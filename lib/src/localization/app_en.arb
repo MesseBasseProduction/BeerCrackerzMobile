@@ -1,0 +1,20 @@
+{
+  "appTitle": "beercrackerz",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "username": "username",
+  "password": "password",
+  "inputLoginUsername": "Enter your username",
+  "inputLoginUsernameEmpty": "You can't let the username field empty",
+  "inputLoginPassword": "Enter your password",
+  "emptyInput": "The {field} field can not be empty",
+  "@emptyInput": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "selected"
+      }
+    }
+  }
+}
