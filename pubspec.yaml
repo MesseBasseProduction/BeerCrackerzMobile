@@ -15,6 +15,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_map: ^6.1.0
+  flutter_rating_bar: ^4.0.1
+  flutter_svg: ^2.0.9
   http: ^1.2.0
   latlong2: ^0.9.0
 
@@ -33,3 +35,5 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/images/marker/
+    - assets/images/icon/
