@@ -10,22 +10,20 @@ import 'settings_service.dart';
 class SettingsController with ChangeNotifier {
   SettingsController(this._settingsService);
 
-  // Make SettingsService a private variable so it is not used directly.
   final SettingsService _settingsService;
 
-  // Make ThemeMode a private variable so it is not updated directly without
-  // also persisting the changes with the SettingsService.
   late ThemeMode _themeMode;
-
-  // Allow Widgets to read the user's preferred ThemeMode.
   ThemeMode get themeMode => _themeMode;
+
+  late bool isLoggedIn;
+  late String sessionCookie = '';
 
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
   /// settings from the service.
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
-
+    isLoggedIn = false;
     // Important! Inform listeners a change has occurred.
     notifyListeners();
   }
@@ -46,5 +44,13 @@ class SettingsController with ChangeNotifier {
     // Persist the changes to a local database or the internet using the
     // SettingService.
     await _settingsService.updateThemeMode(newThemeMode);
+  }
+
+  Future<void> updateSessionCookie(String? rawString) async {
+    if (rawString == null) return;
+    if (rawString == sessionCookie) return;
+    sessionCookie = rawString;
+    notifyListeners();
+    await _settingsService.updateSessionCookie(rawString);
   }
 }
