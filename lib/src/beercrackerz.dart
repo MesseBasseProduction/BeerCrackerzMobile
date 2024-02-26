@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'auth/profile_view.dart';
+import 'auth/auth_view.dart';
 import 'map/map_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
@@ -26,6 +26,7 @@ class BeerCrackerzMobile extends StatelessWidget {
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
           // returns to the app after it has been killed while running in the
@@ -70,8 +71,8 @@ class BeerCrackerzMobile extends StatelessWidget {
               settings: routeSettings,
               builder: (BuildContext context) {
                 switch (routeSettings.name) {
-                  case ProfileView.routeName:
-                    return ProfileView(controller: settingsController);
+                  case AuthView.routeName:
+                    return AuthView(controller: settingsController);
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case MapView.routeName:

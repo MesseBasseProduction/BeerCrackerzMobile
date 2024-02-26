@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:beercrackerz/src/map/map_service.dart';
 
-import '../auth/profile_view.dart';
+import '../auth/auth_view.dart';
 import '../settings/settings_view.dart';
 
 class MapView extends StatefulWidget {
@@ -93,7 +93,7 @@ class MapViewState extends State<MapView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.restorablePushNamed(context, ProfileView.routeName);
+          Navigator.restorablePushNamed(context, AuthView.routeName);
         },
         foregroundColor: null,
         backgroundColor: null,
