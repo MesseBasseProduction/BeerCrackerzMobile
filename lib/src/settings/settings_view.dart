@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'settings_controller.dart';
 
@@ -17,56 +19,67 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context)!.settingsTitle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        // Glue the SettingsController to the theme selection DropdownButton.
-        //
-        // When a user selects a theme from the dropdown list, the
-        // SettingsController is updated, which rebuilds the MaterialApp.
-        child: Column(
-          children: [
-            DropdownButton<ThemeMode>(
-              // Read the selected themeMode from the controller
-              value: controller.themeMode,
-              // Call the updateThemeMode method any time the user selects a theme.
-              onChanged: controller.updateThemeMode,
-              items: const [
-                DropdownMenuItem(
-                  value: ThemeMode.light,
-                  child: Text('Dark Theme'),
+      body: SettingsList(
+        sections: [
+          SettingsSection(
+            title: Text(AppLocalizations.of(context)!.settingsInterfaceSection),
+            tiles: [
+              SettingsTile(
+                title: Text(AppLocalizations.of(context)!.settingsInterfaceLanguage),
+                leading: const Icon(Icons.language),
+                trailing: DropdownMenu<Locale>(
+                  initialSelection: controller.appLocale,
+                  onSelected: controller.updateAppLocale,
+                  inputDecorationTheme: const InputDecorationTheme(),
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(
+                      value: const Locale.fromSubtags(languageCode: 'en'),
+                      label: AppLocalizations.of(context)!.settingsInterfaceLanguageEn,
+                    ),
+                    DropdownMenuEntry(
+                      value: const Locale.fromSubtags(languageCode: 'fr'),
+                      label: AppLocalizations.of(context)!.settingsInterfaceLanguageFr,
+                    ),
+                    DropdownMenuEntry(
+                      value: const Locale.fromSubtags(languageCode: 'es'),
+                      label: AppLocalizations.of(context)!.settingsInterfaceLanguageEs,
+                    ),
+                    DropdownMenuEntry(
+                      value: const Locale.fromSubtags(languageCode: 'de'),
+                      label: AppLocalizations.of(context)!.settingsInterfaceLanguageDe,
+                    ),
+                  ],
                 ),
-                DropdownMenuItem(
-                  value: ThemeMode.dark,
-                  child: Text('Light Theme'),
-                )
-              ],
-            ),
-            DropdownButton<Locale>(
-              value: controller.appLocale,
-              onChanged: controller.updateAppLocale,
-              items: const [
-                DropdownMenuItem(
-                  value: Locale.fromSubtags(languageCode: 'en'),
-                  child: Text('English'),
+                onPressed: (BuildContext context) {},
+              ),
+              SettingsTile(
+                title: Text(AppLocalizations.of(context)!.settingsInterfaceTheme),
+                leading: const Icon(Icons.palette),
+                trailing: DropdownMenu<ThemeMode>(
+                  initialSelection: controller.themeMode,
+                  onSelected: controller.updateThemeMode,
+                  inputDecorationTheme: const InputDecorationTheme(
+                    border: null,
+                    contentPadding: EdgeInsets.only(left: 10),
+                  ),
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(
+                      value: ThemeMode.light,
+                      label: AppLocalizations.of(context)!.settingsInterfaceThemeDark,
+                    ),
+                    DropdownMenuEntry(
+                      value: ThemeMode.light,
+                      label: AppLocalizations.of(context)!.settingsInterfaceThemeLight,
+                    ),
+                  ],
                 ),
-                DropdownMenuItem(
-                  value: Locale.fromSubtags(languageCode: 'fr'),
-                  child: Text('French'),
-                ),
-                DropdownMenuItem(
-                  value: Locale.fromSubtags(languageCode: 'es'),
-                  child: Text('Spanish'),
-                ),
-                DropdownMenuItem(
-                  value: Locale.fromSubtags(languageCode: 'de'),
-                  child: Text('German'),
-                ),
-              ],
-            ),
-          ],
-        ),
+                onPressed: (BuildContext context) {},
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

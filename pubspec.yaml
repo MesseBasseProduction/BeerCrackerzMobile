@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_settings_ui: ^3.0.0
   flutter_map: ^6.1.0
   flutter_map_location_marker: ^8.0.8
   flutter_rating_bar: ^4.0.1

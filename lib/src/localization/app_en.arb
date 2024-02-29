@@ -41,6 +41,16 @@
   "authResetPasswordSuccessContent": "Now consult your emails and follow the link to set a new password on the web interface, then login again.",
   "authResetPasswordSuccessSubmit": "Dismiss",
   "authProfileTitle": "Profile",
+  "settingsTitle": "Settings",
+  "settingsInterfaceSection": "Interface",
+  "settingsInterfaceLanguage": "Language",
+  "settingsInterfaceLanguageEn": "🇬🇧 English",
+  "settingsInterfaceLanguageFr": "🇫🇷 French",
+  "settingsInterfaceLanguageEs": "🇪🇸 Spanish",
+  "settingsInterfaceLanguageDe": "🇩🇪 German",
+  "settingsInterfaceTheme": "Theme",
+  "settingsInterfaceThemeDark": "Dark theme",
+  "settingsInterfaceThemeLight": "Light theme",
   "@emptyInput": {
     "placeholders": {
       "field": {
