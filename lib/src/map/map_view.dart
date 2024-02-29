@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:beercrackerz/src/map/map_service.dart';
 import 'package:beercrackerz/src/auth/auth_view.dart';
@@ -273,6 +274,43 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           MarkerLayer(
             markers: (showBars == true) ? _barMarkerView : [],
+          ),
+          RichAttributionWidget(
+            alignment: AttributionAlignment.bottomLeft,
+            showFlutterMapAttribution: false,
+            popupBackgroundColor: Theme.of(context).colorScheme.primary,
+            closeButton: (BuildContext context, Function close) {
+              return IconButton(
+                icon: const Icon(Icons.cancel_outlined),
+                color: Theme.of(context).colorScheme.surface,
+                onPressed: () => close(),
+                style: ButtonStyle(),
+              );
+            },
+            /*
+            closeButton: const IconButton(
+              icon: Icons.close,
+              onPressed: null,
+            ),
+            */
+            attributions: [
+              TextSourceAttribution(
+                'OpenStreeMap contributors',
+                textStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.surface,
+                  fontStyle: FontStyle.italic,
+                ),
+                onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+              ),
+              TextSourceAttribution(
+                'Flutter Map developers',
+                textStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.surface,
+                  fontStyle: FontStyle.italic,
+                ),
+                onTap: () => launchUrl(Uri.parse('https://github.com/fleaflet/flutter_map')),
+              ),
+            ],
           ),
         ],
       ),
