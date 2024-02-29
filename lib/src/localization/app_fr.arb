@@ -1,0 +1,71 @@
+{
+    "appTitle": "beercrackerz",
+    "@appTitle": {
+      "description": "The title of the application"
+    },
+    "authLoginTitle": "Connexion",
+    "authLoginUsernameInput": "Entez votre nom d'utilisateur",
+    "authLoginUsername": "nom d'utilisateur",
+    "authLoginPasswordInput": "Entez votre mot de passe",
+    "authLoginPassword": "mot de passe",
+    "authLoginForgotPassword": "Mot de passe oublié?",
+    "authLoginSubmit": "Se connecter",
+    "authLoginNoAccount": "pas de compte? ",
+    "authLoginRegister": "S'enregistrer",
+    "emptyInput": "Le champ {field} ne peut pas être vide",
+    "authRegisterTitle": "S'enregistrer",
+    "authRegisterUsernameInput": "Enter your username",
+    "authRegisterUsername": "username",
+    "authRegisterEmailInput": "Enter your email",
+    "authRegisterEmail": "email",
+    "authRegisterInvalidEmail": "This email is invalid",
+    "authRegisterPasswordInput": "Enter your password",
+    "authRegisterPassword": "password",
+    "authRegisterPasswordNotMatching": "Passwords doesn't match",
+    "authRegisterRepeatPasswordInput": "Repeat your password",
+    "authRegisterRepeatPassword": "repeat password",
+    "authRegisterSubmit": "Register",
+    "authRegisterHaveAccount": "You do have an account? ",
+    "authRegisterLogin": "Login",
+    "authRegisterSuccessTitle": "Registration sent",
+    "authRegisterSuccessHeader": "You're almost in!",
+    "authRegisterSuccessContent": "You are one step closer to edit the map and fully enjoy BeerCrackerz! Go check your mail and validate your account and then login.",
+    "authRegisterSuccessSubmit": "Dismiss",
+    "authResetPasswordTitle": "Reset password",
+    "authResetPasswordInput": "Enter your email",
+    "authResetPassword": "email",
+    "authResetPasswordInvalidEmail": "This email is invalid",
+    "authResetPasswordSubmit": "Reset password",
+    "authResetPasswordSuccessTitle": "Reset password sent",
+    "authResetPasswordSuccessHeader": "Password almost reset!",
+    "authResetPasswordSuccessContent": "Now consult your emails and follow the link to set a new password on the web interface, then login again.",
+    "authResetPasswordSuccessSubmit": "Dismiss",
+    "authProfileTitle": "Profile",
+    "@emptyInput": {
+      "placeholders": {
+        "field": {
+          "type": "String",
+          "example": "selected"
+        }
+      }
+    },
+    "spotFeatures": "{feature, select, forest {Forest} river {River} lake {Lake} cliff {Cliff} mountain {Mountain} beach {Beach} city {City} pov {Point of View} bench {Bench} covered {Covered} toilet {Toilet} store {Store nearby} trash {Trash} parking {Parking} other {Other}}",
+    "@spotFeatures": {
+      "placeholders": {
+        "feature": {}
+      }
+    },
+    "shopFeatures": "{feature, select, store {Grocery store} super {Supermarket} hyper {Hypermarket} cellar {Cellar} bio {Bio} craft {Craft} fresh {Refrigerated} card {Credit card} choice {Wide choice} other {Other}}",
+    "@shopFeatures": {
+      "placeholders": {
+        "feature": {}
+      }
+    },
+    "barFeatures": "{feature, select, regular {Regular} snack {Snack} cellar {Brewery} rooftop {Rooftop} tobacco {Cigarets} food {Food} card {Credit card} choice {Wide choice} outdoor {Outdoor} other {Other}}",
+    "@barFeatures": {
+      "placeholders": {
+        "feature": {}
+      }
+    }
+  }
+  

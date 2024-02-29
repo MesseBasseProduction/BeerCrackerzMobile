@@ -2,6 +2,7 @@ import 'package:beercrackerz/src/auth/profile_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:beercrackerz/src/settings/settings_view.dart';
 import 'package:beercrackerz/src/settings/settings_controller.dart';
 import 'package:beercrackerz/src/settings/size_config.dart';
 
@@ -40,6 +41,7 @@ class LoginViewState extends State<LoginView> {
             if (response.headers['set-cookie'] != null) {
               widget.controller.isLoggedIn = true;
               widget.controller.updateSessionCookie(response.headers['set-cookie']!);
+              widget.setAuthPage(5);
             }
           }
         }).catchError((handleError) {
@@ -52,7 +54,17 @@ class LoginViewState extends State<LoginView> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.authLoginTitle),
-        shadowColor: Theme.of(context).colorScheme.shadow,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Navigate to the settings page. If the user leaves and returns
+              // to the app after it has been killed while running in the
+              // background, the navigation stack is restored.
+              Navigator.restorablePushNamed(context, SettingsView.routeName);
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -65,7 +77,8 @@ class LoginViewState extends State<LoginView> {
                   child: Padding(
                     padding: EdgeInsets.only(
                       left: SizeConfig.defaultSize * 3,
-                      right: SizeConfig.defaultSize * 3
+                      right: SizeConfig.defaultSize * 3,
+                      bottom: SizeConfig.defaultSize * 3,
                     ),
                     child: Form(
                       key: _formKey,
@@ -80,7 +93,7 @@ class LoginViewState extends State<LoginView> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.background,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,12 +104,12 @@ class LoginViewState extends State<LoginView> {
                               scrollPadding: EdgeInsets.only(bottom: (formHeight / 2)),
                               decoration: InputDecoration(
                                 labelText: AppLocalizations.of(context)!.authLoginUsernameInput,
-                                labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.account_circle,
                                   size: SizeConfig.defaultSize * 2,
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 enabledBorder: UnderlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -104,7 +117,7 @@ class LoginViewState extends State<LoginView> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)
+                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface)
                                 ),
                               ),
                               onSaved: (String? value) {
@@ -125,12 +138,12 @@ class LoginViewState extends State<LoginView> {
                               scrollPadding: EdgeInsets.only(bottom: (formHeight / 3)),
                               decoration: InputDecoration(
                                 labelText: AppLocalizations.of(context)!.authLoginPasswordInput,
-                                labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.lock,
                                   size: SizeConfig.defaultSize * 2,
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 suffixIcon: Align(
                                   widthFactor: 1.0,
@@ -144,7 +157,7 @@ class LoginViewState extends State<LoginView> {
                                     icon: Icon(
                                       Icons.remove_red_eye,
                                       size: SizeConfig.defaultSize * 2,
-                                      color: (showPassword == true) ? Theme.of(context).colorScheme.primary : null,
+                                      color: (showPassword == true) ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
@@ -154,15 +167,15 @@ class LoginViewState extends State<LoginView> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
                                 ),
                               ),
                               obscureText: (showPassword == true) ? false : true,
                               enableSuggestions: false,
                               autocorrect: false,
-                              onSaved: (String? value) {
-                                password = value!;
-                              },
+                              onSaved: (String? value) => password = value!,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authLoginPassword);
@@ -178,11 +191,12 @@ class LoginViewState extends State<LoginView> {
                               child: InkWell(
                                 child: Text(
                                   AppLocalizations.of(context)!.authLoginForgotPassword,
-                                  style: const TextStyle(color: Colors.grey),
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                                    fontStyle: FontStyle.italic
+                                  ),
                                 ),
-                                onTap: () {
-                                  widget.setAuthPage(3);
-                                },
+                                onTap: () => widget.setAuthPage(3),
                               ),
                             ),
                             SizedBox(
@@ -192,7 +206,7 @@ class LoginViewState extends State<LoginView> {
                               height: SizeConfig.defaultSize * 5,
                               minWidth: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
-                                onPressed: () { formValidation(); },
+                                onPressed: () => formValidation(),
                                 child: Text(AppLocalizations.of(context)!.authLoginSubmit),
                               ),
                             ),
@@ -204,12 +218,13 @@ class LoginViewState extends State<LoginView> {
                               children: <Widget>[
                                 Text(
                                   AppLocalizations.of(context)!.authLoginNoAccount,
-                                  style: const TextStyle(color: Colors.grey),
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                                    fontStyle: FontStyle.italic
+                                  ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {
-                                    widget.setAuthPage(1);
-                                  },
+                                  onTap: () => widget.setAuthPage(1),
                                   child: Text(
                                     AppLocalizations.of(context)!.authLoginRegister,
                                     style: TextStyle(
@@ -226,7 +241,7 @@ class LoginViewState extends State<LoginView> {
                     ),
                   ),
                 ),
-                // App title wrapper
+                // App title wrapper, placed after for "z-index"
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(top: (SizeConfig.screenHeight / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4)),
@@ -234,10 +249,10 @@ class LoginViewState extends State<LoginView> {
                     width: SizeConfig.defaultSize * 20,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.shadow,
                           blurRadius: 6,
                           offset: const Offset(0, 2), // changes position of shadow
                         ),

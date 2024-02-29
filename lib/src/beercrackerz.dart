@@ -4,10 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'auth/auth_view.dart';
 import 'map/map_view.dart';
-import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
+import 'settings/settings_controller.dart';
+import 'settings/theme_controller.dart';
 
-/// The Widget that configures your application.
 class BeerCrackerzMobile extends StatelessWidget {
   const BeerCrackerzMobile({
     super.key,
@@ -43,25 +43,25 @@ class BeerCrackerzMobile extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [
-            Locale('en', ''), // English, no country code
+            Locale('en', ''),
             Locale('fr', ''),
             Locale('de', ''),
             Locale('es', ''),
           ],
+          locale: settingsController.appLocale,
 
           // Use AppLocalizations to configure the correct application title
           // depending on the user's locale.
           //
           // The appTitle is defined in .arb files found in the localization
           // directory.
-          onGenerateTitle: (BuildContext context) =>
-              AppLocalizations.of(context)!.appTitle,
+          onGenerateTitle: (BuildContext context) => AppLocalizations.of(context)!.appTitle,
 
           // Define a light and dark color theme. Then, read the user's
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
+          theme: ThemeController.mainTheme(),
+          darkTheme: ThemeData.light(),
           themeMode: settingsController.themeMode,
 
           // Define a function to handle named routes in order to support

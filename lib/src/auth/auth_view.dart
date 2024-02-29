@@ -19,18 +19,18 @@ class AuthView extends StatefulWidget  {
 }
 
 class AuthViewState extends State<AuthView> {
-  // 0 = login, 1 = register, 2 = register success, 3 = reset pass, 4 = reset password success
+  // 0 = login, 1 = register, 2 = register success, 3 = reset pass, 4 = reset password success, 5 = profile
   int authPage = 0;
 
   void setAuthpage(int number) {
-    if (number >= 0 && number <= 4) {
+    if (number >= 0 && number <= 5) {
       setState(() => authPage = number);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.controller.isLoggedIn == true) {
+    if (authPage == 5 && widget.controller.isLoggedIn == true) {
       return ProfileView(controller: widget.controller);
     } else if (authPage == 4) {
       return ResetPasswordSuccessView(controller: widget.controller, setAuthPage: setAuthpage);

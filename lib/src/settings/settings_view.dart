@@ -25,20 +25,46 @@ class SettingsView extends StatelessWidget {
         //
         // When a user selects a theme from the dropdown list, the
         // SettingsController is updated, which rebuilds the MaterialApp.
-        child: DropdownButton<ThemeMode>(
-          // Read the selected themeMode from the controller
-          value: controller.themeMode,
-          // Call the updateThemeMode method any time the user selects a theme.
-          onChanged: controller.updateThemeMode,
-          items: const [
-            DropdownMenuItem(
-              value: ThemeMode.light,
-              child: Text('Light Theme'),
+        child: Column(
+          children: [
+            DropdownButton<ThemeMode>(
+              // Read the selected themeMode from the controller
+              value: controller.themeMode,
+              // Call the updateThemeMode method any time the user selects a theme.
+              onChanged: controller.updateThemeMode,
+              items: const [
+                DropdownMenuItem(
+                  value: ThemeMode.light,
+                  child: Text('Dark Theme'),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.dark,
+                  child: Text('Light Theme'),
+                )
+              ],
             ),
-            DropdownMenuItem(
-              value: ThemeMode.dark,
-              child: Text('Dark Theme'),
-            )
+            DropdownButton<Locale>(
+              value: controller.appLocale,
+              onChanged: controller.updateAppLocale,
+              items: const [
+                DropdownMenuItem(
+                  value: Locale.fromSubtags(languageCode: 'en'),
+                  child: Text('English'),
+                ),
+                DropdownMenuItem(
+                  value: Locale.fromSubtags(languageCode: 'fr'),
+                  child: Text('French'),
+                ),
+                DropdownMenuItem(
+                  value: Locale.fromSubtags(languageCode: 'es'),
+                  child: Text('Spanish'),
+                ),
+                DropdownMenuItem(
+                  value: Locale.fromSubtags(languageCode: 'de'),
+                  child: Text('German'),
+                ),
+              ],
+            ),
           ],
         ),
       ),

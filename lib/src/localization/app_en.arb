@@ -40,6 +40,7 @@
   "authResetPasswordSuccessHeader": "Password almost reset!",
   "authResetPasswordSuccessContent": "Now consult your emails and follow the link to set a new password on the web interface, then login again.",
   "authResetPasswordSuccessSubmit": "Dismiss",
+  "authProfileTitle": "Profile",
   "@emptyInput": {
     "placeholders": {
       "field": {
