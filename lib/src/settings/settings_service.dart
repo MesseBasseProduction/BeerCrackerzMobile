@@ -22,7 +22,7 @@ class SettingsService {
     // http package to persist settings over the network.
   }
 
-  Future<void> updateSessionCookie(String rawString) async {
+  Future<void> updateAuthToken(String expiry, String token) async {
     // Use the shared_preferences package to persist settings locally or the
     // http package to persist settings over the network.
   }

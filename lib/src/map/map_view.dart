@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:beercrackerz/src/map/map_service.dart';
@@ -30,164 +31,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   bool showSpots = true;
   bool showShops = true;
   bool showBars = true;
+  String mapLayer = 'osm';
 
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
-
-  static const _startedId = 'AnimatedMapController#MoveStarted';
-  static const _inProgressId = 'AnimatedMapController#MoveInProgress';
-  static const _finishedId = 'AnimatedMapController#MoveFinished';
-
-  void _animatedMapMove(LatLng destLocation, double destZoom) {
-    // Create some tweens. These serve to split up the transition from one location to another.
-    // In our case, we want to split the transition be<tween> our current map center and the destination.
-    final camera = _mapController.camera;
-    final latTween = Tween<double>(
-        begin: camera.center.latitude, end: destLocation.latitude);
-    final lngTween = Tween<double>(
-        begin: camera.center.longitude, end: destLocation.longitude);
-    final zoomTween = Tween<double>(begin: camera.zoom, end: destZoom);
-
-    // Create a animation controller that has a duration and a TickerProvider.
-    final controller = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
-    // The animation determines what path the animation will take. You can try different Curves values, although I found
-    // fastOutSlowIn to be my favorite.
-    final Animation<double> animation =
-        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
-
-    // Note this method of encoding the target destination is a workaround.
-    // When proper animated movement is supported (see #1263) we should be able
-    // to detect an appropriate animated movement event which contains the
-    // target zoom/center.
-    final startIdWithTarget =
-        '$_startedId#${destLocation.latitude},${destLocation.longitude},$destZoom';
-    bool hasTriggeredMove = false;
-
-    controller.addListener(() {
-      final String id;
-      if (animation.value == 1.0) {
-        id = _finishedId;
-      } else if (!hasTriggeredMove) {
-        id = startIdWithTarget;
-      } else {
-        id = _inProgressId;
-      }
-
-      hasTriggeredMove |= _mapController.move(
-        LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
-        zoomTween.evaluate(animation),
-        id: id,
-      );
-    });
-
-    animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.dispose();
-      } else if (status == AnimationStatus.dismissed) {
-        controller.dispose();
-      }
-    });
-
-    controller.forward();
-  }
-
-  void displayFilteringModal() {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      barrierColor: Colors.black.withOpacity(0.1),
-      builder: (BuildContext context) {
-        return Container(
-          height: (35 * mediaQueryData.size.height) / 100, // Taking 35% of screen height
-          color: Theme.of(context).colorScheme.background,
-          child: Center(
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                ),
-                const Text(
-                  'Map layers',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4.0),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showSpots = !showSpots;
-                    setState(() {});
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage('assets/images/marker/marker-icon-green.png')
-                      ),
-                      Text(
-                        (showSpots == true) ? 'Hide spots' : 'Show spots',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showShops = !showShops;
-                    setState(() {});
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage('assets/images/marker/marker-icon-blue.png')
-                      ),
-                      Text(
-                        (showShops == true) ? 'Hide shops' : 'Show shops',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showBars = !showBars;
-                    setState(() {});
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage('assets/images/marker/marker-icon-red.png')
-                      ),
-                      Text(
-                        (showBars == true) ? 'Hide bars' : 'Show bars',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   // InitState main purpose is to async load spots/shops/bars
   @override
@@ -233,6 +80,215 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void _animatedMapMove(LatLng destLocation, double destZoom) {
+    final camera = _mapController.camera;
+    final latTween = Tween<double>(begin: camera.center.latitude, end: destLocation.latitude);
+    final lngTween = Tween<double>(begin: camera.center.longitude, end: destLocation.longitude);
+    final zoomTween = Tween<double>(begin: camera.zoom, end: destZoom);
+    final controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    final Animation<double> animation = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+    final startIdWithTarget = 'AnimatedMapController#MoveStarted#${destLocation.latitude},${destLocation.longitude},$destZoom';
+    bool hasTriggeredMove = false;
+
+    controller.addListener(() {
+      final String id;
+      if (animation.value == 1.0) {
+        id = 'AnimatedMapController#MoveFinished';
+      } else if (!hasTriggeredMove) {
+        id = startIdWithTarget;
+      } else {
+        id = 'AnimatedMapController#MoveInProgress';
+      }
+
+      hasTriggeredMove |= _mapController.move(
+        LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
+        zoomTween.evaluate(animation),
+        id: id,
+      );
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
+  void displayFilteringModal() {
+    MediaQueryData mediaQueryData = MediaQuery.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      barrierColor: Colors.black.withOpacity(0.1),
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setModalState) {
+          return Container(
+            height: (35 * mediaQueryData.size.height) / 100, // Taking 35% of screen height
+            color: Theme.of(context).colorScheme.background,
+            child: Center(
+              child: ListView(
+                children: [
+                  Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                      ),
+                      const Text(
+                        'Map options',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                      ),
+                      const Text(
+                        'Map layer style',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16
+                        ),
+                      ),
+                      ToggleSwitch(
+                        customWidths: [mediaQueryData.size.width / 3, mediaQueryData.size.width / 3],
+                        initialLabelIndex: (mapLayer == 'osm') ? 0 : 1,
+                        totalSwitches: 2,
+                        labels: const ['Plan', 'Satellite'],
+                        onToggle: (index) {
+                          if (index == 0) {
+                            setState(() => mapLayer = 'osm');
+                            setModalState(() {});
+                          } else {
+                            setState(() => mapLayer = 'esri');
+                            setModalState(() {});
+                          }
+                        },
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                      ),
+                      const Text(
+                        'Points of interest',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0)
+                          ),
+                          const Image(
+                            image: AssetImage('assets/images/marker/marker-icon-green.png'),
+                            height: 24.0,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0)
+                          ),
+                          const Text(
+                            'Display spots',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18
+                            ),
+                          ),
+                          const Spacer(),
+                          Switch(
+                            value: showSpots,
+                            onChanged: (value) {
+                              setState(() => showSpots = !showSpots);
+                              setModalState(() {});
+                            },
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0)
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0)
+                          ),
+                          const Image(
+                            image: AssetImage('assets/images/marker/marker-icon-blue.png'),
+                            height: 24.0,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0)
+                          ),
+                          const Text(
+                            'Display shops',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18
+                            ),
+                          ),
+                          const Spacer(),
+                          Switch(
+                            value: showShops,
+                            onChanged: (value) {
+                              setState(() => showShops = !showShops);
+                              setModalState(() {});
+                            },
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0)
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0)
+                          ),
+                          const Image(
+                            image: AssetImage('assets/images/marker/marker-icon-red.png'),
+                            height: 24.0,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0)
+                          ),
+                          const Text(
+                            'Display bars',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18
+                            ),
+                          ),
+                          const Spacer(),
+                          Switch(
+                            value: showBars,
+                            onChanged: (value) {
+                              setState(() => showBars = !showBars);
+                              setModalState(() {});
+                            },
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0)
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -255,7 +311,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate: (mapLayer == 'osm') ?
+              'https://tile.openstreetmap.org/{z}/{x}/{y}.png' :
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+            ,
             userAgentPackageName: 'com.example.beercrackerz',
           ),
           CurrentLocationLayer(
@@ -284,23 +343,24 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                 icon: const Icon(Icons.cancel_outlined),
                 color: Theme.of(context).colorScheme.surface,
                 onPressed: () => close(),
-                style: ButtonStyle(),
+                style: const ButtonStyle(),
               );
             },
-            /*
-            closeButton: const IconButton(
-              icon: Icons.close,
-              onPressed: null,
-            ),
-            */
             attributions: [
               TextSourceAttribution(
-                'OpenStreeMap contributors',
+                (mapLayer == 'osm') ? 
+                  'OpenStreeMap contributors' :
+                  'Powered by Esri'
+                ,
                 textStyle: TextStyle(
                   color: Theme.of(context).colorScheme.surface,
                   fontStyle: FontStyle.italic,
                 ),
-                onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+                onTap: () => launchUrl(
+                  (mapLayer == 'osm') ? 
+                    Uri.parse('https://openstreetmap.org/copyright') :
+                    Uri.parse('https://www.esri.com'),
+                ),
               ),
               TextSourceAttribution(
                 'Flutter Map developers',
@@ -326,7 +386,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               foregroundColor: null,
               backgroundColor: null,
               child: const Icon(
-                Icons.filter_alt_rounded,
+                Icons.map,
               ),
             ),
           ),

@@ -1,15 +1,16 @@
+import 'package:beercrackerz/src/auth/profile_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:beercrackerz/src/settings/settings_view.dart';
-
 import 'package:beercrackerz/src/settings/settings_controller.dart';
 import 'package:beercrackerz/src/settings/size_config.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key, required this.controller});
+  const ProfileView({super.key, required this.controller, required this.setAuthPage});
 
   final SettingsController controller;
+  final Function setAuthPage;
 
   @override
   ProfileViewState createState() {
@@ -23,6 +24,19 @@ class ProfileViewState extends State<ProfileView> {
     SizeConfig().init(context);
 
     double formHeight = SizeConfig.defaultSize * 25;
+
+    void requestLogout() {
+      ProfileService.submitLogout(widget.controller.savedToken).then((response) {
+        if (response.statusCode != 204) {
+          throw Exception('/auth/logout/ failed : Status ${response.statusCode}, ${response.body}');
+        } else {
+          widget.controller.isLoggedIn = false;
+          widget.setAuthPage(0);
+        }
+      }).catchError((handleError) {
+        throw Exception(handleError);
+      });
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -94,10 +108,8 @@ class ProfileViewState extends State<ProfileView> {
                               height: SizeConfig.defaultSize * 5,
                               minWidth: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
-                                onPressed: () { 
-
-                                },
-                                child: Text(AppLocalizations.of(context)!.authResetPasswordSuccessSubmit),
+                                onPressed: () => requestLogout(),
+                                child: Text('Logout'),
                               ),
                             ),
                           ],

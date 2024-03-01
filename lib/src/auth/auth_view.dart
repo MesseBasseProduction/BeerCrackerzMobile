@@ -31,7 +31,7 @@ class AuthViewState extends State<AuthView> {
   @override
   Widget build(BuildContext context) {
     if (authPage == 5 && widget.controller.isLoggedIn == true) {
-      return ProfileView(controller: widget.controller);
+      return ProfileView(controller: widget.controller, setAuthPage: setAuthpage);
     } else if (authPage == 4) {
       return ResetPasswordSuccessView(controller: widget.controller, setAuthPage: setAuthpage);
     } else if (authPage == 3) {

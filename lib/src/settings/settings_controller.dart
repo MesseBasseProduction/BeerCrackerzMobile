@@ -20,7 +20,8 @@ class SettingsController with ChangeNotifier {
 
 
   late bool isLoggedIn;
-  late String sessionCookie = '';
+  late String savedExpiry = '';
+  late String savedToken = '';
 
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
@@ -56,11 +57,13 @@ class SettingsController with ChangeNotifier {
     await _settingsService.updateAppLocale(newLocale);
   }
 
-  Future<void> updateSessionCookie(String? rawString) async {
-    if (rawString == null) return;
-    if (rawString == sessionCookie) return;
-    sessionCookie = rawString;
+  Future<void> updateAuthToken(String? expiry, String? token) async {
+    if (expiry == null || token == null) return;
+    if (expiry == savedExpiry) return;
+    if (token == savedToken) return;
+    savedExpiry = expiry;
+    savedToken = token;
     notifyListeners();
-    await _settingsService.updateSessionCookie(rawString);
+    await _settingsService.updateAuthToken(expiry, token);
   }
 }

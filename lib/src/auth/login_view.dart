@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:beercrackerz/src/auth/profile_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -36,11 +38,12 @@ class LoginViewState extends State<LoginView> {
       if (_formKey.currentState!.validate()) {
         ProfileService.submitLogin(username, password).then((response) {
           if (response.statusCode != 200) {
-            throw Exception('/api/auth/login/ failed : Status ${response.statusCode}, ${response.body}');
+            throw Exception('/auth/login/ failed : Status ${response.statusCode}, ${response.body}');
           } else {
-            if (response.headers['set-cookie'] != null) {
+            final parsedJson = jsonDecode(response.body);
+            if (parsedJson['expiry'] != null && parsedJson['token'] != null) {
               widget.controller.isLoggedIn = true;
-              widget.controller.updateSessionCookie(response.headers['set-cookie']!);
+              widget.controller.updateAuthToken(parsedJson['expiry'], parsedJson['token']);
               widget.setAuthPage(5);
             }
           }
