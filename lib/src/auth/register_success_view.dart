@@ -26,7 +26,9 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.authRegisterSuccessTitle),
+        title: Text(
+          AppLocalizations.of(context)!.authRegisterSuccessTitle,
+        ),
         shadowColor: Theme.of(context).colorScheme.shadow,
       ),
       body: SingleChildScrollView(
@@ -39,21 +41,24 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                 Center(
                   child: Padding(
                     padding: EdgeInsets.only(
-                      left: SizeConfig.defaultSize * 3,
-                      right: SizeConfig.defaultSize * 3
+                      left: (SizeConfig.defaultSize * 3),
+                      right: (SizeConfig.defaultSize * 3),
+                      bottom: (SizeConfig.defaultSize * 3),
                     ),
                     child: Container(
                         height: formHeight,
-                        margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4)),
+                        margin: EdgeInsets.only(
+                          top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4),
+                        ),
                         padding: EdgeInsets.only(
-                          top: SizeConfig.defaultSize * 4,
-                          bottom: SizeConfig.defaultSize * 2,
-                          left: SizeConfig.defaultSize * 2,
-                          right: SizeConfig.defaultSize * 2
+                          top: (SizeConfig.defaultSize * 4),
+                          bottom: (SizeConfig.defaultSize * 2),
+                          left: (SizeConfig.defaultSize * 2),
+                          right: (SizeConfig.defaultSize * 2),
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.background,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -64,26 +69,31 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                               AppLocalizations.of(context)!.authRegisterSuccessHeader,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18
                               ),
                             ),
                             SizedBox(
-                              height: SizeConfig.defaultSize * 2,
+                              height: (SizeConfig.defaultSize * 2),
                             ),
                             Text(
                               AppLocalizations.of(context)!.authRegisterSuccessContent,
                               textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                             ),
                             SizedBox(
-                              height: SizeConfig.defaultSize * 2,
+                              height: (SizeConfig.defaultSize * 2),
                             ),
                             ButtonTheme(
-                              height: SizeConfig.defaultSize * 5,
+                              height: (SizeConfig.defaultSize * 5),
                               minWidth: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
-                                onPressed: () { Navigator.of(context).pop(); },
-                                child: Text(AppLocalizations.of(context)!.authRegisterSuccessSubmit),
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: Text(
+                                  AppLocalizations.of(context)!.authRegisterSuccessSubmit,
+                                ),
                               ),
                             ),
                           ],
@@ -94,15 +104,17 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                 // App title wrapper
                 Center(
                   child: Container(
-                    margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4)),
-                    height: SizeConfig.defaultSize * 5,
-                    width: SizeConfig.defaultSize * 20,
+                    margin: EdgeInsets.only(
+                      top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4),
+                    ),
+                    height: (SizeConfig.defaultSize * 5),
+                    width: (SizeConfig.defaultSize * 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.shadow,
                           blurRadius: 6,
                           offset: const Offset(0, 2), // changes position of shadow
                         ),
@@ -113,8 +125,8 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                         'BeerCrackerz',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          fontSize: 18
                         ),
                       ),
                     ),

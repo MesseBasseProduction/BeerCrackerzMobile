@@ -397,14 +397,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               heroTag: 'centerOnButton',
               onPressed: () {
                 if (_alignPositionOnUpdate == AlignOnUpdate.never) {
-                  setState(() {
-                    _alignPositionOnUpdate = AlignOnUpdate.always;
-                  });
+                  setState(() => _alignPositionOnUpdate = AlignOnUpdate.always);
                   _alignPositionStreamController.add(18);
                 } else {
-                  setState(() {
-                    _alignPositionOnUpdate = AlignOnUpdate.never;
-                  });
+                  setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
                 }
               },
               foregroundColor: null,
@@ -416,15 +412,18 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             ),
           ),
           // Auth/Profile section
-          FloatingActionButton(
-            heroTag: 'profileButton',
-            onPressed: () {
-              Navigator.restorablePushNamed(context, AuthView.routeName);
-            },
-            foregroundColor: null,
-            backgroundColor: null,
-            child: const Icon(
-              Icons.account_circle,
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            child: FloatingActionButton(
+              heroTag: 'profileButton',
+              onPressed: () {
+                Navigator.restorablePushNamed(context, AuthView.routeName);
+              },
+              foregroundColor: null,
+              backgroundColor: null,
+              child: const Icon(
+                Icons.account_circle,
+              ),
             ),
           ),
         ],

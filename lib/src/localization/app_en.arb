@@ -3,6 +3,28 @@
   "@appTitle": {
     "description": "The title of the application"
   },
+  "httpServerErrorToastTitle": "The server seems messed up",
+  "httpServerErrorToastDescription": "The server didn't responsed has it should. Please contact support for assistance with error code {field}.",
+  "@httpServerErrorToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
+  "httpWrongResponseToastTitle": "Unexpected server response",
+  "httpWrongResponseToastDescription": "The server didn't responsed as usual. Please contact support for assistance with error code {field}.",
+  "@httpWrongResponseToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
+  "httpFrontErrorToastTitle": "Application error",
+  "httpFrontErrorToastDescription": "Something went wrong when trying to reach the server. Please contact support for assistance with error code {field}.",
   "authLoginTitle": "Login",
   "authLoginUsernameInput": "Enter your username",
   "authLoginUsername": "username",
@@ -12,15 +34,23 @@
   "authLoginSubmit": "Login",
   "authLoginNoAccount": "Don't have an account? ",
   "authLoginRegister": "Register",
-  "emptyInput": "The {field} field can not be empty",
+  "authLoginInvalidCredentials": "Invalid credentials, either incorrect or non-existing",
+  "authLoginSuccessToastTitle": "Welcome back!",
+  "authLoginSuccessToastDescription": "Successfully logged in your account BeerCrackerz account. Grab a spot and a beer, and enjoy!",
   "authRegisterTitle": "Register",
   "authRegisterUsernameInput": "Enter your username",
   "authRegisterUsername": "username",
+  "authRegisterUsernameAlreadyTaken": "This username is already registered",
   "authRegisterEmailInput": "Enter your email",
   "authRegisterEmail": "email",
-  "authRegisterInvalidEmail": "This email is invalid",
+  "authRegisterEmailInvalid": "This email is invalid",
+  "authRegisterEmailAlreadyTaken": "This email is already registered",
   "authRegisterPasswordInput": "Enter your password",
   "authRegisterPassword": "password",
+  "authRegisterPasswordTooCommon": "This password to common",
+  "authRegisterPasswordNotStrongEnough": "Password not strong enough",
+  "authRegisterPasswordNotStrongEnoughToastTitle": "About password strength",
+  "authRegisterPasswordNotStrongEnoughToastDescription": "Your password must contain 8 or more characters, with at least one capital letter, one digit and one special character.",
   "authRegisterPasswordNotMatching": "Passwords doesn't match",
   "authRegisterRepeatPasswordInput": "Repeat your password",
   "authRegisterRepeatPassword": "repeat password",
@@ -51,6 +81,7 @@
   "settingsInterfaceTheme": "Theme",
   "settingsInterfaceThemeDark": "Dark theme",
   "settingsInterfaceThemeLight": "Light theme",
+  "emptyInput": "The {field} field can not be empty",
   "@emptyInput": {
     "placeholders": {
       "field": {

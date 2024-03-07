@@ -24,4 +24,26 @@ class ThemeController {
       ),
     );
   }
+
+  static ThemeData lightTheme() {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: const ColorScheme(
+        brightness: Brightness.light,
+        background: Color.fromARGB(255, 214, 207, 184),
+        onBackground: Color.fromARGB(255, 0, 0, 0),
+        primary: Color(0xffffbf00),
+        onPrimary: Color(0xff000000),
+        secondary: Color(0xff5581AD),
+        onSecondary: Color(0xff000000),
+        tertiary: Color(0xff80abff),
+        onTertiary: Color(0xff000000),
+        error: Color(0xffDE716D),
+        onError: Color.fromARGB(255, 255, 255, 255),
+        surface: Color.fromARGB(255, 240, 240, 240),
+        onSurface: Color.fromARGB(255, 0, 0, 0),
+        shadow: Color.fromARGB(84, 228, 182, 181),
+      ),
+    );
+  }
 }

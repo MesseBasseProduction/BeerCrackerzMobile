@@ -26,15 +26,15 @@ class ProfileService {
       body: jsonEncode(<String, String> {
         'username': username,
         'email': email,
-        'password1': password1,
-        'password2': password2
+        'password': password1,
+        'confirmPassword': password2
       }),
     );
   }
 
   static Future<http.Response> submitResetPassword(String email) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/auth/password-reset-request/'),
+      Uri.parse('https://beercrackerz.org/auth/reset-password-request/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },

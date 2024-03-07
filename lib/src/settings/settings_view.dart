@@ -70,7 +70,7 @@ class SettingsView extends StatelessWidget {
                       label: AppLocalizations.of(context)!.settingsInterfaceThemeDark,
                     ),
                     DropdownMenuEntry(
-                      value: ThemeMode.light,
+                      value: ThemeMode.dark,
                       label: AppLocalizations.of(context)!.settingsInterfaceThemeLight,
                     ),
                   ],
