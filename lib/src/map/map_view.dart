@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:beercrackerz/src/map/modal/new_poi_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -9,11 +10,17 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:beercrackerz/src/map/map_service.dart';
 import 'package:beercrackerz/src/auth/auth_view.dart';
+import 'package:beercrackerz/src/settings/settings_controller.dart';
 
 class MapView extends StatefulWidget {
-  const MapView({super.key});
+  const MapView({
+    super.key,
+    required this.controller
+  });
 
   static const routeName = '/map';
+
+  final SettingsController controller;
 
   @override
   MapViewState createState() {
@@ -26,11 +33,14 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final List<Marker> _spotMarkerView = [];
   final List<Marker> _shopMarkerView = [];
   final List<Marker> _barMarkerView = [];
+  final List<Marker> wipMarker = []; // Temporary marker when user wants to add a new poi
+
   late MapController _mapController;
 
   bool showSpots = true;
   bool showShops = true;
   bool showBars = true;
+  bool showWIP = false;
   String mapLayer = 'osm';
 
   late AlignOnUpdate _alignPositionOnUpdate;
@@ -116,6 +126,28 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     });
 
     controller.forward();
+  }
+
+  void displayNewPOIModal(LatLng latLng, double mapLatRange) {
+//    MediaQueryData mediaQueryData = MediaQuery.of(context);
+
+//    String poiType = 'spot';
+/**/
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      barrierColor: Colors.black.withOpacity(0.1),
+      builder: (BuildContext context) {
+        return NewPOIView(controller: widget.controller);
+      },
+    ).whenComplete(() {
+      _animatedMapMove(LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude), _mapController.camera.zoom - 2);
+      showWIP = false;
+      wipMarker.clear();
+      setState(() {});
+    });
+/**/
   }
 
   void displayFilteringModal() {
@@ -293,6 +325,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
+      resizeToAvoidBottomInset: false, // Do not move map when keyboard appear
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -303,11 +336,24 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           minZoom: 0,
           maxZoom: 19,
-          onPositionChanged: (MapPosition position, bool hasGesture) {
+          onPositionChanged:  (MapPosition position, bool hasGesture) {
             if (hasGesture && _alignPositionOnUpdate != AlignOnUpdate.never) {
               setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
             }
           },
+          onTap: (widget.controller.isLoggedIn == true) 
+            ? (TapPosition position, LatLng latLng) {
+              double mapLatRange = (80 * (_mapController.camera.visibleBounds.northWest.latitude - _mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
+              if (showWIP == false) {
+                wipMarker.add(MapService.buildWIPMarkerView(latLng, context, _mapController));
+                // Move map to the marker position
+                _animatedMapMove(LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude), _mapController.camera.zoom + 2);
+                displayNewPOIModal(latLng, mapLatRange);
+              }
+              showWIP = !showWIP;
+              setState(() {});
+            }
+            : (TapPosition position, LatLng latLng) {},
         ),
         children: [
           TileLayer(
@@ -333,6 +379,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           MarkerLayer(
             markers: (showBars == true) ? _barMarkerView : [],
+          ),
+          MarkerLayer(
+            markers: (showWIP == true) ? wipMarker : [],
           ),
           RichAttributionWidget(
             alignment: AttributionAlignment.bottomLeft,

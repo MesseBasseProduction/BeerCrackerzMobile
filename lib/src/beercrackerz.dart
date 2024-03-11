@@ -82,7 +82,9 @@ class BeerCrackerzMobile extends StatelessWidget {
                       );
                     case MapView.routeName:
                     default:
-                      return const MapView();
+                      return MapView(
+                        controller: settingsController,
+                      );
                   }
                 },
               );

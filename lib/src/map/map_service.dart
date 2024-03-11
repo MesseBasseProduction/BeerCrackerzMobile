@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:beercrackerz/src/map/object/marker_data.dart';
@@ -93,5 +94,17 @@ class MapService {
     } else {
       throw Exception('Invalid type $type to build view from');
     }
+  }
+
+  static Marker buildWIPMarkerView(LatLng latLng, BuildContext context, MapController mapController) {
+    return MarkerView.buildWIPMarkerView(latLng, context, mapController);
+  }
+
+  static Widget buildNewSpotModal(BuildContext context, String type) {
+    return MarkerView.buildNewSpotModal(context, type);
+  }
+
+  static Widget buildNewShopModal(BuildContext context, String type) {
+    return MarkerView.buildNewShopModal(context, type);
   }
 }
