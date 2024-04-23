@@ -1,18 +1,20 @@
-class MarkerData {
-  final int id;
-  final String type;
-  final String name;
-  final String description;
-  final double lat;
-  final double lng;
-  final double rate;
-  final List<String> types;
-  final List<String> modifiers;
-  final String user;
-  final int userId;
-  final String creationDate;
+import 'package:flutter/material.dart';
 
-  const MarkerData({
+class MarkerData {
+  int id;
+  String type;
+  String name;
+  String description;
+  double lat;
+  double lng;
+  double rate;
+  List<String> types;
+  List<String> modifiers;
+  String user;
+  int userId;
+  String creationDate;
+
+  MarkerData({
     required this.id,
     required this.type,
     required this.name,
@@ -63,4 +65,30 @@ class MarkerData {
       _ => throw const FormatException('Failed to load spot.'),
     };
   }
+}
+
+/* Marker types and modifiers enums */
+
+enum SpotTypes {
+  forest, river, cliff, mountain, beach, sea, city, pov, lake
+}
+
+enum SpotModifiers {
+  bench, covered, toilet, store, trash, parking
+}
+
+enum ShopTypes {
+  store, $super, hyper, cellar
+}
+
+enum ShopModifiers {
+  bio, craft, fresh, card, choice
+}
+
+enum BarTypes {
+  regular, snack, cellar, rooftop
+}
+
+enum BarModifiers {
+  tobacco, food, card, choice, outdoor
 }

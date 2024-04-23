@@ -62,8 +62,6 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
               showProgressBar: false,
             );
           }
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
         }).catchError((handleError) {
           // Unable to perform server call
           // Error RSP2
@@ -85,6 +83,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
             ),
             showProgressBar: false,
           );
+        }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();
         });

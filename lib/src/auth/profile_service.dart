@@ -54,4 +54,32 @@ class ProfileService {
       body: null
     );
   }
+
+  static Future<http.Response> getUserInfo(String token) async {
+    return await http.get(
+      Uri.parse('https://beercrackerz.org/api/user/me/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token'
+      }
+    );
+  }
+
+  static Future<http.Response> submitProfilePicture(String token, int userId, String base64Image, int size) async {
+    return await http.patch(
+      Uri.parse('https://beercrackerz.org/api/user/$userId/profile-picture/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        'profile_picture': base64Image,
+        'minX': 0,
+        'minY': 0,
+        'maxX': size,
+        'maxY': size
+      }),
+    );
+  }
 }

@@ -71,6 +71,11 @@
   "authResetPasswordSuccessContent": "Now consult your emails and follow the link to set a new password on the web interface, then login again.",
   "authResetPasswordSuccessSubmit": "Dismiss",
   "authProfileTitle": "Profile",
+  "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production! BeerCrackerz is an open source website and mobile application released under the GPL-3.0 licence.",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "authProfileLogout": "Logout",
+  "authProfileLogoutSuccessToastTitle": "Logout success",
+  "authProfileLogoutSuccessToastDescription": "You've been successfully logged out of your account. See you soon!",
   "settingsTitle": "Settings",
   "settingsInterfaceSection": "Interface",
   "settingsInterfaceLanguage": "Language",
@@ -90,7 +95,7 @@
       }
     }
   },
-  "spotFeatures": "{feature, select, forest {Forest} river {River} lake {Lake} cliff {Cliff} mountain {Mountain} beach {Beach} city {City} pov {Point of View} bench {Bench} covered {Covered} toilet {Toilet} store {Store nearby} trash {Trash} parking {Parking} other {Other}}",
+  "spotFeatures": "{feature, select, forest {Forest} river {River} lake {Lake} cliff {Cliff} mountain {Mountain} beach {Beach} sea {Sea} city {City} pov {Point of View} bench {Bench} covered {Covered} toilet {Toilet} store {Store nearby} trash {Trash} parking {Parking} other {Other}}",
   "@spotFeatures": {
     "placeholders": {
       "feature": {}
@@ -107,5 +112,13 @@
     "placeholders": {
       "feature": {}
     }
-  }
+  },
+  "newSpotInformation": "A spot is a remarkable place to crack a beer ! Share it with the community, wether it is for the astonishing view or for whatever it is enjoyable to drink a beer!",
+  "newSpotNameInput": "Spot name",
+  "newSpotNameInputEmpty": "spot name",
+  "newSpotTypesTitle": "What kind of spot it is?",
+  "newSpotDescriptionInput": "Describe that spot",
+  "newSpotModifiersTitle": "Has it any specific features",
+  "newSpotRatingTitle": "Give it a rate",
+  "newSpotSubmit": "Add spot"
 }

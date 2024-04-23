@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -249,7 +250,7 @@ class MarkerView {
   }
 
   // For POI types and modifiers
-  static List<Widget> buildListElements(BuildContext context, String poiType, List<String> poiElements, bool readOnly) {
+  static List<Widget> buildListElements(BuildContext context, String poiType, List<String> poiElements, bool readOnly, List<String> selected, StateSetter setModalState) {
     List<Widget> output = [];
     for (var element in poiElements) {
       Container typeElem = Container(
@@ -257,7 +258,9 @@ class MarkerView {
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
           border: Border.all(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: selected.contains(element) 
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onSurface,
           ),
           borderRadius: BorderRadius.circular(4.0),
         ),
@@ -274,6 +277,9 @@ class MarkerView {
                     'assets/images/icon/$element.svg',
                     width: 14.0,
                     height: 14.0,
+                    colorFilter: selected.contains(element) 
+                      ? ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn)
+                      : ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                   ),
                 ),
                 const WidgetSpan(
@@ -285,6 +291,11 @@ class MarkerView {
                     : ((poiType == 'shop')
                       ? AppLocalizations.of(context)!.shopFeatures(element)
                       : AppLocalizations.of(context)!.barFeatures(element)),
+                  style: TextStyle(
+                    color: selected.contains(element) 
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 const WidgetSpan(
                   child: SizedBox(width: 4.0),
@@ -299,10 +310,15 @@ class MarkerView {
       } else {
         output.add(
           InkWell(
-            onTap: () {
-              print('click');
-            }, // Handle your callback
             child: typeElem,
+            onTap: () {
+              if (selected.contains(element)) {
+                selected.remove(element);
+              } else {
+                selected.add(element);
+              }
+              setModalState(() {});
+            },
           ),
         );
       }
@@ -311,178 +327,207 @@ class MarkerView {
     return output;
   }
 
-  static Widget buildNewSpotModal(BuildContext context, String type) {
-    final formKey = GlobalKey<FormState>();
+  static Widget buildNewSpotModal(BuildContext context, String type, GlobalKey<FormState> formKey, MarkerData data) {
     SizeConfig().init(context);
 
-    return Form(
-      key: formKey,
-      child: Container(
-        padding: EdgeInsets.only(
-          top: (SizeConfig.defaultSize * 2),
-          bottom: (SizeConfig.defaultSize * 2),
-          left: (SizeConfig.defaultSize * 2),
-          right: (SizeConfig.defaultSize * 2),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text("Un spot est un endroit remarquable pour se craquer une bière ! Partager le avec la communauté, que ce soit pour sa vue ou pour n'importe quelle autre raison, en faisant l'endroit parfait pour y boire une bière!"),
-            // POI name
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.authLoginUsernameInput,
-                labelStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                filled: true,
-                prefixIcon: Icon(
-                  Icons.account_circle,
-                  size: (SizeConfig.defaultSize * 2),
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
+    String? nameErrorMsg;
+    String? descErrorMsg;
+
+    void formValidation(StateSetter setModalState) {
+      setModalState(() {
+        nameErrorMsg = null;
+        descErrorMsg = null;
+      });
+      formKey.currentState!.save();
+      if (formKey.currentState!.validate()) {
+        print('valid input');
+      }
+    }
+
+    return StatefulBuilder(builder: (BuildContext context, StateSetter setModalState) {
+      return Form(
+        key: formKey,
+        child: Container(
+          padding: EdgeInsets.only(
+            top: (SizeConfig.defaultSize * 2),
+            bottom: (SizeConfig.defaultSize * 2),
+            left: (SizeConfig.defaultSize * 2),
+            right: (SizeConfig.defaultSize * 2),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(context)!.newSpotInformation,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // POI name
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.newSpotNameInput,
+                  labelStyle: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                ),
-                errorText: 'TMP',
-              ),
-              inputFormatters: [
-                // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
-                //LengthLimitingTextInputFormatter(100),
-              ],
-              autofocus: true,
-              onSaved: (String? value) => {},
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authLoginUsername);
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: (SizeConfig.defaultSize * 2),
-            ),
-            // POI types
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: MarkerView.buildListElements(context, type, ['forest'], false),
-            ),
-            SizedBox(
-              height: (SizeConfig.defaultSize * 2),
-            ),
-            // POI description
-            TextFormField(
-              minLines: 3,
-              maxLines: 3,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.authLoginUsernameInput,
-                labelStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                filled: true,
-                prefixIcon: Icon(
-                  Icons.account_circle,
-                  size: (SizeConfig.defaultSize * 2),
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
+                  filled: true,
+                  prefixIcon: Icon(
+                    Icons.label,
+                    size: (SizeConfig.defaultSize * 2),
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
                   ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorText: nameErrorMsg,
                 ),
-                errorText: 'TMP',
+                inputFormatters: [
+                  // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
+                  LengthLimitingTextInputFormatter(50),
+                ],
+                onSaved: (String? value) => data.name = value!,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.newSpotNameInputEmpty);
+                  }
+                  return null;
+                },
               ),
-              inputFormatters: [
-                // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
-                //LengthLimitingTextInputFormatter(100),
-              ],
-              onSaved: (String? value) => {},
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authLoginUsername);
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: (SizeConfig.defaultSize * 2),
-            ),
-            // POI Modifiers
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: MarkerView.buildListElements(context, type, ['bench'], false),
-            ),
-            SizedBox(
-              height: (SizeConfig.defaultSize * 2),
-            ),
-            RatingBarIndicator(
-              rating: 1,
-              direction: Axis.horizontal,
-              itemCount: 5,
-              itemSize: 14,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
               ),
-            ),
-            SizedBox(
-              height: (SizeConfig.defaultSize * 2),
-            ),
-            // Submit new spot
-            ButtonTheme(
-              height: (SizeConfig.defaultSize * 5),
-              minWidth: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                onPressed: () {}/*formValidation()*/,
-                child: Text(AppLocalizations.of(context)!.authLoginSubmit),
+              Text(
+                AppLocalizations.of(context)!.newSpotTypesTitle,
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              // POI types
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: MarkerView.buildListElements(context, type, SpotTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // POI description
+              TextFormField(
+                minLines: 3,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.newSpotDescriptionInput,
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  filled: true,
+                  prefixIcon: Icon(
+                    Icons.edit,
+                    size: (SizeConfig.defaultSize * 2),
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorText: descErrorMsg,
+                ),
+                inputFormatters: [
+                  // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
+                  LengthLimitingTextInputFormatter(500),
+                ],
+                onSaved: (String? value) => data.description = value!,
+                // No validator as this fiel is optionnal
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Text(
+                AppLocalizations.of(context)!.newSpotModifiersTitle,
+                textAlign: TextAlign.center,
+              ),
+              // POI Modifiers
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: MarkerView.buildListElements(context, type, SpotModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Text(
+                AppLocalizations.of(context)!.newSpotRatingTitle,
+                textAlign: TextAlign.center,
+              ),
+              RatingBar.builder(
+                initialRating: data.rate,
+                direction: Axis.horizontal,
+                itemCount: 5,
+                itemSize: 14,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {
+                  data.rate = rating;
+                },
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // Submit new spot
+              ButtonTheme(
+                height: (SizeConfig.defaultSize * 5),
+                minWidth: MediaQuery.of(context).size.width,
+                child: ElevatedButton(
+                  onPressed: () => formValidation(setModalState),
+                  child: Text(AppLocalizations.of(context)!.newSpotSubmit),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  static Widget buildNewShopModal(BuildContext context, String type) {
-    final formKey = GlobalKey<FormState>();
+  static Widget buildNewShopModal(BuildContext context, String type, GlobalKey<FormState> formKey) {
     SizeConfig().init(context);
 
     return 

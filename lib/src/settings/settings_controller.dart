@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'settings_service.dart';
+import 'package:beercrackerz/src/auth/profile_service.dart';
 
 /// A class that many Widgets can interact with to read user settings, update
 /// user settings, or listen to user settings changes.
@@ -19,8 +22,14 @@ class SettingsController with ChangeNotifier {
 
   late Locale _appLocale;
   Locale get appLocale => _appLocale;
-
+  // Auth internals
   late bool isLoggedIn;
+  late int userId;
+  late String username;
+  late String email;
+  late String ppPath;
+  late bool isUserActive;
+  late bool isUserStaff;
 
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
@@ -28,16 +37,19 @@ class SettingsController with ChangeNotifier {
 
     if (await _secureStorage.read(key: 'auth-expiry') != null && await _secureStorage.read(key: 'auth-token') != null) {
       if (await isAuthTokenExpired() == true) {
-        isLoggedIn = false;      
+        isLoggedIn = false;
       } else {
-        isLoggedIn = true;        
+        // Call server to request user info
+        isLoggedIn = await processUserInfo();
       }
     } else {
       isLoggedIn = false;
     }
-
+    // Finally notify listener that settings are loaded, app can be started
     notifyListeners();
   }
+
+  // App settings upates
 
   Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
     if (newThemeMode == null) return;
@@ -86,5 +98,37 @@ class SettingsController with ChangeNotifier {
   Future<String> getAuthToken() async {
     if (await _secureStorage.read(key: 'auth-expiry') == null && await _secureStorage.read(key: 'auth-token') == null) return '';
     return (await _secureStorage.read(key: 'auth-token'))!;
+  }
+
+  Future<bool> processUserInfo() async {
+    bool loggedIn = false;
+    String token = (await _secureStorage.read(key: 'auth-token')).toString();
+    await ProfileService.getUserInfo(token).then((response) {
+      if (response.statusCode == 200) {
+        final parsedJson = jsonDecode(response.body);
+        userId = parsedJson['id'];
+        username = parsedJson['username'];
+        email = parsedJson['email'];
+        ppPath = parsedJson['profilePicture'];
+        isUserActive = parsedJson['isActive'];
+        isUserStaff = parsedJson['isStaff'];
+        loggedIn = true;
+      } else {
+        loggedIn = false;
+      }
+    }).catchError((error) {
+      loggedIn = false;
+    });
+    return loggedIn;
+  }
+
+  bool resetUserInfo() {
+    userId = -1;
+    username = '';
+    email = '';
+    ppPath = '';
+    isUserActive = false;
+    isUserStaff = false;
+    return false;
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
+import 'package:beercrackerz/src/map/map_view.dart';
 import 'package:beercrackerz/src/auth/profile_service.dart';
 import 'package:beercrackerz/src/settings/settings_view.dart';
 import 'package:beercrackerz/src/settings/settings_controller.dart';
@@ -57,33 +58,36 @@ class LoginViewState extends State<LoginView> {
         }
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        ProfileService.submitLogin(username, password).then((response) {
+        ProfileService.submitLogin(username, password).then((response) async {
           // HTTP/200, Alrighty
           if (response.statusCode == 200) {
             final parsedJson = jsonDecode(response.body);
             if (parsedJson['expiry'] != null && parsedJson['token'] != null) {
-              widget.controller.isLoggedIn = true;
-              widget.controller.updateAuthToken(parsedJson['expiry'], parsedJson['token']);
-              widget.setAuthPage(5);
-              // Login success toast
-              toastification.show(
-                context: context,
-                title: Text(
-                  AppLocalizations.of(context)!.authLoginSuccessToastTitle,
-                ),
-                description: Text(
-                  AppLocalizations.of(context)!.authLoginSuccessToastDescription,
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
+              await widget.controller.updateAuthToken(parsedJson['expiry'], parsedJson['token']);
+              widget.controller.isLoggedIn = await widget.controller.processUserInfo();
+              // Ensure context is mounted before calling action into it
+              if (context.mounted) {
+                Navigator.popAndPushNamed(context, MapView.routeName);
+                // Login success toast
+                toastification.show(
+                  context: context,
+                  title: Text(
+                    AppLocalizations.of(context)!.authLoginSuccessToastTitle,
                   ),
-                ),
-                type: ToastificationType.success,
-                style: ToastificationStyle.flatColored,
-                autoCloseDuration: const Duration(
-                  seconds: 5,
-                ),
-                showProgressBar: false,
-              );
+                  description: Text(
+                    AppLocalizations.of(context)!.authLoginSuccessToastDescription,
+                    style: const TextStyle(
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  type: ToastificationType.success,
+                  style: ToastificationStyle.flatColored,
+                  autoCloseDuration: const Duration(
+                    seconds: 5,
+                  ),
+                  showProgressBar: false,
+                );
+              }
             } else {
               // No token nor expiry sent through the response, not supposed to happen
               // Error LGI1
@@ -134,8 +138,6 @@ class LoginViewState extends State<LoginView> {
               );
             }
           }
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
         }).catchError((handleError) {
           // Unable to perform server call
           // Error LGI3
@@ -157,6 +159,7 @@ class LoginViewState extends State<LoginView> {
             ),
             showProgressBar: false,
           );
+        }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();
         });

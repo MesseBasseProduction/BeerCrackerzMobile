@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:beercrackerz/src/map/modal/new_poi_view.dart';
+import 'package:beercrackerz/src/map/object/marker_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -129,17 +130,29 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   }
 
   void displayNewPOIModal(LatLng latLng, double mapLatRange) {
-//    MediaQueryData mediaQueryData = MediaQuery.of(context);
-
-//    String poiType = 'spot';
-/**/
+    MarkerData newPoiData = MarkerData(
+      id: 42, // Fake data, won't be sent to server
+      type: 'spot',
+      name: '',
+      description: '',
+      lat: latLng.latitude,
+      lng: latLng.longitude,
+      rate: 3.0,
+      types: [],
+      modifiers: [],
+      user: widget.controller.username,
+      userId: widget.controller.userId,
+      creationDate: '' // Fake data, won't be sent to server
+    );
 
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
       barrierColor: Colors.black.withOpacity(0.1),
+      shape: const RoundedRectangleBorder(),
       builder: (BuildContext context) {
-        return NewPOIView(controller: widget.controller);
+        return NewPOIView(controller: widget.controller, data: newPoiData);
       },
     ).whenComplete(() {
       _animatedMapMove(LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude), _mapController.camera.zoom - 2);

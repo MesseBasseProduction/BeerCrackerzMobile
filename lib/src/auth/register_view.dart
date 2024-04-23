@@ -75,7 +75,7 @@ class RegisterViewState extends State<RegisterView> {
                   }
                 }
               }
-
+              // Email has issues
               if (parsedJson['email'] != null) {
                 for (var i = 0; i < parsedJson['email'].length; ++i) {
                   if (parsedJson['email'][i] == 'This field must be unique.') {
@@ -84,7 +84,6 @@ class RegisterViewState extends State<RegisterView> {
                   }
                 }
               }
-
               // Password has issues
               if (parsedJson['password'] != null) {
                 // Too common password, (Caps, Digit and Spec char already validated)
@@ -113,8 +112,6 @@ class RegisterViewState extends State<RegisterView> {
               );
             }
           }
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
         }).catchError((handleError) {
           // Unable to perform server call
           // Error REG2
@@ -136,6 +133,7 @@ class RegisterViewState extends State<RegisterView> {
             ),
             showProgressBar: false,
           );
+        }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();
         });

@@ -100,11 +100,11 @@ class MapService {
     return MarkerView.buildWIPMarkerView(latLng, context, mapController);
   }
 
-  static Widget buildNewSpotModal(BuildContext context, String type) {
-    return MarkerView.buildNewSpotModal(context, type);
+  static Widget buildNewSpotModal(BuildContext context, String type, GlobalKey<FormState> formKey, MarkerData data) {
+    return MarkerView.buildNewSpotModal(context, type, formKey, data);
   }
 
-  static Widget buildNewShopModal(BuildContext context, String type) {
-    return MarkerView.buildNewShopModal(context, type);
+  static Widget buildNewShopModal(BuildContext context, String type, GlobalKey<FormState> formKey) {
+    return MarkerView.buildNewShopModal(context, type, formKey);
   }
 }
