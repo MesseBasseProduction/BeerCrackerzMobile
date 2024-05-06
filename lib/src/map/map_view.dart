@@ -60,7 +60,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Future.delayed(Duration.zero, () {
       MapService.getSpots().then((spotMarkersData) {
         for (var markerData in spotMarkersData) {
-          _spotMarkerView.add(MapService.buildMarkerView('spot', markerData, context, _mapController, _animatedMapMove, widget.controller.userId));
+          _spotMarkerView.add(MapService.buildMarkerView('spot', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
         }
         // Render UI modifications
         setState(() {});
@@ -68,7 +68,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getShops().then((shopMarkersData) {
         for (var markerData in shopMarkersData) {
-          _shopMarkerView.add(MapService.buildMarkerView('shop', markerData, context, _mapController, _animatedMapMove, widget.controller.userId));
+          _shopMarkerView.add(MapService.buildMarkerView('shop', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
         }
         // Render UI modifications
         setState(() {});
@@ -76,7 +76,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getBars().then((barMarkersData) {
         for (var markerData in barMarkersData) {
-          _barMarkerView.add(MapService.buildMarkerView('bar', markerData, context, _mapController, _animatedMapMove, widget.controller.userId));
+          _barMarkerView.add(MapService.buildMarkerView('bar', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
         }
         // Render UI modifications
         setState(() {});
@@ -152,7 +152,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(),
       builder: (BuildContext context) {
-        return NewPOIView(controller: widget.controller, data: newPoiData);
+        return NewPOIView(mapView: widget, data: newPoiData, callback: addNewMarker);
       },
     ).whenComplete(() {
       _animatedMapMove(LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude), _mapController.camera.zoom - 2);
@@ -160,7 +160,49 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       wipMarker.clear();
       setState(() {});
     });
-/**/
+  }
+  // Callback method to be sent in NewPoi bottom sheet
+  void addNewMarker(String type, MarkerData marker) {
+    if (type == 'spot') {
+      _spotMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+    } else if (type == 'shop') {
+      _shopMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+    } else if (type == 'bar') {
+      _barMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+    }
+    // Render UI modifications
+    setState(() {});
+    // Close bottom sheet as this callback is performed upon success
+    Navigator.pop(context);
+  }
+
+  void removeMarker(MarkerData marker) {
+    if (marker.type == 'spot') {
+      for (var mark in _spotMarkerView) {
+        if (mark.point.latitude == marker.lat && mark.point.longitude == marker.lng) {
+          _spotMarkerView.remove(mark);
+          break;
+        }
+      }
+    } else if (marker.type == 'shop') {
+      for (var mark in _shopMarkerView) {
+        if (mark.point.latitude == marker.lat && mark.point.longitude == marker.lng) {
+          _shopMarkerView.remove(mark);
+          break;
+        }
+      }
+    } else if (marker.type == 'bar') {
+      for (var mark in _barMarkerView) {
+        if (mark.point.latitude == marker.lat && mark.point.longitude == marker.lng) {
+          _barMarkerView.remove(mark);
+          break;
+        }
+      }
+    }
+    // Render UI modifications
+    setState(() {});
+    // Close bottom sheet as this callback is performed upon success
+    Navigator.pop(context);
   }
 
   void displayFilteringModal() {

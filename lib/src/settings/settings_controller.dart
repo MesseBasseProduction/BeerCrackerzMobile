@@ -24,7 +24,7 @@ class SettingsController with ChangeNotifier {
   Locale get appLocale => _appLocale;
   // Auth internals
   late bool isLoggedIn;
-  late int userId;
+  int userId = -1; // Must be iniatialized
   late String username;
   late String email;
   late String ppPath;

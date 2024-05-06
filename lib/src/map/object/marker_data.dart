@@ -6,6 +6,7 @@ class MarkerData {
   double lat;
   double lng;
   double rate;
+  int? price;
   List<String> types;
   List<String> modifiers;
   String user;
@@ -20,6 +21,7 @@ class MarkerData {
     required this.lat,
     required this.lng,
     required this.rate,
+    this.price = 1,
     required this.types,
     required this.modifiers,
     required this.user,
@@ -30,8 +32,14 @@ class MarkerData {
   factory MarkerData.fromJson(Map<String, dynamic> json) {
     var rawTypes = json['types'];
     List<String> parsedTypes = List<String>.from(rawTypes);
+
     var rawModifiers = json['modifiers'];
     List<String> parsedModifiers = List<String>.from(rawModifiers);
+
+    int sanitizedPrice = 0;
+    if (json['price'] != null) {
+      sanitizedPrice = json['price'];
+    }
 
     return switch (json) {
       {
@@ -54,6 +62,7 @@ class MarkerData {
           lat: lat,
           lng: lng,
           rate: rate,
+          price: sanitizedPrice,
           types: parsedTypes,
           modifiers: parsedModifiers,
           user: user,
@@ -76,7 +85,7 @@ enum SpotModifiers {
 }
 
 enum ShopTypes {
-  store, $super, hyper, cellar
+  store, super_, hyper, cellar
 }
 
 enum ShopModifiers {

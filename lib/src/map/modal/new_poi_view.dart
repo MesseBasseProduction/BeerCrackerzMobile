@@ -2,18 +2,20 @@ import 'package:beercrackerz/src/map/object/marker_data.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'package:beercrackerz/src/map/map_view.dart';
 import 'package:beercrackerz/src/map/map_service.dart';
-import 'package:beercrackerz/src/settings/settings_controller.dart';
 
 class NewPOIView extends StatefulWidget {
-  NewPOIView({
+  const NewPOIView({
     super.key,
-    required this.controller,
-    required this.data
+    required this.mapView,
+    required this.data,
+    required this.callback
   });
 
-  final SettingsController controller;
-  MarkerData data;
+  final MapView mapView;
+  final MarkerData data;
+  final Function callback;
 
   @override
   NewPOIViewState createState() {
@@ -75,10 +77,10 @@ class NewPOIViewState extends State<NewPOIView> {
             // BottomModal content built depending on switch value
             SingleChildScrollView(
               child: (poiType == 'spot')
-                ? MapService.buildNewSpotModal(context, poiType, _formKey, widget.data)
+                ? MapService.buildNewSpotModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback)
                 : (poiType == 'shop')
-                  ? MapService.buildNewShopModal(context, poiType, _formKey)
-                  : Text('Bar'),
+                  ? MapService.buildNewShopModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback)
+                  : MapService.buildNewBarModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback),
             ),
           ],
         ),

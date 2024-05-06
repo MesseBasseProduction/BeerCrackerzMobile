@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,18 +8,30 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:loader_overlay/loader_overlay.dart';
+
+import 'package:beercrackerz/src/map/map_view.dart';
+import 'package:beercrackerz/src/map/map_service.dart';
 import 'package:beercrackerz/src/map/object/marker_data.dart';
 import 'package:beercrackerz/src/settings/size_config.dart';
 
 class MarkerView {
-  static Marker buildSpotMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
+  static Marker buildSpotMarkerView(
+    MarkerData data,
+    BuildContext context,
+    MapView mapView,
+    MapController mapController,
+    Function animatedMapMove,
+    int userId,
+    Function removeCallback
+  ) {
     return Marker(
       height: 30.0,
       width: 30.0,
       point: LatLng(data.lat, data.lng),
       child: GestureDetector(
         onTap: () {
-          onMarkerTapped(data, context, mapController, animatedMapMove, userId);
+          onMarkerTapped(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
         },
         child: const Image(
           image: AssetImage('assets/images/marker/marker-icon-green.png')
@@ -26,14 +40,22 @@ class MarkerView {
     );
   }
 
-  static Marker buildShopMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
+  static Marker buildShopMarkerView(
+    MarkerData data,
+    BuildContext context,
+    MapView mapView,
+    MapController mapController,
+    Function animatedMapMove,
+    int userId,
+    Function removeCallback
+  ) {
     return Marker(
       height: 30.0,
       width: 30.0,
       point: LatLng(data.lat, data.lng),
       child: GestureDetector(
         onTap: () {
-          onMarkerTapped(data, context, mapController, animatedMapMove, userId);
+          onMarkerTapped(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
         },
         child: const Image(
           image: AssetImage('assets/images/marker/marker-icon-blue.png')
@@ -42,14 +64,22 @@ class MarkerView {
     );
   }
 
-  static Marker buildBarMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
+  static Marker buildBarMarkerView(
+    MarkerData data,
+    BuildContext context,
+    MapView mapView,
+    MapController mapController,
+    Function animatedMapMove,
+    int userId,
+    Function removeCallback
+  ) {
     return Marker(
       height: 30.0,
       width: 30.0,
       point: LatLng(data.lat, data.lng),
       child: GestureDetector(
         onTap: () {
-          onMarkerTapped(data, context, mapController, animatedMapMove, userId);
+          onMarkerTapped(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
         },
         child: const Image(
           image: AssetImage('assets/images/marker/marker-icon-red.png')
@@ -58,7 +88,11 @@ class MarkerView {
     );
   }
 
-  static Marker buildWIPMarkerView(LatLng latLng, BuildContext context, MapController mapController) {
+  static Marker buildWIPMarkerView(
+    LatLng latLng,
+    BuildContext context,
+    MapController mapController
+  ) {
     return Marker(
       height: 30.0,
       width: 30.0,
@@ -71,7 +105,15 @@ class MarkerView {
     );
   }
 
-  static void onMarkerTapped(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
+  static void onMarkerTapped(
+    MarkerData data,
+    BuildContext context,
+    MapView mapView,
+    MapController mapController,
+    Function animatedMapMove,
+    int userId,
+    Function removeCallback
+  ) {
     // Internal method to build types/modifiers "button"-like elements
     List<Widget> buildListElements(types) {
       List<Widget> output = [];
@@ -236,8 +278,47 @@ class MarkerView {
                     alignment: WrapAlignment.center,
                     children: buildListElements(data.modifiers)
                   ),
+                  // Check if currentMak is created by user, allow him to delete/edit
                   (userId == data.userId)
-                    ? Text('SameUSER')
+                    ? IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Do you want to continue?"),
+                                  content: Text("Youre about to remove thing"),
+                                  actions: [
+                                    ElevatedButton(
+                                      child: Text("No"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                    ),
+                                        ElevatedButton(
+                                      child: Text("Yes"),
+                                      onPressed: () async {
+                                        if (data.type == 'spot') {
+                                          MapService.deleteSpot(await mapView.controller.getAuthToken(), data.id);
+                                        } else if (data.type == 'shop') {
+                                          MapService.deleteShop(await mapView.controller.getAuthToken(), data.id);
+                                        } else if (data.type == 'bar') {
+                                          MapService.deleteBar(await mapView.controller.getAuthToken(), data.id);
+                                        }
+                                        // Now remove from view to end process
+                                        removeCallback(data);
+                                        Navigator.of(context).pop(false);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                        },
+                      )
                     : const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8.0),
                       ),
@@ -253,9 +334,17 @@ class MarkerView {
   }
 
   // For POI types and modifiers
-  static List<Widget> buildListElements(BuildContext context, String poiType, List<String> poiElements, bool readOnly, List<String> selected, StateSetter setModalState) {
+  static List<Widget> buildListElements(
+    BuildContext context,
+    String poiType,
+    List<String> poiElements,
+    bool readOnly,
+    List<String> selected,
+    StateSetter setModalState
+  ) {
     List<Widget> output = [];
     for (var element in poiElements) {
+      element = element.replaceAll('_', '');
       Container typeElem = Container(
         margin: const EdgeInsets.all(4.0),
         padding: const EdgeInsets.all(4.0),
@@ -330,20 +419,40 @@ class MarkerView {
     return output;
   }
 
-  static Widget buildNewSpotModal(BuildContext context, String type, GlobalKey<FormState> formKey, MarkerData data) {
+  static Widget buildNewSpotModal(
+    BuildContext context,
+    MapView mapView,
+    String type,
+    GlobalKey<FormState> formKey,
+    MarkerData data,
+    Function callback
+  ) {
     SizeConfig().init(context);
 
     String? nameErrorMsg;
     String? descErrorMsg;
 
-    void formValidation(StateSetter setModalState) {
+    void formValidation(StateSetter setModalState) async {
       setModalState(() {
         nameErrorMsg = null;
         descErrorMsg = null;
       });
       formKey.currentState!.save();
       if (formKey.currentState!.validate()) {
-        print('valid input');
+        // Start loading overlay during server call
+        context.loaderOverlay.show();
+        MapService.postNewSpot(await mapView.controller.getAuthToken(), data).then((response) async {
+          if (response.statusCode == 201) {
+            final parsedJson = jsonDecode(response.body);
+            MarkerData newMark = MarkerData.fromJson(parsedJson);
+            callback('spot', newMark);
+          }
+        }).catchError((handleError) {
+          print(handleError);
+        }).whenComplete(() {
+          // Hide overlay loader anyway
+          context.loaderOverlay.hide();
+        });
       }
     }
 
@@ -501,7 +610,7 @@ class MarkerView {
                 initialRating: data.rate,
                 direction: Axis.horizontal,
                 itemCount: 5,
-                itemSize: 14,
+                itemSize: 24,
                 itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
                 itemBuilder: (context, _) => const Icon(
                   Icons.star,
@@ -530,11 +639,45 @@ class MarkerView {
     });
   }
 
-  static Widget buildNewShopModal(BuildContext context, String type, GlobalKey<FormState> formKey) {
+  static Widget buildNewShopModal(
+    BuildContext context,
+    MapView mapView,
+    String type,
+    GlobalKey<FormState> formKey,
+    MarkerData data,
+    Function callback
+  ) {
     SizeConfig().init(context);
 
-    return 
-      Form(
+    String? nameErrorMsg;
+    String? descErrorMsg;
+
+    void formValidation(StateSetter setModalState) async {
+      setModalState(() {
+        nameErrorMsg = null;
+        descErrorMsg = null;
+      });
+      formKey.currentState!.save();
+      if (formKey.currentState!.validate()) {
+        // Start loading overlay during server call
+        context.loaderOverlay.show();
+        MapService.postNewShop(await mapView.controller.getAuthToken(), data).then((response) async {
+          if (response.statusCode == 201) {
+            final parsedJson = jsonDecode(response.body);
+            MarkerData newMark = MarkerData.fromJson(parsedJson);
+            callback('shop', newMark);
+          }
+        }).catchError((handleError) {
+          print(handleError);
+        }).whenComplete(() {
+          // Hide overlay loader anyway
+          context.loaderOverlay.hide();
+        });
+      }
+    }
+
+    return StatefulBuilder(builder: (BuildContext context, StateSetter setModalState) {
+      return Form(
         key: formKey,
         child: Container(
           padding: EdgeInsets.only(
@@ -543,23 +686,27 @@ class MarkerView {
             left: (SizeConfig.defaultSize * 2),
             right: (SizeConfig.defaultSize * 2),
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).colorScheme.background,
-          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Text(
+                AppLocalizations.of(context)!.newShopInformation,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // POI name
               TextFormField(
                 decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.authLoginUsernameInput,
+                  labelText: AppLocalizations.of(context)!.newShopNameInput,
                   labelStyle: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   filled: true,
                   prefixIcon: Icon(
-                    Icons.account_circle,
+                    Icons.label,
                     size: (SizeConfig.defaultSize * 2),
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -585,23 +732,414 @@ class MarkerView {
                       color: Theme.of(context).colorScheme.error,
                     ),
                   ),
-                  errorText: 'TMP',
+                  errorText: nameErrorMsg,
                 ),
                 inputFormatters: [
                   // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
-                  //LengthLimitingTextInputFormatter(100),
+                  LengthLimitingTextInputFormatter(50),
                 ],
-                onSaved: (String? value) => {},
+                onSaved: (String? value) => data.name = value!,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authLoginUsername);
+                    return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.newShopNameInputEmpty);
                   }
                   return null;
                 },
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Text(
+                AppLocalizations.of(context)!.newShopTypesTitle,
+                textAlign: TextAlign.center,
+              ),
+              // POI types
+              Wrap(
+                alignment: WrapAlignment.center,
+                // We must replace $ char from Shop enum
+                children: MarkerView.buildListElements(context, type, ShopTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // POI description
+              TextFormField(
+                minLines: 3,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.newShopDescriptionInput,
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  filled: true,
+                  prefixIcon: Icon(
+                    Icons.edit,
+                    size: (SizeConfig.defaultSize * 2),
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorText: descErrorMsg,
+                ),
+                inputFormatters: [
+                  // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
+                  LengthLimitingTextInputFormatter(500),
+                ],
+                onSaved: (String? value) => data.description = value!,
+                // No validator as this fiel is optionnal
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Text(
+                AppLocalizations.of(context)!.newShopModifiersTitle,
+                textAlign: TextAlign.center,
+              ),
+              // POI Modifiers
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: MarkerView.buildListElements(context, type, ShopModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.newShopRatingTitle,
+                        textAlign: TextAlign.center,
+                      ),
+                      RatingBar.builder(
+                        initialRating: data.rate,
+                        direction: Axis.horizontal,
+                        itemCount: 5,
+                        itemSize: 24,
+                        itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        itemBuilder: (context, _) => const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          data.rate = rating;
+                        },
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.newShopPriceTitle,
+                        textAlign: TextAlign.center,
+                      ),
+                      RatingBar.builder(
+                        initialRating: data.price!.toDouble(),
+                        direction: Axis.horizontal,
+                        itemCount: 3,
+                        itemSize: 24,
+                        itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        itemBuilder: (context, _) => const Icon(
+                          Icons.attach_money,
+                          color: Colors.green,
+                        ),
+                        onRatingUpdate: (rating) {
+                          data.price = rating.toInt();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // Submit new spot
+              ButtonTheme(
+                height: (SizeConfig.defaultSize * 5),
+                minWidth: MediaQuery.of(context).size.width,
+                child: ElevatedButton(
+                  onPressed: () => formValidation(setModalState),
+                  child: Text(AppLocalizations.of(context)!.newShopSubmit),
+                ),
               ),
             ],
           ),
         ),
       );
+    });
+  }
+
+  static Widget buildNewBarModal(
+    BuildContext context,
+    MapView mapView,
+    String type,
+    GlobalKey<FormState> formKey,
+    MarkerData data,
+    Function callback
+  ) {
+    SizeConfig().init(context);
+
+    String? nameErrorMsg;
+    String? descErrorMsg;
+
+    void formValidation(StateSetter setModalState) async {
+      setModalState(() {
+        nameErrorMsg = null;
+        descErrorMsg = null;
+      });
+      formKey.currentState!.save();
+      if (formKey.currentState!.validate()) {
+        // Start loading overlay during server call
+        context.loaderOverlay.show();
+        MapService.postNewBar(await mapView.controller.getAuthToken(), data).then((response) async {
+          if (response.statusCode == 201) {
+            final parsedJson = jsonDecode(response.body);
+            MarkerData newMark = MarkerData.fromJson(parsedJson);
+            callback('bar', newMark);
+          }
+        }).catchError((handleError) {
+          print(handleError);
+        }).whenComplete(() {
+          // Hide overlay loader anyway
+          context.loaderOverlay.hide();
+        });
+      }
+    }
+
+    return StatefulBuilder(builder: (BuildContext context, StateSetter setModalState) {
+      return Form(
+        key: formKey,
+        child: Container(
+          padding: EdgeInsets.only(
+            top: (SizeConfig.defaultSize * 2),
+            bottom: (SizeConfig.defaultSize * 2),
+            left: (SizeConfig.defaultSize * 2),
+            right: (SizeConfig.defaultSize * 2),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(context)!.newBarInformation,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // POI name
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.newBarNameInput,
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  filled: true,
+                  prefixIcon: Icon(
+                    Icons.label,
+                    size: (SizeConfig.defaultSize * 2),
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorText: nameErrorMsg,
+                ),
+                inputFormatters: [
+                  // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
+                  LengthLimitingTextInputFormatter(50),
+                ],
+                onSaved: (String? value) => data.name = value!,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.newBarNameInputEmpty);
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Text(
+                AppLocalizations.of(context)!.newBarTypesTitle,
+                textAlign: TextAlign.center,
+              ),
+              // POI types
+              Wrap(
+                alignment: WrapAlignment.center,
+                // We must replace $ char from Shop enum
+                children: MarkerView.buildListElements(context, type, BarTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // POI description
+              TextFormField(
+                minLines: 3,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.newBarDescriptionInput,
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  filled: true,
+                  prefixIcon: Icon(
+                    Icons.edit,
+                    size: (SizeConfig.defaultSize * 2),
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  errorText: descErrorMsg,
+                ),
+                inputFormatters: [
+                  // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
+                  LengthLimitingTextInputFormatter(500),
+                ],
+                onSaved: (String? value) => data.description = value!,
+                // No validator as this fiel is optionnal
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Text(
+                AppLocalizations.of(context)!.newBarModifiersTitle,
+                textAlign: TextAlign.center,
+              ),
+              // POI Modifiers
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: MarkerView.buildListElements(context, type, BarModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.newBarRatingTitle,
+                        textAlign: TextAlign.center,
+                      ),
+                      RatingBar.builder(
+                        initialRating: data.rate,
+                        direction: Axis.horizontal,
+                        itemCount: 5,
+                        itemSize: 24,
+                        itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        itemBuilder: (context, _) => const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          data.rate = rating;
+                        },
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.newBarPriceTitle,
+                        textAlign: TextAlign.center,
+                      ),
+                      RatingBar.builder(
+                        initialRating: data.price!.toDouble(),
+                        direction: Axis.horizontal,
+                        itemCount: 3,
+                        itemSize: 24,
+                        itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        itemBuilder: (context, _) => const Icon(
+                          Icons.attach_money,
+                          color: Colors.green,
+                        ),
+                        onRatingUpdate: (rating) {
+                          data.price = rating.toInt();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: (SizeConfig.defaultSize * 2),
+              ),
+              // Submit new spot
+              ButtonTheme(
+                height: (SizeConfig.defaultSize * 5),
+                minWidth: MediaQuery.of(context).size.width,
+                child: ElevatedButton(
+                  onPressed: () => formValidation(setModalState),
+                  child: Text(AppLocalizations.of(context)!.newBarSubmit),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

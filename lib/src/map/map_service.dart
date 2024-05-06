@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:beercrackerz/src/map/map_view.dart';
 import 'package:beercrackerz/src/map/object/marker_data.dart';
 import 'package:beercrackerz/src/map/object/marker_view.dart';
 
@@ -82,15 +83,121 @@ class MapService {
     return output;
   }
 
+  /* Marker submission and deletion */
+
+  static Future<http.Response> postNewSpot(String token, MarkerData marker) async {
+    return await http.post(
+      Uri.parse('https://beercrackerz.org/api/spot/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        'name': marker.name,
+        'description': marker.description,
+        'lat': marker.lat,
+        'lng': marker.lng,
+        'rate': marker.rate,
+        'types': marker.types,
+        'modifiers': marker.modifiers
+      }),
+    );
+  }
+
+  static Future<http.Response> postNewShop(String token, MarkerData marker) async {
+    return await http.post(
+      Uri.parse('https://beercrackerz.org/api/shop/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        'name': marker.name,
+        'description': marker.description,
+        'lat': marker.lat,
+        'lng': marker.lng,
+        'rate': marker.rate,
+        'price': marker.price,
+        'types': marker.types,
+        'modifiers': marker.modifiers
+      }),
+    );
+  }
+
+  static Future<http.Response> postNewBar(String token, MarkerData marker) async {
+    return await http.post(
+      Uri.parse('https://beercrackerz.org/api/bar/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        'name': marker.name,
+        'description': marker.description,
+        'lat': marker.lat,
+        'lng': marker.lng,
+        'rate': marker.rate,
+        'price': marker.price,
+        'types': marker.types,
+        'modifiers': marker.modifiers
+      }),
+    );
+  }
+
+  static Future<http.Response> deleteSpot(String token, int id) async {
+    return await http.delete(
+      Uri.parse('https://beercrackerz.org/api/spot/$id/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+  }
+
+  static Future<http.Response> deleteShop(String token, int id) async {
+    return await http.delete(
+      Uri.parse('https://beercrackerz.org/api/shop/$id/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+  }
+
+  static Future<http.Response> deleteBar(String token, int id) async {
+    return await http.delete(
+      Uri.parse('https://beercrackerz.org/api/bar/$id/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+  }
+
   /* Marker view building, proxyfies methods from MarkerView */
 
-  static Marker buildMarkerView(String type, MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
+  static Marker buildMarkerView(
+    String type,
+    MarkerData data,
+    BuildContext context, 
+    MapView mapView,
+    MapController mapController,
+    Function animatedMapMove,
+    int userId,
+    Function removeCallback
+  ) {
     if (type == 'spot') {
-      return MarkerView.buildSpotMarkerView(data, context, mapController, animatedMapMove, userId);
+      return MarkerView.buildSpotMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
     } else if (type == 'shop') {
-      return MarkerView.buildShopMarkerView(data, context, mapController, animatedMapMove, userId);
+      return MarkerView.buildShopMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
     } else if (type == 'bar') {
-      return MarkerView.buildBarMarkerView(data, context, mapController, animatedMapMove, userId);
+      return MarkerView.buildBarMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
     } else {
       throw Exception('Invalid type $type to build view from');
     }
@@ -100,11 +207,15 @@ class MapService {
     return MarkerView.buildWIPMarkerView(latLng, context, mapController);
   }
 
-  static Widget buildNewSpotModal(BuildContext context, String type, GlobalKey<FormState> formKey, MarkerData data) {
-    return MarkerView.buildNewSpotModal(context, type, formKey, data);
+  static Widget buildNewSpotModal(BuildContext context, MapView mapView, String type, GlobalKey<FormState> formKey, MarkerData data, Function callback) {
+    return MarkerView.buildNewSpotModal(context, mapView, type, formKey, data, callback);
   }
 
-  static Widget buildNewShopModal(BuildContext context, String type, GlobalKey<FormState> formKey) {
-    return MarkerView.buildNewShopModal(context, type, formKey);
+  static Widget buildNewShopModal(BuildContext context, MapView mapView, String type, GlobalKey<FormState> formKey, MarkerData data, Function callback) {
+    return MarkerView.buildNewShopModal(context, mapView, type, formKey, data, callback);
+  }
+
+  static Widget buildNewBarModal(BuildContext context, MapView mapView, String type, GlobalKey<FormState> formKey, MarkerData data, Function callback) {
+    return MarkerView.buildNewBarModal(context, mapView, type, formKey, data, callback);
   }
 }
