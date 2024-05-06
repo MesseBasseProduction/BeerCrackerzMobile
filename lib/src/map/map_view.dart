@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:beercrackerz/src/map/modal/new_poi_view.dart';
+import 'package:beercrackerz/src/map/modal/edit_poi_view.dart';
 import 'package:beercrackerz/src/map/object/marker_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -60,7 +61,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Future.delayed(Duration.zero, () {
       MapService.getSpots().then((spotMarkersData) {
         for (var markerData in spotMarkersData) {
-          _spotMarkerView.add(MapService.buildMarkerView('spot', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+           // TODO userId can be remove as its used in widget arg
+          _spotMarkerView.add(MapService.buildMarkerView('spot', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
         }
         // Render UI modifications
         setState(() {});
@@ -68,7 +70,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getShops().then((shopMarkersData) {
         for (var markerData in shopMarkersData) {
-          _shopMarkerView.add(MapService.buildMarkerView('shop', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+          _shopMarkerView.add(MapService.buildMarkerView('shop', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
         }
         // Render UI modifications
         setState(() {});
@@ -76,7 +78,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getBars().then((barMarkersData) {
         for (var markerData in barMarkersData) {
-          _barMarkerView.add(MapService.buildMarkerView('bar', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+          _barMarkerView.add(MapService.buildMarkerView('bar', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
         }
         // Render UI modifications
         setState(() {});
@@ -164,11 +166,11 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   // Callback method to be sent in NewPoi bottom sheet
   void addNewMarker(String type, MarkerData marker) {
     if (type == 'spot') {
-      _spotMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+      _spotMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
     } else if (type == 'shop') {
-      _shopMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+      _shopMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
     } else if (type == 'bar') {
-      _barMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker));
+      _barMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
     }
     // Render UI modifications
     setState(() {});
@@ -203,6 +205,26 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     setState(() {});
     // Close bottom sheet as this callback is performed upon success
     Navigator.pop(context);
+  }
+
+  void editMarkerStart(MarkerData marker) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      barrierColor: Colors.black.withOpacity(0.1),
+      shape: const RoundedRectangleBorder(),
+      builder: (BuildContext context) {
+        return EditPOIView(mapView: widget, data: marker);
+      },
+    ).whenComplete(() {
+      _animatedMapMove(LatLng(marker.lat, marker.lng), _mapController.camera.zoom - 2);
+      setState(() {});
+    });
+  }
+
+  void editMarkerEnd() {
+
   }
 
   void displayFilteringModal() {

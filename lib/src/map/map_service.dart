@@ -83,7 +83,7 @@ class MapService {
     return output;
   }
 
-  /* Marker submission and deletion */
+  /* Marker submission, edition and deletion */
 
   static Future<http.Response> postNewSpot(String token, MarkerData marker) async {
     return await http.post(
@@ -146,6 +146,69 @@ class MapService {
       }),
     );
   }
+  
+  static Future<http.Response> patchEditSpot(String token, MarkerData marker) async {
+    return await http.patch(
+      Uri.parse('https://beercrackerz.org/api/spot/${marker.id}/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        'name': marker.name,
+        'description': marker.description,
+        'lat': marker.lat,
+        'lng': marker.lng,
+        'rate': marker.rate,
+        'price': marker.price,
+        'types': marker.types,
+        'modifiers': marker.modifiers
+      }),
+    );
+  }
+
+  static Future<http.Response> patchEditShop(String token, MarkerData marker) async {
+    return await http.patch(
+      Uri.parse('https://beercrackerz.org/api/shop/${marker.id}/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        'name': marker.name,
+        'description': marker.description,
+        'lat': marker.lat,
+        'lng': marker.lng,
+        'rate': marker.rate,
+        'price': marker.price,
+        'types': marker.types,
+        'modifiers': marker.modifiers
+      }),
+    );
+  }
+
+  static Future<http.Response> patchEditBar(String token, MarkerData marker) async {
+    return await http.patch(
+      Uri.parse('https://beercrackerz.org/api/bar/${marker.id}/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        'name': marker.name,
+        'description': marker.description,
+        'lat': marker.lat,
+        'lng': marker.lng,
+        'rate': marker.rate,
+        'price': marker.price,
+        'types': marker.types,
+        'modifiers': marker.modifiers
+      }),
+    );
+  }
 
   static Future<http.Response> deleteSpot(String token, int id) async {
     return await http.delete(
@@ -190,14 +253,15 @@ class MapService {
     MapController mapController,
     Function animatedMapMove,
     int userId,
-    Function removeCallback
+    Function removeCallback,
+    Function editCallback
   ) {
     if (type == 'spot') {
-      return MarkerView.buildSpotMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
+      return MarkerView.buildSpotMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
     } else if (type == 'shop') {
-      return MarkerView.buildShopMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
+      return MarkerView.buildShopMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
     } else if (type == 'bar') {
-      return MarkerView.buildBarMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback);
+      return MarkerView.buildBarMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
     } else {
       throw Exception('Invalid type $type to build view from');
     }
@@ -207,6 +271,7 @@ class MapService {
     return MarkerView.buildWIPMarkerView(latLng, context, mapController);
   }
 
+// TODo remove type from arg, as its in method name duh
   static Widget buildNewSpotModal(BuildContext context, MapView mapView, String type, GlobalKey<FormState> formKey, MarkerData data, Function callback) {
     return MarkerView.buildNewSpotModal(context, mapView, type, formKey, data, callback);
   }
@@ -217,5 +282,17 @@ class MapService {
 
   static Widget buildNewBarModal(BuildContext context, MapView mapView, String type, GlobalKey<FormState> formKey, MarkerData data, Function callback) {
     return MarkerView.buildNewBarModal(context, mapView, type, formKey, data, callback);
+  }
+
+  static Widget buildEditSpotModal(BuildContext context, MapView mapView, GlobalKey<FormState> formKey, MarkerData data) {
+    return MarkerView.buildEditSpotModal(context, mapView, formKey, data);
+  }
+
+  static Widget buildEditShopModal(BuildContext context, MapView mapView, GlobalKey<FormState> formKey, MarkerData data) {
+    return MarkerView.buildEditShopModal(context, mapView, formKey, data);
+  }
+
+  static Widget buildEditBarModal(BuildContext context, MapView mapView, GlobalKey<FormState> formKey, MarkerData data) {
+    return MarkerView.buildEditBarModal(context, mapView, formKey, data);
   }
 }

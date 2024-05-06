@@ -1,6 +1,7 @@
 import 'package:beercrackerz/src/map/object/marker_data.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:beercrackerz/src/map/map_view.dart';
 import 'package:beercrackerz/src/map/map_service.dart';
@@ -43,10 +44,10 @@ class NewPOIViewState extends State<NewPOIView> {
           children: [
             Text(
               (poiType == 'spot')
-              ? 'Spot'
+              ? AppLocalizations.of(context)!.newSpotTitle
               : (poiType == 'shop')
-                ? 'Shop'
-                : 'Bar',
+                ? AppLocalizations.of(context)!.newShopTitle
+                : AppLocalizations.of(context)!.newBarTitle,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 28

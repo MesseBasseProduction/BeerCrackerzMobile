@@ -21,7 +21,7 @@ class MarkerData {
     required this.lat,
     required this.lng,
     required this.rate,
-    this.price = 1,
+    this.price = 0,
     required this.types,
     required this.modifiers,
     required this.user,
