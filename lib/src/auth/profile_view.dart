@@ -207,17 +207,6 @@ class ProfileViewState extends State<ProfileView> {
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
               ),
-              Text(
-                widget.controller.username,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 32,
-                ),
-              ),
-              SizedBox(
-                height: (SizeConfig.defaultSize * 2),
-              ),
               Container(
                 height: (MediaQuery.of(context).size.width / 2),
                 width: (MediaQuery.of(context).size.width / 2),
@@ -246,6 +235,14 @@ class ProfileViewState extends State<ProfileView> {
               ),
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
+              ),
+              Text(
+                widget.controller.username,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                ),
               ),
               Text(
                 widget.controller.email,

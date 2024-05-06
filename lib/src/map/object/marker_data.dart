@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class MarkerData {
   int id;
   String type;

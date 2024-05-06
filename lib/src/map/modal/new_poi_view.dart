@@ -30,8 +30,10 @@ class NewPOIViewState extends State<NewPOIView> {
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
 
+    int screenHeightRatio = 66;
+
     return Container(
-      height: (80 * mediaQueryData.size.height) / 100, // Taking 80% of screen height
+      height: (screenHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
       width: mediaQueryData.size.width,
       padding: const EdgeInsets.all(4),
       child: SingleChildScrollView(

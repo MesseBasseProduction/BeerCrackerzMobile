@@ -60,7 +60,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Future.delayed(Duration.zero, () {
       MapService.getSpots().then((spotMarkersData) {
         for (var markerData in spotMarkersData) {
-          _spotMarkerView.add(MapService.buildMarkerView('spot', markerData, context, _mapController, _animatedMapMove));
+          _spotMarkerView.add(MapService.buildMarkerView('spot', markerData, context, _mapController, _animatedMapMove, widget.controller.userId));
         }
         // Render UI modifications
         setState(() {});
@@ -68,7 +68,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getShops().then((shopMarkersData) {
         for (var markerData in shopMarkersData) {
-          _shopMarkerView.add(MapService.buildMarkerView('shop', markerData, context, _mapController, _animatedMapMove));
+          _shopMarkerView.add(MapService.buildMarkerView('shop', markerData, context, _mapController, _animatedMapMove, widget.controller.userId));
         }
         // Render UI modifications
         setState(() {});
@@ -76,7 +76,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getBars().then((barMarkersData) {
         for (var markerData in barMarkersData) {
-          _barMarkerView.add(MapService.buildMarkerView('bar', markerData, context, _mapController, _animatedMapMove));
+          _barMarkerView.add(MapService.buildMarkerView('bar', markerData, context, _mapController, _animatedMapMove, widget.controller.userId));
         }
         // Render UI modifications
         setState(() {});
@@ -356,7 +356,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           },
           onTap: (widget.controller.isLoggedIn == true) 
             ? (TapPosition position, LatLng latLng) {
-              double mapLatRange = (80 * (_mapController.camera.visibleBounds.northWest.latitude - _mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
+              // Match value in new_poi.screenHeightRatio
+              double mapLatRange = (66 * (_mapController.camera.visibleBounds.northWest.latitude - _mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
               if (showWIP == false) {
                 wipMarker.add(MapService.buildWIPMarkerView(latLng, context, _mapController));
                 // Move map to the marker position

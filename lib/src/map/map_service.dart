@@ -84,13 +84,13 @@ class MapService {
 
   /* Marker view building, proxyfies methods from MarkerView */
 
-  static Marker buildMarkerView(String type, MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove) {
+  static Marker buildMarkerView(String type, MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
     if (type == 'spot') {
-      return MarkerView.buildSpotMarkerView(data, context, mapController, animatedMapMove);
+      return MarkerView.buildSpotMarkerView(data, context, mapController, animatedMapMove, userId);
     } else if (type == 'shop') {
-      return MarkerView.buildShopMarkerView(data, context, mapController, animatedMapMove);
+      return MarkerView.buildShopMarkerView(data, context, mapController, animatedMapMove, userId);
     } else if (type == 'bar') {
-      return MarkerView.buildBarMarkerView(data, context, mapController, animatedMapMove);
+      return MarkerView.buildBarMarkerView(data, context, mapController, animatedMapMove, userId);
     } else {
       throw Exception('Invalid type $type to build view from');
     }

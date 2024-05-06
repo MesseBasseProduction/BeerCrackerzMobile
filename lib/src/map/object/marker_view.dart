@@ -10,14 +10,14 @@ import 'package:beercrackerz/src/map/object/marker_data.dart';
 import 'package:beercrackerz/src/settings/size_config.dart';
 
 class MarkerView {
-  static Marker buildSpotMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove) {
+  static Marker buildSpotMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
     return Marker(
       height: 30.0,
       width: 30.0,
       point: LatLng(data.lat, data.lng),
       child: GestureDetector(
         onTap: () {
-          onMarkerTapped(data, context, mapController, animatedMapMove);
+          onMarkerTapped(data, context, mapController, animatedMapMove, userId);
         },
         child: const Image(
           image: AssetImage('assets/images/marker/marker-icon-green.png')
@@ -26,14 +26,14 @@ class MarkerView {
     );
   }
 
-  static Marker buildShopMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove) {
+  static Marker buildShopMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
     return Marker(
       height: 30.0,
       width: 30.0,
       point: LatLng(data.lat, data.lng),
       child: GestureDetector(
         onTap: () {
-          onMarkerTapped(data, context, mapController, animatedMapMove);
+          onMarkerTapped(data, context, mapController, animatedMapMove, userId);
         },
         child: const Image(
           image: AssetImage('assets/images/marker/marker-icon-blue.png')
@@ -42,14 +42,14 @@ class MarkerView {
     );
   }
 
-  static Marker buildBarMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove) {
+  static Marker buildBarMarkerView(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
     return Marker(
       height: 30.0,
       width: 30.0,
       point: LatLng(data.lat, data.lng),
       child: GestureDetector(
         onTap: () {
-          onMarkerTapped(data, context, mapController, animatedMapMove);
+          onMarkerTapped(data, context, mapController, animatedMapMove, userId);
         },
         child: const Image(
           image: AssetImage('assets/images/marker/marker-icon-red.png')
@@ -71,7 +71,7 @@ class MarkerView {
     );
   }
 
-  static void onMarkerTapped(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove) {
+  static void onMarkerTapped(MarkerData data, BuildContext context, MapController mapController, Function animatedMapMove, int userId) {
     // Internal method to build types/modifiers "button"-like elements
     List<Widget> buildListElements(types) {
       List<Widget> output = [];
@@ -124,7 +124,8 @@ class MarkerView {
     }
 
     MediaQueryData mediaQueryData = MediaQuery.of(context);
-    double mapLatRange = (35 * (mapController.camera.visibleBounds.northWest.latitude - mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
+    int screenHeightRatio = 66;
+    double mapLatRange = (screenHeightRatio * (mapController.camera.visibleBounds.northWest.latitude - mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
     // Move map to the marker position
     animatedMapMove(LatLng(data.lat - (mapLatRange / 2), data.lng), mapController.camera.zoom + 2);
     // Display POI informations in scrollable modal bottom sheet
@@ -134,7 +135,7 @@ class MarkerView {
       barrierColor: Colors.black.withOpacity(0.1),
       builder: (BuildContext context) {
         return Container(
-          height: (35 * mediaQueryData.size.height) / 100, // Taking 35% of screen height
+          height: (screenHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
           color: Theme.of(context).colorScheme.background,
           child: Center(
             child: ListView(children: [
@@ -235,9 +236,11 @@ class MarkerView {
                     alignment: WrapAlignment.center,
                     children: buildListElements(data.modifiers)
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                  ),
+                  (userId == data.userId)
+                    ? Text('SameUSER')
+                    : const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                      ),
                 ],
               )
             ]),
