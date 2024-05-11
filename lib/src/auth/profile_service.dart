@@ -3,10 +3,17 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '/src/beercrackerz.dart';
+// This service class abstracts server calls required for auth views.
+// These static method only returns the request, and any error must
+// be handled by the caller.
 class ProfileService {
-  static Future<http.Response> submitLogin(String username, String password) async {
+  static Future<http.Response> submitLogin(
+    String username,
+    String password
+  ) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/auth/login/'),
+      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/login/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -17,9 +24,14 @@ class ProfileService {
     );
   }
 
-  static Future<http.Response> submitRegister(String username, String email, String password1, String password2) async {
+  static Future<http.Response> submitRegister(
+    String username,
+    String email,
+    String password1,
+    String password2
+  ) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/auth/register/'),
+      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/register/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -32,9 +44,11 @@ class ProfileService {
     );
   }
 
-  static Future<http.Response> submitResetPassword(String email) async {
+  static Future<http.Response> submitResetPassword(
+    String email
+  ) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/auth/reset-password-request/'),
+      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/reset-password-request/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -42,11 +56,13 @@ class ProfileService {
         'email': email
       }),
     );
-  }  
+  }
 
-  static Future<http.Response> submitLogout(String token) async {
+  static Future<http.Response> submitLogout(
+    String token
+  ) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/auth/logout/'),
+      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/logout/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token'
@@ -55,9 +71,11 @@ class ProfileService {
     );
   }
 
-  static Future<http.Response> getUserInfo(String token) async {
+  static Future<http.Response> getUserInfo(
+    String token
+  ) async {
     return await http.get(
-      Uri.parse('https://beercrackerz.org/api/user/me/'),
+      Uri.parse('${BeerCrackerzMobile.baseServerURL}/api/user/me/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token'
@@ -65,9 +83,14 @@ class ProfileService {
     );
   }
 
-  static Future<http.Response> submitProfilePicture(String token, int userId, String base64Image, int size) async {
+  static Future<http.Response> submitProfilePicture(
+    String token,
+    int userId,
+    String base64Image,
+    int imageSize
+  ) async {
     return await http.patch(
-      Uri.parse('https://beercrackerz.org/api/user/$userId/profile-picture/'),
+      Uri.parse('${BeerCrackerzMobile.baseServerURL}/api/user/$userId/profile-picture/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -77,8 +100,8 @@ class ProfileService {
         'profile_picture': base64Image,
         'minX': 0,
         'minY': 0,
-        'maxX': size,
-        'maxY': size
+        'maxX': imageSize,
+        'maxY': imageSize
       }),
     );
   }

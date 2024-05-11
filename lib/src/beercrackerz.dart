@@ -18,6 +18,7 @@ class BeerCrackerzMobile extends StatelessWidget {
   });
 
   final SettingsController settingsController;
+  static String baseServerURL = 'https://beercrackerz.org'; // Ensure no trailing slash remains
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +60,8 @@ class BeerCrackerzMobile extends StatelessWidget {
               Locale('fr', ''),
               Locale('de', ''),
               Locale('es', ''),
+              Locale('it', ''),
+              Locale('pt', ''),
             ],
             // Attach app locale to settings value
             locale: settingsController.appLocale,
@@ -74,7 +77,7 @@ class BeerCrackerzMobile extends StatelessWidget {
                   switch (routeSettings.name) {
                     case AuthView.routeName:
                       return AuthView(
-                        controller: settingsController,
+                        settingsController: settingsController,
                       );
                     case SettingsView.routeName:
                       return SettingsView(

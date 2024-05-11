@@ -1,71 +1,152 @@
 {
-    "appTitle": "beercrackerz",
-    "@appTitle": {
-      "description": "The title of the application"
-    },
-    "authLoginTitle": "Connexion",
-    "authLoginUsernameInput": "Entez votre nom d'utilisateur",
-    "authLoginUsername": "nom d'utilisateur",
-    "authLoginPasswordInput": "Entez votre mot de passe",
-    "authLoginPassword": "mot de passe",
-    "authLoginForgotPassword": "Mot de passe oublié?",
-    "authLoginSubmit": "Se connecter",
-    "authLoginNoAccount": "pas de compte? ",
-    "authLoginRegister": "S'enregistrer",
-    "emptyInput": "Le champ {field} ne peut pas être vide",
-    "authRegisterTitle": "S'enregistrer",
-    "authRegisterUsernameInput": "Enter your username",
-    "authRegisterUsername": "username",
-    "authRegisterEmailInput": "Enter your email",
-    "authRegisterEmail": "email",
-    "authRegisterInvalidEmail": "This email is invalid",
-    "authRegisterPasswordInput": "Enter your password",
-    "authRegisterPassword": "password",
-    "authRegisterPasswordNotMatching": "Passwords doesn't match",
-    "authRegisterRepeatPasswordInput": "Repeat your password",
-    "authRegisterRepeatPassword": "repeat password",
-    "authRegisterSubmit": "Register",
-    "authRegisterHaveAccount": "You do have an account? ",
-    "authRegisterLogin": "Login",
-    "authRegisterSuccessTitle": "Registration sent",
-    "authRegisterSuccessHeader": "You're almost in!",
-    "authRegisterSuccessContent": "You are one step closer to edit the map and fully enjoy BeerCrackerz! Go check your mail and validate your account and then login.",
-    "authRegisterSuccessSubmit": "Dismiss",
-    "authResetPasswordTitle": "Reset password",
-    "authResetPasswordInput": "Enter your email",
-    "authResetPassword": "email",
-    "authResetPasswordInvalidEmail": "This email is invalid",
-    "authResetPasswordSubmit": "Reset password",
-    "authResetPasswordSuccessTitle": "Reset password sent",
-    "authResetPasswordSuccessHeader": "Password almost reset!",
-    "authResetPasswordSuccessContent": "Now consult your emails and follow the link to set a new password on the web interface, then login again.",
-    "authResetPasswordSuccessSubmit": "Dismiss",
-    "authProfileTitle": "Profile",
-    "@emptyInput": {
-      "placeholders": {
-        "field": {
-          "type": "String",
-          "example": "selected"
-        }
-      }
-    },
-    "spotFeatures": "{feature, select, forest {Forest} river {River} lake {Lake} cliff {Cliff} mountain {Mountain} beach {Beach} city {City} pov {Point of View} bench {Bench} covered {Covered} toilet {Toilet} store {Store nearby} trash {Trash} parking {Parking} other {Other}}",
-    "@spotFeatures": {
-      "placeholders": {
-        "feature": {}
-      }
-    },
-    "shopFeatures": "{feature, select, store {Grocery store} super {Supermarket} hyper {Hypermarket} cellar {Cellar} bio {Bio} craft {Craft} fresh {Refrigerated} card {Credit card} choice {Wide choice} other {Other}}",
-    "@shopFeatures": {
-      "placeholders": {
-        "feature": {}
-      }
-    },
-    "barFeatures": "{feature, select, regular {Regular} snack {Snack} cellar {Brewery} rooftop {Rooftop} tobacco {Cigarets} food {Food} card {Credit card} choice {Wide choice} outdoor {Outdoor} other {Other}}",
-    "@barFeatures": {
-      "placeholders": {
-        "feature": {}
+  "appTitle": "beercrackerz",
+  "@appTitle": {
+    "description": "L'application dédiée aux amoureux de la bière, pour partager leurs meilleurs spots pour s'en déguster une, ou pour facilement se ré-assortir de cette boisson des dieux!"
+  },
+  "httpServerErrorToastTitle": "Le serveur ne semble pas en forme",
+  "httpServerErrorToastDescription": "Le serveur n'a pas répondu comme prévu. Veuillez contacter le support pour assistance en fournissant le code suivant {field}.",
+  "@httpServerErrorToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
       }
     }
-  }
-  
+  },
+  "httpWrongResponseToastTitle": "Réponse inatendu du serveur",
+  "httpWrongResponseToastDescription": "La réponse du serveur n'a pas une forme habituelle. Veuillez contacter le support pour assistance en fournissant le code suivant {field}.",
+  "@httpWrongResponseToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
+  "httpFrontErrorToastTitle": "Erreur de l'application",
+  "httpFrontErrorToastDescription": "Something went wrong when trying to reach the server. Veuillez contacter le support pour assistance en fournissant le code suivant {field}.",
+  "authLoginTitle": "Login",
+  "authLoginUsernameInput": "Enter your username",
+  "authLoginUsername": "username",
+  "authLoginPasswordInput": "Enter your password",
+  "authLoginPassword": "password",
+  "authLoginForgotPassword": "Forgot your password?",
+  "authLoginSubmit": "Login",
+  "authLoginNoAccount": "Don't have an account? ",
+  "authLoginRegister": "Register",
+  "authLoginInvalidCredentials": "Invalid credentials, either incorrect or non-existing",
+  "authLoginSuccessToastTitle": "Welcome back!",
+  "authLoginSuccessToastDescription": "Successfully logged in your account BeerCrackerz account. Grab a spot and a beer, and enjoy!",
+  "authRegisterTitle": "Register",
+  "authRegisterUsernameInput": "Enter your username",
+  "authRegisterUsername": "username",
+  "authRegisterUsernameAlreadyTaken": "This username is already registered",
+  "authRegisterEmailInput": "Enter your email",
+  "authRegisterEmail": "email",
+  "authRegisterEmailInvalid": "This email is invalid",
+  "authRegisterEmailAlreadyTaken": "This email is already registered",
+  "authRegisterPasswordInput": "Enter your password",
+  "authRegisterPassword": "password",
+  "authRegisterPasswordTooCommon": "This password to common",
+  "authRegisterPasswordNotStrongEnough": "Password not strong enough",
+  "authRegisterPasswordNotStrongEnoughToastTitle": "About password strength",
+  "authRegisterPasswordNotStrongEnoughToastDescription": "Your password must contain 8 or more characters, with at least one capital letter, one digit and one special character.",
+  "authRegisterPasswordNotMatching": "Passwords doesn't match",
+  "authRegisterRepeatPasswordInput": "Repeat your password",
+  "authRegisterRepeatPassword": "repeat password",
+  "authRegisterSubmit": "Register",
+  "authRegisterHaveAccount": "You do have an account? ",
+  "authRegisterLogin": "Login",
+  "authRegisterSuccessTitle": "Registration sent",
+  "authRegisterSuccessHeader": "You're almost in!",
+  "authRegisterSuccessContent": "You are one step closer to edit the map and fully enjoy BeerCrackerz! Go check your mail and validate your account and then login.",
+  "authRegisterSuccessSubmit": "Dismiss",
+  "authResetPasswordTitle": "Reset password",
+  "authResetPasswordInput": "Enter your email",
+  "authResetPassword": "email",
+  "authResetPasswordInvalidEmail": "This email is invalid",
+  "authResetPasswordSubmit": "Reset password",
+  "authResetPasswordSuccessTitle": "Reset password sent",
+  "authResetPasswordSuccessHeader": "Password almost reset!",
+  "authResetPasswordSuccessContent": "Now consult your emails and follow the link to set a new password on the web interface, then login again.",
+  "authResetPasswordSuccessSubmit": "Dismiss",
+  "authProfileTitle": "Profile",
+  "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production! BeerCrackerz is an open source website and mobile application released under the GPL-3.0 licence.",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "authProfileLogout": "Logout",
+  "authProfileLogoutSuccessToastTitle": "Logout success",
+  "authProfileLogoutSuccessToastDescription": "You've been successfully logged out of your account. See you soon!",
+  "settingsTitle": "Settings",
+  "settingsInterfaceSection": "Interface",
+  "settingsInterfaceLanguage": "Language",
+  "settingsInterfaceLanguageEn": "🇬🇧 English",
+  "settingsInterfaceLanguageFr": "🇫🇷 French",
+  "settingsInterfaceLanguageEs": "🇪🇸 Spanish",
+  "settingsInterfaceLanguageDe": "🇩🇪 German",
+  "settingsInterfaceTheme": "Theme",
+  "settingsInterfaceThemeDark": "Dark theme",
+  "settingsInterfaceThemeLight": "Light theme",
+  "emptyInput": "The {field} field can not be empty",
+  "@emptyInput": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "selected"
+      }
+    }
+  },
+  "spotFeatures": "{feature, select, forest {Forest} river {River} lake {Lake} cliff {Cliff} mountain {Mountain} beach {Beach} sea {Sea} city {City} pov {Point of View} bench {Bench} covered {Covered} toilet {Toilet} store {Store nearby} trash {Trash} parking {Parking} other {Other}}",
+  "@spotFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "shopFeatures": "{feature, select, store {Grocery store} super {Supermarket} hyper {Hypermarket} cellar {Cellar} bio {Bio} craft {Craft} fresh {Refrigerated} card {Credit card} choice {Wide choice} other {Other}}",
+  "@shopFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "barFeatures": "{feature, select, regular {Regular} snack {Snack} cellar {Brewery} rooftop {Rooftop} tobacco {Cigarets} food {Food} card {Credit card} choice {Wide choice} outdoor {Outdoor} other {Other}}",
+  "@barFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "newSpotTitle": "New spot",
+  "newSpotInformation": "A spot is a remarkable place to crack a beer ! Share it with the community, wether it is for the astonishing view or for whatever it is enjoyable to drink a beer!",
+  "newSpotNameInput": "Spot name",
+  "newSpotNameInputEmpty": "spot name",
+  "newSpotTypesTitle": "What kind of spot it is?",
+  "newSpotDescriptionInput": "Describe that spot",
+  "newSpotModifiersTitle": "Has it any specific features",
+  "newSpotRatingTitle": "Give it a rate",
+  "newSpotSubmit": "Add spot",
+  "newShopTitle": "New shop",
+  "newShopInformation": "The must have place to refill your beer stock. The more info you provide, the better you help your fellow beer crackerz!",
+  "newShopNameInput": "Shop name",
+  "newShopNameInputEmpty": "Shop name",
+  "newShopTypesTitle": "What kind of shop it is?",
+  "newShopDescriptionInput": "Describe that shop",
+  "newShopModifiersTitle": "Has it any specific features",
+  "newShopRatingTitle": "Give it a rate",
+  "newShopPriceTitle": "Give it a price",
+  "newShopSubmit": "Add shop",
+  "newBarTitle": "New bar",
+  "newBarInformation": "A bar is a holly place where you can get some nicely colded draft beers!",
+  "newBarNameInput": "Bar name",
+  "newBarNameInputEmpty": "Bar name",
+  "newBarTypesTitle": "What kind of bar it is?",
+  "newBarDescriptionInput": "Describe that bar",
+  "newBarModifiersTitle": "Has it any specific features",
+  "newBarRatingTitle": "Give it a rate",
+  "newBarPriceTitle": "Give it a price",
+  "newBarSubmit": "Add bar",
+  "editSpotTitle": "Edit spot",
+  "editShopTitle": "Edit shop",
+  "editBarTitle": "Edit bar",
+  "deleteMarkDialogTitle": "Delete marker",
+  "deleteMarkDialogDescription": "You're about to delete this point of interest, is that really what you want?",
+  "deleteMarkDialogYes": "Yes",
+  "deleteMarkDialogNo": "No"
+}

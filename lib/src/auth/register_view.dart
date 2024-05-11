@@ -7,12 +7,18 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
-import 'package:beercrackerz/src/auth/profile_service.dart';
-import 'package:beercrackerz/src/settings/settings_controller.dart';
-import 'package:beercrackerz/src/settings/size_config.dart';
-
+import '/src/auth/profile_service.dart';
+import '/src/settings/settings_controller.dart';
+import '/src/settings/settings_view.dart';
+import '/src/settings/size_config.dart';
+// Registration view to allow new user to create an account
+// so they can add their marks to BeerCrackerz.
 class RegisterView extends StatefulWidget {
-  const RegisterView({super.key, required this.controller, required this.setAuthPage});
+  const RegisterView({
+    super.key,
+    required this.controller,
+    required this.setAuthPage,
+  });
 
   final SettingsController controller;
   final Function setAuthPage;
@@ -31,114 +37,137 @@ String? passwordErrorMsg;
 
 class RegisterViewState extends State<RegisterView> {
   final _formKey = GlobalKey<FormState>();
+  String username = '';
+  String email = '';
+  String password1 = '';
+  String password2 = '';
 
   @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
+  void dispose() {
+    // Clear any previous displayed errors
+    usernameErrorMsg = null;
+    emailErrorMsg = null;
+    passwordErrorMsg = null;
+    super.dispose();
+  }
 
-    double formHeight = SizeConfig.defaultSize * 65;
-    String username = '';
-    String email = '';
-    String password1 = '';
-    String password2 = '';
-
-    void formValidation() {
-      setState(() {
-        usernameErrorMsg = null;
-        emailErrorMsg = null;
-        passwordErrorMsg = null;
-      });
-      _formKey.currentState!.save();
-      if (_formKey.currentState!.validate()) {
-        // Dismiss keyboard by removing focus on current input if any
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-        // Start loading overlay during server call
-        context.loaderOverlay.show();
-        ProfileService.submitRegister(username, email, password1, password2).then((response) {
-          // HTTP/201, Created
-          if (response.statusCode == 201) {
-            // Moving forward to register succes, go check mail and login then
-            widget.setAuthPage(2);
-          } else {
-            // Check server response to check for known errors
-            final parsedJson = jsonDecode(response.body);
-            // Server sent back input with issues
-            if (parsedJson['username'] != null || parsedJson['password'] == null) {
-              if (parsedJson['username'] != null) {
-                for (var i = 0; i < parsedJson['username'].length; ++i) {
-                  if (parsedJson['username'][i] == 'This field must be unique.') {
-                    // Username has issues, password doesn't
-                    setState(() => usernameErrorMsg = AppLocalizations.of(context)!.authRegisterUsernameAlreadyTaken);
-                  }
-                }
-              }
-              // Email has issues
-              if (parsedJson['email'] != null) {
-                for (var i = 0; i < parsedJson['email'].length; ++i) {
-                  if (parsedJson['email'][i] == 'This field must be unique.') {
-                    // Username has issues, password doesn't
-                    setState(() => emailErrorMsg = AppLocalizations.of(context)!.authRegisterEmailAlreadyTaken);
-                  }
-                }
-              }
-              // Password has issues
-              if (parsedJson['password'] != null) {
-                // Too common password, (Caps, Digit and Spec char already validated)
-                setState(() => passwordErrorMsg = AppLocalizations.of(context)!.authRegisterPasswordTooCommon);
-              }
-            } else {
-              // Unexpected response code from server
-              // Error REG1
-              toastification.show(
-                context: context,
-                title: Text(
-                  AppLocalizations.of(context)!.httpWrongResponseToastTitle,
-                ),
-                description: Text(
-                  AppLocalizations.of(context)!.httpWrongResponseToastDescription('REG1 (${response.statusCode})'),
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                type: ToastificationType.error,
-                style: ToastificationStyle.flatColored,
-                autoCloseDuration: const Duration(
-                  seconds: 5,
-                ),
-                showProgressBar: false,
-              );
-            }
-          }
-        }).catchError((handleError) {
-          // Unable to perform server call
-          // Error REG2
-          toastification.show(
-            context: context,
-            title: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-            ),
-            description: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastDescription('REG2'),
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            type: ToastificationType.error,
-            style: ToastificationStyle.flatColored,
-            autoCloseDuration: const Duration(
-              seconds: 5,
-            ),
-            showProgressBar: false,
-          );
-        }).whenComplete(() {
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
-        });
-      }
+  void formValidation(
+    BuildContext context,
+    String username,
+    String email,
+    String password1,
+    String password2,
+  ) {
+    // Reset previous errors
+    setState(() {
+      usernameErrorMsg = null;
+      emailErrorMsg = null;
+      passwordErrorMsg = null;
+    });
+    _formKey.currentState!.save();
+    // Dismiss keyboard by removing focus on current input if any
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
     }
+    if (_formKey.currentState!.validate()) {
+      // Start loading overlay during server call
+      context.loaderOverlay.show();
+      ProfileService.submitRegister(
+        username,
+        email,
+        password1,
+        password2,
+      ).then((response) {
+        // HTTP/201, Created
+        if (response.statusCode == 201) {
+          // Moving forward to register success, go check mail and login then
+          widget.setAuthPage(2);
+        } else {
+          // Check server response to check for known errors
+          final parsedJson = jsonDecode(response.body);
+          // Server sent back input with issues
+          if (parsedJson['username'] != null || parsedJson['password'] == null) {
+            if (parsedJson['username'] != null) {
+              for (var i = 0; i < parsedJson['username'].length; ++i) {
+                if (parsedJson['username'][i] == 'This field must be unique.') {
+                  // Username has issues, password doesn't
+                  setState(() => usernameErrorMsg = AppLocalizations.of(context)!.authRegisterUsernameAlreadyTaken);
+                }
+              }
+            }
+            // Email has issues
+            if (parsedJson['email'] != null) {
+              for (var i = 0; i < parsedJson['email'].length; ++i) {
+                if (parsedJson['email'][i] == 'This field must be unique.') {
+                  // Username has issues, password doesn't
+                  setState(() => emailErrorMsg = AppLocalizations.of(context)!.authRegisterEmailAlreadyTaken);
+                }
+              }
+            }
+            // Password has issues
+            if (parsedJson['password'] != null) {
+              // Too common password, (Caps, Digit and Spec char already validated)
+              setState(() => passwordErrorMsg = AppLocalizations.of(context)!.authRegisterPasswordTooCommon);
+            }
+          } else {
+            // Unexpected response code from server
+            // Error REG1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.httpWrongResponseToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.httpWrongResponseToastDescription('REG1 (${response.statusCode})'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
+          }
+        }
+      }).catchError((handleError) {
+        // Unable to perform server call
+        // Error REG2
+        toastification.show(
+          context: context,
+          title: Text(
+            AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+          ),
+          description: Text(
+            AppLocalizations.of(context)!.httpFrontErrorToastDescription('REG2'),
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          type: ToastificationType.error,
+          style: ToastificationStyle.flatColored,
+          autoCloseDuration: const Duration(
+            seconds: 5,
+          ),
+          showProgressBar: false,
+        );
+      }).whenComplete(() {
+        // Hide overlay loader anyway
+        context.loaderOverlay.hide();
+      });
+    }
+  }
+
+  @override
+  Widget build(
+    BuildContext context
+  ) {
+    SizeConfig().init(context);
+    double formHeight = SizeConfig.defaultSize * 65;
+    bool isPortrait = (MediaQuery.of(context).orientation == Orientation.portrait);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -147,6 +176,18 @@ class RegisterViewState extends State<RegisterView> {
           AppLocalizations.of(context)!.authRegisterTitle,
         ),
         shadowColor: Theme.of(context).colorScheme.shadow,
+        actions: [
+          // Open application SettingsView
+          IconButton(
+            icon: const Icon(
+              Icons.settings
+            ),
+            onPressed: () => Navigator.restorablePushNamed(
+              context,
+              SettingsView.routeName
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -156,19 +197,26 @@ class RegisterViewState extends State<RegisterView> {
               children: <Widget>[
                 // Form box wrapper
                 Center(
+                  // Form outter panning
                   child: Padding(
                     padding: EdgeInsets.only(
+                      bottom: (SizeConfig.defaultSize * 3),
                       left: (SizeConfig.defaultSize * 3),
                       right: (SizeConfig.defaultSize * 3),
-                      bottom: (SizeConfig.defaultSize * 3),
+                      top: (isPortrait == false)
+                        ? (SizeConfig.defaultSize * 3) // Avoid form to be sticked to AppBar in landscape
+                        : 0.0,
                     ),
                     child: Form(
                       key: _formKey,
                       child: Container(
                         height: formHeight,
                         margin: EdgeInsets.only(
-                          top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4),
+                          top: (isPortrait == true)
+                            ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4)
+                            : 0.0,
                         ),
+                        // Form inner padding
                         padding: EdgeInsets.only(
                           top: (SizeConfig.defaultSize * 6),
                           bottom: (SizeConfig.defaultSize * 2),
@@ -176,18 +224,15 @@ class RegisterViewState extends State<RegisterView> {
                           right: (SizeConfig.defaultSize * 2),
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                           color: Theme.of(context).colorScheme.background,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            // Username input field
+                            // Username TextFormField input
                             TextFormField(
-                              scrollPadding: EdgeInsets.only(
-                                bottom: (formHeight / 2),
-                              ),
                               decoration: InputDecoration(
                                 labelText: AppLocalizations.of(context)!.authRegisterUsernameInput,
                                 labelStyle: TextStyle(
@@ -196,27 +241,27 @@ class RegisterViewState extends State<RegisterView> {
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.account_circle,
-                                  size: SizeConfig.defaultSize * 2,
+                                  size: SizeConfig.inputIcon,
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 enabledBorder: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
@@ -229,6 +274,7 @@ class RegisterViewState extends State<RegisterView> {
                               ],
                               onSaved: (String? value) => username = value!,
                               validator: (value) {
+                                // Field value can not be empty to be a valid input
                                 if (value == null || value.isEmpty) {
                                   return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authRegisterUsername);
                                 }
@@ -238,7 +284,7 @@ class RegisterViewState extends State<RegisterView> {
                             SizedBox(
                               height: (SizeConfig.defaultSize * 2),
                             ),
-                            // Mail input field
+                            // Email input field
                             TextFormField(
                               keyboardType: TextInputType.emailAddress,
                               scrollPadding: EdgeInsets.only(
@@ -252,27 +298,27 @@ class RegisterViewState extends State<RegisterView> {
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.mail,
-                                  size: (SizeConfig.defaultSize * 2),
+                                  size: SizeConfig.inputIcon,
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 enabledBorder: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
@@ -285,10 +331,11 @@ class RegisterViewState extends State<RegisterView> {
                               ],
                               onSaved: (String? value) => email = value!,
                               validator: (value) {
+                                // Field value can not be empty to be a valid input
                                 if (value == null || value.isEmpty) {
                                   return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authRegisterEmail);
                                 }
-
+                                // Field must contain '@', char(s) before, char(s) after, containing '.' and chars(s) after
                                 final bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
                                 if (emailValid != true) {
                                   return AppLocalizations.of(context)!.authRegisterEmailInvalid;
@@ -313,7 +360,7 @@ class RegisterViewState extends State<RegisterView> {
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.lock,
-                                  size: (SizeConfig.defaultSize * 2),
+                                  size: SizeConfig.inputIcon,
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 suffixIcon: Align(
@@ -323,29 +370,29 @@ class RegisterViewState extends State<RegisterView> {
                                     onPressed: () => setState(() => showPassword1 = !showPassword1),
                                     icon: Icon(
                                       Icons.remove_red_eye,
-                                      size: (SizeConfig.defaultSize * 2),
+                                      size: SizeConfig.inputIcon,
                                       color: (showPassword1 == true) ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
                                 enabledBorder: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
@@ -361,7 +408,7 @@ class RegisterViewState extends State<RegisterView> {
                               autocorrect: false,
                               onSaved: (String? value) => password1 = value!,
                               validator: (value) {
-                                // Non-null test
+                                // Field value can not be empty to be a valid input
                                 if (value == null || value.isEmpty) {
                                   return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authRegisterPassword);
                                 }
@@ -424,23 +471,23 @@ class RegisterViewState extends State<RegisterView> {
                                   ),
                                 ),
                                 enabledBorder: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
@@ -456,7 +503,7 @@ class RegisterViewState extends State<RegisterView> {
                               autocorrect: false,
                               onSaved: (String? value) => password2 = value!,
                               validator: (value) {
-                                // Non-null test
+                                // Field value can not be empty to be a valid input
                                 if (value == null || value.isEmpty) {
                                   return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authRegisterRepeatPassword);
                                 }
@@ -477,11 +524,18 @@ class RegisterViewState extends State<RegisterView> {
                             SizedBox(
                               height: (SizeConfig.defaultSize * 2),
                             ),
+                            // Submit register to the server
                             ButtonTheme(
                               height: (SizeConfig.defaultSize * 5),
                               minWidth: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
-                                onPressed: () => formValidation(),
+                                onPressed: () => formValidation(
+                                  context,
+                                  username,
+                                  email,
+                                  password1,
+                                  password2,
+                                ),
                                 child: Text(
                                   AppLocalizations.of(context)!.authRegisterSubmit,
                                 ),
@@ -490,6 +544,7 @@ class RegisterViewState extends State<RegisterView> {
                             SizedBox(
                               height: (SizeConfig.defaultSize * 2),
                             ),
+                            // Go to login link
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -523,12 +578,14 @@ class RegisterViewState extends State<RegisterView> {
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(
-                      top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4),
+                      top: (isPortrait == true)
+                        ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4)
+                        : (SizeConfig.defaultSize * 3) / 2,
                     ),
                     height: (SizeConfig.defaultSize * 5),
                     width: (SizeConfig.defaultSize * 20),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                       color: Theme.of(context).colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
@@ -540,10 +597,10 @@ class RegisterViewState extends State<RegisterView> {
                     ),
                     child: Center(
                       child: Text(
-                        'BeerCrackerz',
+                        AppLocalizations.of(context)!.appTitleWithCase,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 18,
+                          fontSize: SizeConfig.fontTextLargeSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

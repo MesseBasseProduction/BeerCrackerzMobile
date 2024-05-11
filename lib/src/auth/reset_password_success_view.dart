@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:beercrackerz/src/settings/settings_controller.dart';
-import 'package:beercrackerz/src/settings/size_config.dart';
+import '/src/settings/settings_controller.dart';
+import '/src/settings/size_config.dart';
 
 class ResetPasswordSuccessView extends StatefulWidget {
-  const ResetPasswordSuccessView({super.key, required this.controller, required this.setAuthPage});
+  const ResetPasswordSuccessView({
+    super.key,
+    required this.controller,
+    required this.setAuthPage,
+  });
 
   final SettingsController controller;
   final Function setAuthPage;
@@ -18,10 +22,12 @@ class ResetPasswordSuccessView extends StatefulWidget {
 
 class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     SizeConfig().init(context);
-
     double formHeight = SizeConfig.defaultSize * 25;
+    bool isPortrait = (MediaQuery.of(context).orientation == Orientation.portrait);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -32,7 +38,6 @@ class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
         shadowColor: Theme.of(context).colorScheme.shadow,
       ),
       body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Column(
           children: <Widget>[
             Stack(
@@ -41,35 +46,39 @@ class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
                 Center(
                   child: Padding(
                     padding: EdgeInsets.only(
+                      bottom: (SizeConfig.defaultSize * 3),
                       left: (SizeConfig.defaultSize * 3),
                       right: (SizeConfig.defaultSize * 3),
-                      bottom: (SizeConfig.defaultSize * 3),
+                      top: (isPortrait == false)
+                        ? (SizeConfig.defaultSize * 3) // Avoid form to be sticked to AppBar in landscape
+                        : 0.0,
                     ),
                     child: Container(
                         height: formHeight,
                         margin: EdgeInsets.only(
-                          top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4),
+                          top: (isPortrait == true)
+                            ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4)
+                            : 0.0,
                         ),
                         padding: EdgeInsets.only(
-                          top: (SizeConfig.defaultSize * 4),
                           bottom: (SizeConfig.defaultSize * 2),
                           left: (SizeConfig.defaultSize * 2),
                           right: (SizeConfig.defaultSize * 2),
+                          top: (SizeConfig.defaultSize * 4),
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                           color: Theme.of(context).colorScheme.background,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            // Username input field
                             Text(
                               AppLocalizations.of(context)!.authResetPasswordSuccessHeader,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
-                                fontSize: 18,
+                                fontSize: SizeConfig.fontTextLargeSize,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -83,6 +92,7 @@ class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
                             SizedBox(
                               height: (SizeConfig.defaultSize * 2),
                             ),
+                            // Go to login button
                             ButtonTheme(
                               height: (SizeConfig.defaultSize * 5),
                               minWidth: MediaQuery.of(context).size.width,
@@ -102,12 +112,14 @@ class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(
-                      top: (MediaQuery.of(context).size.height / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4),
+                      top: (isPortrait == true)
+                        ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4)
+                        : (SizeConfig.defaultSize * 3) / 2,
                     ),
                     height: (SizeConfig.defaultSize * 5),
                     width: (SizeConfig.defaultSize * 20),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                       color: Theme.of(context).colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
@@ -119,10 +131,10 @@ class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
                     ),
                     child: Center(
                       child: Text(
-                        'BeerCrackerz',
+                        AppLocalizations.of(context)!.appTitleWithCase,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 18,
+                          fontSize: SizeConfig.fontTextLargeSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

@@ -1,7 +1,8 @@
 {
   "appTitle": "beercrackerz",
+  "appTitleWithCase": "BeerCrackerz",
   "@appTitle": {
-    "description": "The title of the application"
+    "description": "The app for beer lovers, to share the best spot to crack a beer, or to easily refill this beverage of the gods!"
   },
   "httpServerErrorToastTitle": "The server seems messed up",
   "httpServerErrorToastDescription": "The server didn't responsed has it should. Please contact support for assistance with error code {field}.",
@@ -26,15 +27,16 @@
   "httpFrontErrorToastTitle": "Application error",
   "httpFrontErrorToastDescription": "Something went wrong when trying to reach the server. Please contact support for assistance with error code {field}.",
   "authLoginTitle": "Login",
-  "authLoginUsernameInput": "Enter your username",
+  "authLoginUsernameInput": "Username or email",
   "authLoginUsername": "username",
-  "authLoginPasswordInput": "Enter your password",
+  "authLoginPasswordInput": "Password",
   "authLoginPassword": "password",
   "authLoginForgotPassword": "Forgot your password?",
   "authLoginSubmit": "Login",
   "authLoginNoAccount": "Don't have an account? ",
   "authLoginRegister": "Register",
   "authLoginInvalidCredentials": "Invalid credentials, either incorrect or non-existing",
+  "authLoginEmptyCredentials": "Empty credentials received",
   "authLoginSuccessToastTitle": "Welcome back!",
   "authLoginSuccessToastDescription": "Successfully logged in your account BeerCrackerz account. Grab a spot and a beer, and enjoy!",
   "authRegisterTitle": "Register",
@@ -71,6 +73,9 @@
   "authResetPasswordSuccessContent": "Now consult your emails and follow the link to set a new password on the web interface, then login again.",
   "authResetPasswordSuccessSubmit": "Dismiss",
   "authProfileTitle": "Profile",
+  "authProfileCropTitle": "Crop image",
+  "authProfileErrorMinimalPPSizeTitle": "Invalid image size",
+  "authProfileErrorMinimalPPSizeContent": "The cropped image is bellow 512x512 pixels. Please provide an image with mode pixels.",
   "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production! BeerCrackerz is an open source website and mobile application released under the GPL-3.0 licence.",
   "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
   "authProfileLogout": "Logout",

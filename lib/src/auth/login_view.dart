@@ -3,20 +3,26 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
-import 'package:beercrackerz/src/map/map_view.dart';
-import 'package:beercrackerz/src/auth/profile_service.dart';
-import 'package:beercrackerz/src/settings/settings_view.dart';
-import 'package:beercrackerz/src/settings/settings_controller.dart';
-import 'package:beercrackerz/src/settings/size_config.dart';
-
+import '/src/auth/profile_service.dart';
+import '/src/map/map_view.dart';
+import '/src/settings/size_config.dart';
+import '/src/settings/settings_controller.dart';
+import '/src/settings/settings_view.dart';
+// Pretty straightforward, the LoginView handle the whole app login process
+// and handle form validation, aswel as front/back errors upon login.
+// When credentials are validated, the server returns a JWT token
+// that is stored in the SettingsController.
 class LoginView extends StatefulWidget {
-  const LoginView({super.key, required this.controller, required this.setAuthPage});
+  const LoginView({
+    super.key,
+    required this.settingsController,
+    required this.setAuthPage,
+  });
 
-  final SettingsController controller;
+  final SettingsController settingsController;
   final Function setAuthPage;
 
   @override
@@ -24,85 +30,69 @@ class LoginView extends StatefulWidget {
     return LoginViewState();
   }
 }
-// Needs to be outside state to ensure data perenity
+// Store variable outside state widget to ensure data preservation
 bool showPassword = false;
-String? errorMsg;
+String? errorMsg; // Shared error feedback under Username/Password field
 
 class LoginViewState extends State<LoginView> {
+  String username = '';
+  String password = '';
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    // Clear any error fields on leaving widget
-    showPassword = false;
-    errorMsg = null;
+    errorMsg = null; // Clear any previous displayed errors
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-
-    double formHeight = SizeConfig.defaultSize * 45;
-    String username = '';
-    String password = '';
-
-    void formValidation() {
-      setState(() => errorMsg = null);
-      _formKey.currentState!.save();
-      if (_formKey.currentState!.validate()) {
-        // Dismiss keyboard by removing focus on current input if any
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-        // Start loading overlay during server call
-        context.loaderOverlay.show();
-        ProfileService.submitLogin(username, password).then((response) async {
-          // HTTP/200, Alrighty
-          if (response.statusCode == 200) {
-            final parsedJson = jsonDecode(response.body);
-            if (parsedJson['expiry'] != null && parsedJson['token'] != null) {
-              await widget.controller.updateAuthToken(parsedJson['expiry'], parsedJson['token']);
-              widget.controller.isLoggedIn = await widget.controller.processUserInfo();
-              // Ensure context is mounted before calling action into it
-              if (context.mounted) {
-                Navigator.popAndPushNamed(context, MapView.routeName);
-                // Login success toast
-                toastification.show(
-                  context: context,
-                  title: Text(
-                    AppLocalizations.of(context)!.authLoginSuccessToastTitle,
-                  ),
-                  description: Text(
-                    AppLocalizations.of(context)!.authLoginSuccessToastDescription,
-                    style: const TextStyle(
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  type: ToastificationType.success,
-                  style: ToastificationStyle.flatColored,
-                  autoCloseDuration: const Duration(
-                    seconds: 5,
-                  ),
-                  showProgressBar: false,
-                );
-              }
-            } else {
-              // No token nor expiry sent through the response, not supposed to happen
-              // Error LGI1
+  void formValidation(
+    BuildContext context,
+    String username,
+    String password
+  ) {
+    setState(() => errorMsg = null);
+    _formKey.currentState!.save();
+    // Dismiss keyboard by removing focus on current input if any
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+    // Only go further if form fields are validated (see TextFormField for validator)
+    if (_formKey.currentState!.validate()) {
+      // Start loading overlay during server call
+      context.loaderOverlay.show();
+      ProfileService.submitLogin(
+        username,
+        password,
+      ).then((response) async {
+        if (response.statusCode == 200) { // HTTP/200, Alrighty
+          final parsedJson = jsonDecode(response.body);
+          // Check server response validity, it must contain the token and its expiration date
+          if (parsedJson['expiry'] != null && parsedJson['token'] != null) {
+            await widget.settingsController.updateAuthToken(
+              parsedJson['expiry'],
+              parsedJson['token'],
+            );
+            widget.settingsController.isLoggedIn = await widget.settingsController.processUserInfo();
+            // Ensure context is mounted, then redirect user to MapView
+            if (context.mounted) {
+              Navigator.popAndPushNamed(
+                context,
+                MapView.routeName
+              );
+              // Inform user that login went OK
               toastification.show(
                 context: context,
                 title: Text(
-                  AppLocalizations.of(context)!.httpServerErrorToastTitle,
+                  AppLocalizations.of(context)!.authLoginSuccessToastTitle,
                 ),
                 description: Text(
-                  AppLocalizations.of(context)!.httpServerErrorToastDescription('LGI1'),
+                  AppLocalizations.of(context)!.authLoginSuccessToastDescription,
                   style: const TextStyle(
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                type: ToastificationType.error,
+                type: ToastificationType.success,
                 style: ToastificationStyle.flatColored,
                 autoCloseDuration: const Duration(
                   seconds: 5,
@@ -111,60 +101,92 @@ class LoginViewState extends State<LoginView> {
               );
             }
           } else {
-            // Check server response to check for known errors
-            final parsedJson = jsonDecode(response.body);
-            if (parsedJson['detail'] != null && parsedJson['detail'] == 'Invalid credentials') {
-              setState(() => errorMsg = AppLocalizations.of(context)!.authLoginInvalidCredentials);
-            } else {
-              // Unexpected response code from server
-              // Error LGI2
-              toastification.show(
-                context: context,
-                title: Text(
-                  AppLocalizations.of(context)!.httpWrongResponseToastTitle,
-                ),
-                description: Text(
-                  AppLocalizations.of(context)!.httpWrongResponseToastDescription('LGI2 (${response.statusCode})'),
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                type: ToastificationType.error,
-                style: ToastificationStyle.flatColored,
-                autoCloseDuration: const Duration(
-                  seconds: 5,
-                ),
-                showProgressBar: false,
-              );
-            }
-          }
-        }).catchError((handleError) {
-          // Unable to perform server call
-          // Error LGI3
-          toastification.show(
-            context: context,
-            title: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-            ),
-            description: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastDescription('LGI3'),
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
+            // No token nor expiry sent through the response, not supposed to happen
+            // Error LGI1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.httpServerErrorToastTitle,
               ),
+              description: Text(
+                AppLocalizations.of(context)!.httpServerErrorToastDescription('LGI1'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
+          }
+        } else {
+          // Check server response to check for known errors
+          final parsedJson = jsonDecode(response.body);
+          if (parsedJson['detail'] != null && parsedJson['detail'] == 'Invalid credentials') {
+            setState(() => errorMsg = AppLocalizations.of(context)!.authLoginInvalidCredentials);
+          } else if (parsedJson['detail'] != null && parsedJson['detail'] == 'No credentials provided') {
+            setState(() => errorMsg = AppLocalizations.of(context)!.authLoginEmptyCredentials);
+          } else {
+            // Unexpected response code from server
+            // Error LGI2
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.httpWrongResponseToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.httpWrongResponseToastDescription('LGI2 (${response.statusCode})'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
+          }
+        }
+      }).catchError((handleError) {
+        // Unable to perform server call
+        // Error LGI3
+        toastification.show(
+          context: context,
+          title: Text(
+            AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+          ),
+          description: Text(
+            AppLocalizations.of(context)!.httpFrontErrorToastDescription('LGI3'),
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
             ),
-            type: ToastificationType.error,
-            style: ToastificationStyle.flatColored,
-            autoCloseDuration: const Duration(
-              seconds: 5,
-            ),
-            showProgressBar: false,
-          );
-        }).whenComplete(() {
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
-        });
-      }
+          ),
+          type: ToastificationType.error,
+          style: ToastificationStyle.flatColored,
+          autoCloseDuration: const Duration(
+            seconds: 5,
+          ),
+          showProgressBar: false,
+        );
+      }).whenComplete(() {
+        // Hide overlay loader in any case
+        context.loaderOverlay.hide();
+      });
     }
+  }
+
+  @override
+  Widget build(
+    BuildContext context
+  ) {
+    SizeConfig().init(context);
+    double formHeight = SizeConfig.defaultSize * 45;
+    bool isPortrait = (MediaQuery.of(context).orientation == Orientation.portrait);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -172,10 +194,17 @@ class LoginViewState extends State<LoginView> {
         title: Text(
           AppLocalizations.of(context)!.authLoginTitle,
         ),
+        shadowColor: Theme.of(context).colorScheme.shadow,
         actions: [
+          // Open application SettingsView
           IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => Navigator.restorablePushNamed(context, SettingsView.routeName),
+            icon: const Icon(
+              Icons.settings
+            ),
+            onPressed: () => Navigator.restorablePushNamed(
+              context,
+              SettingsView.routeName
+            ),
           ),
         ],
       ),
@@ -183,23 +212,31 @@ class LoginViewState extends State<LoginView> {
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Column(
           children: <Widget>[
+            // We use stack to properly position form and app title all together
             Stack(
               children: <Widget>[
                 // Form box wrapper
                 Center(
+                  // Form outter panning
                   child: Padding(
                     padding: EdgeInsets.only(
+                      bottom: (SizeConfig.defaultSize * 3),
                       left: (SizeConfig.defaultSize * 3),
                       right: (SizeConfig.defaultSize * 3),
-                      bottom: (SizeConfig.defaultSize * 3),
+                      top: (isPortrait == false)
+                        ? (SizeConfig.defaultSize * 3) // Avoid form to be sticked to AppBar in landscape
+                        : 0.0,
                     ),
                     child: Form(
                       key: _formKey,
                       child: Container(
                         height: formHeight,
                         margin: EdgeInsets.only(
-                          top: (SizeConfig.screenHeight / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4),
+                          top: (isPortrait == true)
+                            ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4)
+                            : 0.0,
                         ),
+                        // Form inner padding
                         padding: EdgeInsets.only(
                           top: (SizeConfig.defaultSize * 6),
                           bottom: (SizeConfig.defaultSize * 2),
@@ -207,14 +244,14 @@ class LoginViewState extends State<LoginView> {
                           right: (SizeConfig.defaultSize * 2),
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                           color: Theme.of(context).colorScheme.background,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            // Username input field
+                            // Username TextFormField input
                             TextFormField(
                               scrollPadding: EdgeInsets.only(
                                 bottom: (formHeight / 2),
@@ -227,27 +264,27 @@ class LoginViewState extends State<LoginView> {
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.account_circle,
-                                  size: (SizeConfig.defaultSize * 2),
+                                  size: SizeConfig.inputIcon,
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
@@ -258,8 +295,9 @@ class LoginViewState extends State<LoginView> {
                                 // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
                                 LengthLimitingTextInputFormatter(100),
                               ],
-                              onSaved: (String? value) => username = value!,
+                              onChanged: (String? value) => username = value!,
                               validator: (value) {
+                                // Field value can not be empty to be a valid input
                                 if (value == null || value.isEmpty) {
                                   return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authLoginUsername);
                                 }
@@ -271,14 +309,16 @@ class LoginViewState extends State<LoginView> {
                             ),
                             // Password input field
                             TextFormField(
-                              scrollPadding: EdgeInsets.only(bottom: (formHeight / 3)),
+                              scrollPadding: EdgeInsets.only(
+                                bottom: (formHeight / 2),
+                              ),
                               decoration: InputDecoration(
                                 labelText: AppLocalizations.of(context)!.authLoginPasswordInput,
                                 labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.lock,
-                                  size: (SizeConfig.defaultSize * 2),
+                                  size: SizeConfig.inputIcon,
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 suffixIcon: Align(
@@ -288,29 +328,31 @@ class LoginViewState extends State<LoginView> {
                                     onPressed: () => setState(() => showPassword = !showPassword),
                                     icon: Icon(
                                       Icons.remove_red_eye,
-                                      size: (SizeConfig.defaultSize * 2),
-                                      color: (showPassword == true) ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
+                                      size: SizeConfig.inputIcon,
+                                      color: (showPassword == true)
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),
                                 enabledBorder: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
                                 ),
                                 errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                                   borderSide: BorderSide(
                                     color: Theme.of(context).colorScheme.error,
                                   ),
@@ -324,8 +366,9 @@ class LoginViewState extends State<LoginView> {
                               obscureText: (showPassword == true) ? false : true,
                               enableSuggestions: false,
                               autocorrect: false,
-                              onSaved: (String? value) => password = value!,
+                              onChanged: (String? value) => password = value!,
                               validator: (value) {
+                                // Field value can not be empty to be a valid input
                                 if (value == null || value.isEmpty) {
                                   return AppLocalizations.of(context)!.emptyInput(AppLocalizations.of(context)!.authLoginPassword);
                                 }
@@ -335,6 +378,7 @@ class LoginViewState extends State<LoginView> {
                             SizedBox(
                               height: (SizeConfig.defaultSize * 2),
                             ),
+                            // Forgogt password link
                             Align(
                               alignment: Alignment.centerRight,
                               child: InkWell(
@@ -351,17 +395,19 @@ class LoginViewState extends State<LoginView> {
                             SizedBox(
                               height: (SizeConfig.defaultSize * 2),
                             ),
+                            // Submit login form
                             ButtonTheme(
                               height: (SizeConfig.defaultSize * 5),
                               minWidth: MediaQuery.of(context).size.width,
                               child: ElevatedButton(
-                                onPressed: () => formValidation(),
+                                onPressed: () => formValidation(context, username, password),
                                 child: Text(AppLocalizations.of(context)!.authLoginSubmit),
                               ),
                             ),
                             SizedBox(
                               height: (SizeConfig.defaultSize * 2),
                             ),
+                            // Register link
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -395,12 +441,14 @@ class LoginViewState extends State<LoginView> {
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(
-                      top: (SizeConfig.screenHeight / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4),
+                      top: (isPortrait == true)
+                        ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4)
+                        : (SizeConfig.defaultSize * 3) / 2, // Half padding on main Form container to keep "offset"
                     ),
                     height: (SizeConfig.defaultSize * 5),
                     width: (SizeConfig.defaultSize * 20),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
                       color: Theme.of(context).colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
@@ -412,10 +460,10 @@ class LoginViewState extends State<LoginView> {
                     ),
                     child: Center(
                       child: Text(
-                        'BeerCrackerz',
+                        AppLocalizations.of(context)!.appTitleWithCase,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 18,
+                          fontSize: SizeConfig.fontTextLargeSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
