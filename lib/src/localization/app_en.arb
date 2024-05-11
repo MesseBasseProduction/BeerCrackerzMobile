@@ -83,14 +83,15 @@
   "authProfileLogoutSuccessToastDescription": "You've been successfully logged out of your account. See you soon!",
   "settingsTitle": "Settings",
   "settingsInterfaceSection": "Interface",
-  "settingsInterfaceLanguage": "Language",
-  "settingsInterfaceLanguageEn": "🇬🇧 English",
-  "settingsInterfaceLanguageFr": "🇫🇷 French",
-  "settingsInterfaceLanguageEs": "🇪🇸 Spanish",
-  "settingsInterfaceLanguageDe": "🇩🇪 German",
-  "settingsInterfaceTheme": "Theme",
-  "settingsInterfaceThemeDark": "Dark theme",
-  "settingsInterfaceThemeLight": "Light theme",
+  "settingsInterfaceLanguageSetting": "Language",
+  "settingsInterfaceLanguageDialogTitle": "Select language",
+  "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 English} fr{🇫🇷 French} es{🇪🇸 Spanish} de{🇩🇪 German} it{🇮🇹 Italian} pt{🇵🇹 Portuguese} other{Unknown}}",
+  "@shopFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "settingsInterfaceTheme": "Dark Theme",
   "emptyInput": "The {field} field can not be empty",
   "@emptyInput": {
     "placeholders": {
@@ -100,19 +101,19 @@
       }
     }
   },
-  "spotFeatures": "{feature, select, forest {Forest} river {River} lake {Lake} cliff {Cliff} mountain {Mountain} beach {Beach} sea {Sea} city {City} pov {Point of View} bench {Bench} covered {Covered} toilet {Toilet} store {Store nearby} trash {Trash} parking {Parking} other {Other}}",
+  "spotFeatures": "{feature, select, forest{Forest} river{River} lake{Lake} cliff{Cliff} mountain{Mountain} beach{Beach} sea{Sea} city{City} pov{Point of View} bench{Bench} covered{Covered} toilet{Toilet} store{Store nearby} trash{Trash} parking{Parking} other{Other}}",
   "@spotFeatures": {
     "placeholders": {
       "feature": {}
     }
   },
-  "shopFeatures": "{feature, select, store {Grocery store} super {Supermarket} hyper {Hypermarket} cellar {Cellar} bio {Bio} craft {Craft} fresh {Refrigerated} card {Credit card} choice {Wide choice} other {Other}}",
+  "shopFeatures": "{feature, select, store{Grocery store} super{Supermarket} hyper{Hypermarket} cellar{Cellar} bio{Bio} craft{Craft} fresh{Refrigerated} card{Credit card} choice{Wide choice} other{Other}}",
   "@shopFeatures": {
     "placeholders": {
       "feature": {}
     }
   },
-  "barFeatures": "{feature, select, regular {Regular} snack {Snack} cellar {Brewery} rooftop {Rooftop} tobacco {Cigarets} food {Food} card {Credit card} choice {Wide choice} outdoor {Outdoor} other {Other}}",
+  "barFeatures": "{feature, select, regular{Regular} snack{Snack} cellar{Brewery} rooftop{Rooftop} tobacco{Cigarets} food{Food} card{Credit card} choice{Wide choice} outdoor{Outdoor} other{Other}}",
   "@barFeatures": {
     "placeholders": {
       "feature": {}

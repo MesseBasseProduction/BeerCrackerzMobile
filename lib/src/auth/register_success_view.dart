@@ -24,7 +24,9 @@ class RegisterSuccessView extends StatefulWidget {
 
 class RegisterSuccessViewState extends State<RegisterSuccessView> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     SizeConfig().init(context);
 
     double formHeight = SizeConfig.defaultSize * 25;

@@ -11,6 +11,7 @@ class SizeConfig {
   static late double fontTitleSize;
   static late double fontTextSize;
   static late double fontTextLargeSize;
+  static late double fontTextBigSize;
 
   void init(BuildContext context) {
     _mediaQueryData = MediaQuery.of(context);
@@ -26,5 +27,6 @@ class SizeConfig {
     fontTitleSize = 32;
     fontTextSize = 14;
     fontTextLargeSize = 18;
+    fontTextBigSize = 24;
   }
 }

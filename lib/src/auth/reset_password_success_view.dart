@@ -3,7 +3,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '/src/settings/settings_controller.dart';
 import '/src/settings/size_config.dart';
-
+// After successfull password request, we ask use to check emails,
+// so he can update password in the web app. Once done, he can come
+// back on mobile app to login again.
 class ResetPasswordSuccessView extends StatefulWidget {
   const ResetPasswordSuccessView({
     super.key,

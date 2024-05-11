@@ -8,7 +8,8 @@ import 'package:toastification/toastification.dart';
 import '/src/auth/profile_service.dart';
 import '/src/settings/settings_controller.dart';
 import '/src/settings/size_config.dart';
-
+// User request to reset password, to do so, we ask for email,
+// then sent an email for user to confirm request.
 class ResetPasswordView extends StatefulWidget {
   const ResetPasswordView({
     super.key,
