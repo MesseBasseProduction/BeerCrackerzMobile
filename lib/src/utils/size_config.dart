@@ -11,11 +11,13 @@ class SizeConfig {
   static late Orientation orientation;
   // Icon sizes
   static late double inputIcon;
+  static late double iconSize;
   // Font sizes
-  static late double fontTitleSize;
+  static late double fontTextSmallSize;
   static late double fontTextSize;
   static late double fontTextLargeSize;
   static late double fontTextBigSize;
+  static late double fontTextTitleSize;
   // Init size config for a given context
   void init(
     BuildContext context,
@@ -28,11 +30,14 @@ class SizeConfig {
     defaultSize = (orientation == Orientation.landscape)
       ? screenHeight * 0.024
       : screenWidth * 0.024;
+    // Icon sizes
     inputIcon = defaultSize * 2;
+    iconSize = 24;
     // Font sizes
-    fontTitleSize = 32;
+    fontTextSmallSize = 12;
     fontTextSize = 14;
     fontTextLargeSize = 18;
     fontTextBigSize = 24;
+    fontTextTitleSize = 32;
   }
 }

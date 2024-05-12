@@ -155,5 +155,11 @@
   "deleteMarkDialogTitle": "Delete marker",
   "deleteMarkDialogDescription": "You're about to delete this point of interest, is that really what you want?",
   "deleteMarkDialogYes": "Yes",
-  "deleteMarkDialogNo": "No"
+  "deleteMarkDialogNo": "No",
+  "spotDiscoveredBy": "A spot discovered by",
+  "shopDiscoveredBy": "A shop discovered by",
+  "barDiscoveredBy": "A bar discovered by",
+  "markDiscoveredSince": "Since",
+  "markEdit": "Edit",
+  "markDelete": "Delete"
 }

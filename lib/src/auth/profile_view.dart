@@ -310,7 +310,7 @@ class ProfileViewState extends State<ProfileView> {
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
-                  fontSize: SizeConfig.fontTitleSize,
+                  fontSize: SizeConfig.fontTextTitleSize,
                 ),
               ),
               // User email adress

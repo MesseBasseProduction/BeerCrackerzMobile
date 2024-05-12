@@ -238,10 +238,10 @@ class LoginViewState extends State<LoginView> {
                         ),
                         // Form inner padding
                         padding: EdgeInsets.only(
-                          top: (SizeConfig.defaultSize * 6),
                           bottom: (SizeConfig.defaultSize * 2),
                           left: (SizeConfig.defaultSize * 2),
                           right: (SizeConfig.defaultSize * 2),
+                          top: (SizeConfig.defaultSize * 6),
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
