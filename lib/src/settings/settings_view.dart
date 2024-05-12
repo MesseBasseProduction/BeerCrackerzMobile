@@ -4,9 +4,8 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 import '/src/settings/settings_controller.dart';
 import '/src/settings/size_config.dart';
-/// Displays the various settings that can be customized by the user.
-/// When a user changes a setting, the SettingsController is updated and
-/// Widgets that listen to the SettingsController are rebuilt.
+// This settings view handle global app settings.
+// They are stored on the phone so they are permanent
 class SettingsView extends StatefulWidget {
   const SettingsView({
     super.key,
@@ -32,15 +31,23 @@ class SettingsViewState extends State<SettingsView> {
     Locale localeValue = widget.controller.appLocale;
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settingsTitle),
+        title: Text(
+          AppLocalizations.of(context)!.settingsTitle,
+        ),
+        shadowColor: Theme.of(context).colorScheme.shadow,
       ),
       body: SettingsList(
         sections: [
           SettingsSection(
-            title: Text(AppLocalizations.of(context)!.settingsInterfaceSection),
+            title: Text(
+              AppLocalizations.of(context)!.settingsInterfaceSection,
+            ),
             tiles: [
+              // App locale selection
               SettingsTile.navigation(
-                leading: const Icon(Icons.language),
+                leading: const Icon(
+                  Icons.language,
+                ),
                 title: Text(
                   AppLocalizations.of(context)!.settingsInterfaceLanguageSetting,
                 ),
@@ -201,17 +208,18 @@ class SettingsViewState extends State<SettingsView> {
                   });
                 }
               ),
+              // UI dark theme switch
               SettingsTile.switchTile(
                 onToggle: (value) async {
                   if (value == true) {
-                    await widget.controller.updateThemeMode(ThemeMode.light);
-                  } else {
                     await widget.controller.updateThemeMode(ThemeMode.dark);
+                  } else {
+                    await widget.controller.updateThemeMode(ThemeMode.light);
                   }
                 },
                 initialValue: (widget.controller.themeMode == ThemeMode.dark)
-                  ? false
-                  : true,
+                  ? true
+                  : false,
                 leading: const Icon(
                   Icons.palette,
                 ),

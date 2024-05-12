@@ -1,28 +1,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'settings_service.dart';
-import 'package:beercrackerz/src/auth/profile_service.dart';
-
-/// A class that many Widgets can interact with to read user settings, update
-/// user settings, or listen to user settings changes.
-///
-/// Controllers glue Data Services to Flutter Widgets. The SettingsController
-/// uses the SettingsService to store and retrieve user settings.
+import '/src/auth/profile_service.dart';
+import '/src/settings/settings_service.dart';
+// An abstract controller class for handling settings.
+// This object may be given to views so they can get and set
+// settings values.
 class SettingsController with ChangeNotifier {
-  SettingsController(this._settingsService);
-
+  SettingsController(
+    this._settingsService,
+  );
+  // Settings service to access device and secure storage
   final SettingsService _settingsService;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
-
+  // App stored settings
   late ThemeMode _themeMode;
   ThemeMode get themeMode => _themeMode;
-
   late Locale _appLocale;
   Locale get appLocale => _appLocale;
-  // Auth internals
+  // Auth internals / user infos
   late bool isLoggedIn;
   int userId = -1; // Must be iniatialized
   late String username;
@@ -30,13 +26,13 @@ class SettingsController with ChangeNotifier {
   late String ppPath;
   late bool isUserActive;
   late bool isUserStaff;
-
+  // Load settings from storage. Required before loading app
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
     _appLocale = await _settingsService.appLocale();
-
-    if (await _secureStorage.read(key: 'auth-expiry') != null && await _secureStorage.read(key: 'auth-token') != null) {
-      if (await isAuthTokenExpired() == true) {
+    String token = await _settingsService.getAuthToken();
+    if (token != '') {
+      if (await _settingsService.isAuthTokenExpired() == true) {
         isLoggedIn = false;
       } else {
         // Call server to request user info
@@ -49,79 +45,75 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
   }
 
-  // App settings upates
+  /* App global settings setters */
 
-  Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
+  // Update app UI theme
+  Future<void> updateThemeMode(
+    ThemeMode? newThemeMode,
+  ) async {
     if (newThemeMode == null) return;
     if (newThemeMode == _themeMode) return;
     _themeMode = newThemeMode;
-    notifyListeners();
     await _settingsService.updateThemeMode(newThemeMode);
+    notifyListeners();
   }
-
-  Future<void> updateAppLocale(Locale? newLocale) async {
+  // Update app locale
+  Future<void> updateAppLocale(
+    Locale? newLocale,
+  ) async {
     if (newLocale == null) return;
     if (newLocale == _appLocale) return;
     _appLocale = newLocale;
-    notifyListeners();
     await _settingsService.updateAppLocale(newLocale);
-  }
-
-  // Auth section
-
-  Future<void> updateAuthToken(String? expiry, String? token) async {
-    if (expiry == null || token == null) return;
-    if (expiry == await _secureStorage.read(key: 'auth-expiry')) return;
-    if (token == await _secureStorage.read(key: 'auth-token')) return;
-    await _secureStorage.write(key: 'auth-expiry', value: expiry);
-    await _secureStorage.write(key: 'auth-token', value: token);
     notifyListeners();
+  }
+
+  /* Auth related methods */
+
+  // Update the user JWT token
+  Future<void> updateAuthToken(
+    String? expiry,
+    String? token,
+  ) async {
+    if (expiry == null || token == null) return;
     await _settingsService.updateAuthToken(expiry, token);
+    notifyListeners();
   }
-
+  // Test that the user token is expired or not
   Future<bool> isAuthTokenExpired() async {
-    if (await _secureStorage.read(key: 'auth-expiry') == null) return true;
-    final String expiry = (await _secureStorage.read(key: 'auth-expiry'))!;
-    try {
-      DateTime expiryDateTime = DateTime.parse(expiry);
-      DateTime nowDate = DateTime.now();
-      // Expiry date is not valid anymore
-      if (nowDate.isAfter(expiryDateTime)) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return true;
-    }
+    return await _settingsService.isAuthTokenExpired();
   }
-
+  // Get JWT token from secured storage
   Future<String> getAuthToken() async {
-    if (await _secureStorage.read(key: 'auth-expiry') == null && await _secureStorage.read(key: 'auth-token') == null) return '';
-    return (await _secureStorage.read(key: 'auth-token'))!;
+    return _settingsService.getAuthToken();
   }
-
+  // Fetch user information and store them
   Future<bool> processUserInfo() async {
     bool loggedIn = false;
-    String token = (await _secureStorage.read(key: 'auth-token')).toString();
-    await ProfileService.getUserInfo(token).then((response) {
-      if (response.statusCode == 200) {
-        final parsedJson = jsonDecode(response.body);
-        userId = parsedJson['id'];
-        username = parsedJson['username'];
-        email = parsedJson['email'];
-        ppPath = parsedJson['profilePicture'];
-        isUserActive = parsedJson['isActive'];
-        isUserStaff = parsedJson['isStaff'];
-        loggedIn = true;
-      } else {
+    String token = await _settingsService.getAuthToken();
+    if (token != '') {
+      await ProfileService.getUserInfo(token).then((response) {
+        if (response.statusCode == 200) {
+          final parsedJson = jsonDecode(response.body);
+          userId = parsedJson['id'];
+          username = parsedJson['username'];
+          email = parsedJson['email'];
+          ppPath = parsedJson['profilePicture'];
+          isUserActive = parsedJson['isActive'];
+          isUserStaff = parsedJson['isStaff'];
+          loggedIn = true;
+        } else {
+          loggedIn = false;
+        }
+      }).catchError((error) {
         loggedIn = false;
-      }
-    }).catchError((error) {
+      });
+    } else {
       loggedIn = false;
-    });
+    }
     return loggedIn;
   }
-
+  // Clear user info internal, usefull on logout
   bool resetUserInfo() {
     userId = -1;
     username = '';

@@ -5,11 +5,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
-import 'package:beercrackerz/src/auth/auth_view.dart';
-import 'package:beercrackerz/src/map/map_view.dart';
-import 'package:beercrackerz/src/settings/settings_view.dart';
-import 'package:beercrackerz/src/settings/settings_controller.dart';
-import 'package:beercrackerz/src/settings/theme_controller.dart';
+import '/src/auth/auth_view.dart';
+import '/src/map/map_view.dart';
+import '/src/settings/settings_view.dart';
+import '/src/settings/settings_controller.dart';
+import '/src/settings/theme_controller.dart';
 
 class BeerCrackerzMobile extends StatelessWidget {
   const BeerCrackerzMobile({
@@ -21,14 +21,19 @@ class BeerCrackerzMobile extends StatelessWidget {
   static String baseServerURL = 'https://beercrackerz.org'; // Ensure no trailing slash remains
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     // First get Themes for proper customization
-    ThemeData mainTheme = ThemeController.mainTheme();
-    ThemeData altTheme = ThemeController.lightTheme();
+    ThemeData darkTheme = ThemeController.darkTheme();
+    ThemeData lighTheme = ThemeController.lightTheme();
     // MaterialApp encapsulated in loading overlay, itself encapsulated in Listenable for settings updates
     return ListenableBuilder(
       listenable: settingsController,
-      builder: (BuildContext context, Widget? child) {
+      builder: (
+        BuildContext context,
+        Widget? child,
+      ) {
         return GlobalLoaderOverlay(
           duration: const Duration(
             milliseconds: 250,
@@ -42,7 +47,7 @@ class BeerCrackerzMobile extends StatelessWidget {
           overlayWidgetBuilder: (_) {
             return Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(mainTheme.colorScheme.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(darkTheme.colorScheme.primary),
               ),
             );
           },
@@ -66,8 +71,8 @@ class BeerCrackerzMobile extends StatelessWidget {
             // Attach app locale to settings value
             locale: settingsController.appLocale,
             onGenerateTitle: (BuildContext context) => AppLocalizations.of(context)!.appTitle,
-            theme: mainTheme,
-            darkTheme: altTheme,
+            theme: lighTheme,
+            darkTheme: darkTheme,
             // Attach app theme to settings value
             themeMode: settingsController.themeMode,
             onGenerateRoute: (RouteSettings routeSettings) {
