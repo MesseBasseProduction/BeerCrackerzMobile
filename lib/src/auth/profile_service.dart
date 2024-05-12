@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '/src/beercrackerz.dart';
+import '/src/utils/app_const.dart';
 // This service class abstracts server calls required for auth views.
 // These static method only returns the request, and any error must
 // be handled by the caller.
@@ -13,7 +13,7 @@ class ProfileService {
     String password
   ) async {
     return await http.post(
-      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/login/'),
+      Uri.parse('${AppConst.baseURL}/auth/login/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -31,7 +31,7 @@ class ProfileService {
     String password2
   ) async {
     return await http.post(
-      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/register/'),
+      Uri.parse('${AppConst.baseURL}/auth/register/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -48,7 +48,7 @@ class ProfileService {
     String email
   ) async {
     return await http.post(
-      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/reset-password-request/'),
+      Uri.parse('${AppConst.baseURL}/auth/reset-password-request/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -62,7 +62,7 @@ class ProfileService {
     String token
   ) async {
     return await http.post(
-      Uri.parse('${BeerCrackerzMobile.baseServerURL}/auth/logout/'),
+      Uri.parse('${AppConst.baseURL}/auth/logout/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token'
@@ -75,7 +75,7 @@ class ProfileService {
     String token
   ) async {
     return await http.get(
-      Uri.parse('${BeerCrackerzMobile.baseServerURL}/api/user/me/'),
+      Uri.parse('${AppConst.baseURL}/api/user/me/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token'
@@ -90,7 +90,7 @@ class ProfileService {
     int imageSize
   ) async {
     return await http.patch(
-      Uri.parse('${BeerCrackerzMobile.baseServerURL}/api/user/$userId/profile-picture/'),
+      Uri.parse('${AppConst.baseURL}/api/user/$userId/profile-picture/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-// The global theme controller for light/dark
-class ThemeController {
-  ThemeController();
+// The global theme configuration for light/dark
+class ThemeConfig {
+  ThemeConfig();
   // Main app theme is dark
   static ThemeData lightTheme() {
     return ThemeData(

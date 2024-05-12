@@ -8,7 +8,7 @@ import 'package:toastification/toastification.dart';
 
 import '/src/auth/profile_service.dart';
 import '/src/map/map_view.dart';
-import '/src/settings/size_config.dart';
+import '/src/utils/size_config.dart';
 import '/src/settings/settings_controller.dart';
 import '/src/settings/settings_view.dart';
 // Pretty straightforward, the LoginView handle the whole app login process

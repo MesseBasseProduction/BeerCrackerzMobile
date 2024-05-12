@@ -86,6 +86,7 @@
   "settingsInterfaceLanguageSetting": "Language",
   "settingsInterfaceLanguageDialogTitle": "Select language",
   "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 English} fr{🇫🇷 French} es{🇪🇸 Spanish} de{🇩🇪 German} it{🇮🇹 Italian} pt{🇵🇹 Portuguese} other{Unknown}}",
+  "settingsInterfaceClose": "Close",
   "@shopFeatures": {
     "placeholders": {
       "feature": {}

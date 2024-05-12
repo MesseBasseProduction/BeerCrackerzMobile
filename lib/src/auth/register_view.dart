@@ -10,7 +10,7 @@ import 'package:toastification/toastification.dart';
 import '/src/auth/profile_service.dart';
 import '/src/settings/settings_controller.dart';
 import '/src/settings/settings_view.dart';
-import '/src/settings/size_config.dart';
+import '/src/utils/size_config.dart';
 // Registration view to allow new user to create an account
 // so they can add their marks to BeerCrackerz.
 class RegisterView extends StatefulWidget {

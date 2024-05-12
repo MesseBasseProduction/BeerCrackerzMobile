@@ -1,9 +1,9 @@
-import 'package:beercrackerz/src/map/object/marker_data.dart';
+import 'package:beercrackerz/src/map/marker/marker_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:beercrackerz/src/map/map_view.dart';
-import 'package:beercrackerz/src/map/map_service.dart';
+import '/src/map/map_view.dart';
+import '/src/map/map_service.dart';
 
 class EditPOIView extends StatefulWidget {
   const EditPOIView({

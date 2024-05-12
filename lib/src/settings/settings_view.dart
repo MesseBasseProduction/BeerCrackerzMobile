@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 import '/src/settings/settings_controller.dart';
-import '/src/settings/size_config.dart';
+import '/src/utils/size_config.dart';
 // This settings view handle global app settings.
 // They are stored on the phone so they are permanent
 class SettingsView extends StatefulWidget {
@@ -13,7 +13,6 @@ class SettingsView extends StatefulWidget {
   });
 
   static const routeName = '/settings';
-
   final SettingsController controller;
   
   @override
@@ -187,10 +186,10 @@ class SettingsViewState extends State<SettingsView> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       TextButton(
-                                        child: const Text('Close'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
+                                        child: Text(
+                                          AppLocalizations.of(context)!.settingsInterfaceClose,
+                                        ),
+                                        onPressed: () => Navigator.of(context).pop(),
                                       ),
                                     ]
                                   ),

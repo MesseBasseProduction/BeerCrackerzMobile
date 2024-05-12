@@ -7,8 +7,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:beercrackerz/src/map/map_view.dart';
-import 'package:beercrackerz/src/map/object/marker_data.dart';
-import 'package:beercrackerz/src/map/object/marker_view.dart';
+import 'package:beercrackerz/src/map/marker/marker_data.dart';
+import 'package:beercrackerz/src/map/marker/marker_view.dart';
 
 // Utils class to use geolocation, perform HTTP call and build markers
 class MapService {
@@ -244,32 +244,6 @@ class MapService {
   }
 
   /* Marker view building, proxyfies methods from MarkerView */
-
-  static Marker buildMarkerView(
-    String type,
-    MarkerData data,
-    BuildContext context, 
-    MapView mapView,
-    MapController mapController,
-    Function animatedMapMove,
-    int userId,
-    Function removeCallback,
-    Function editCallback
-  ) {
-    if (type == 'spot') {
-      return MarkerView.buildSpotMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
-    } else if (type == 'shop') {
-      return MarkerView.buildShopMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
-    } else if (type == 'bar') {
-      return MarkerView.buildBarMarkerView(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
-    } else {
-      throw Exception('Invalid type $type to build view from');
-    }
-  }
-
-  static Marker buildWIPMarkerView(LatLng latLng, BuildContext context, MapController mapController) {
-    return MarkerView.buildWIPMarkerView(latLng, context, mapController);
-  }
 
 // TODo remove type from arg, as its in method name duh
   static Widget buildNewSpotModal(BuildContext context, MapView mapView, String type, GlobalKey<FormState> formKey, MarkerData data, Function callback) {

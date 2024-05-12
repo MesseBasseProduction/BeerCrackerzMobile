@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '/src/settings/settings_controller.dart';
-import '/src/settings/size_config.dart';
+import '/src/utils/size_config.dart';
 // After successfull password request, we ask use to check emails,
 // so he can update password in the web app. Once done, he can come
 // back on mobile app to login again.

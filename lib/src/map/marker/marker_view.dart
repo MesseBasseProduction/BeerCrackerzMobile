@@ -2,95 +2,288 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:latlong2/latlong.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
-import 'package:beercrackerz/src/map/map_view.dart';
-import 'package:beercrackerz/src/map/map_service.dart';
-import 'package:beercrackerz/src/map/object/marker_data.dart';
-import 'package:beercrackerz/src/settings/size_config.dart';
-
+import '/src/map/map_service.dart';
+import '/src/map/map_view.dart';
+import '/src/map/marker/marker_enums.dart';
+import '/src/map/marker/marker_data.dart';
+import '/src/map/utils/map_utils.dart';
+import '/src/utils/size_config.dart';
+// MarkerView clas shandle the whole content for the flutter_map ;
+// the pin on map, and the modal sheet that opens when marker is clicked. 
 class MarkerView {
-  static Marker buildSpotMarkerView(
-    MarkerData data,
+  // Generic marker creator, used for Shops, Spots and bars
+  static Marker buildMarkerView(
     BuildContext context,
-    MapView mapView,
     MapController mapController,
-    Function animatedMapMove,
-    int userId,
+    MapView mapView,
+    MarkerData markerData,
+    TickerProvider tickerProvider,
     Function removeCallback,
-    Function editCallback
+    Function editCallback,
   ) {
+    String iconPath = '';
+    switch (markerData.type) {
+      case 'spot':
+        iconPath = 'assets/images/marker/marker-icon-green.png';
+        break;
+      case 'shop':
+        iconPath = 'assets/images/marker/marker-icon-blue.png';
+        break;
+      case 'bar':
+        iconPath = 'assets/images/marker/marker-icon-red.png';
+        break;
+    }
     return Marker(
       height: 30.0,
       width: 30.0,
-      point: LatLng(data.lat, data.lng),
+      point: LatLng(markerData.lat, markerData.lng),
       child: GestureDetector(
-        onTap: () {
-          onMarkerTapped(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
-        },
-        child: const Image(
-          image: AssetImage('assets/images/marker/marker-icon-green.png')
+        onTap: () => onMarkerTapped(
+          context,
+          mapController,
+          mapView,
+          markerData,
+          tickerProvider,
+          removeCallback,
+          editCallback,
+        ),
+        child: Image(
+          image: AssetImage(
+            iconPath,
+          ),
         ),
       ),
     );
   }
-
-  static Marker buildShopMarkerView(
-    MarkerData data,
+  // Marker callback when clicked to display its information
+  static void onMarkerTapped(
     BuildContext context,
-    MapView mapView,
     MapController mapController,
-    Function animatedMapMove,
-    int userId,
-    Function removeCallback,
-    Function editCallback
-  ) {
-    return Marker(
-      height: 30.0,
-      width: 30.0,
-      point: LatLng(data.lat, data.lng),
-      child: GestureDetector(
-        onTap: () {
-          onMarkerTapped(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
-        },
-        child: const Image(
-          image: AssetImage('assets/images/marker/marker-icon-blue.png')
-        ),
-      ),
-    );
-  }
-
-  static Marker buildBarMarkerView(
-    MarkerData data,
-    BuildContext context,
     MapView mapView,
-    MapController mapController,
-    Function animatedMapMove,
-    int userId,
+    MarkerData markerData,
+    TickerProvider tickerProvider,
     Function removeCallback,
-    Function editCallback
+    Function editCallback,
   ) {
-    return Marker(
-      height: 30.0,
-      width: 30.0,
-      point: LatLng(data.lat, data.lng),
-      child: GestureDetector(
-        onTap: () {
-          onMarkerTapped(data, context, mapView, mapController, animatedMapMove, userId, removeCallback, editCallback);
-        },
-        child: const Image(
-          image: AssetImage('assets/images/marker/marker-icon-red.png')
-        ),
-      ),
+    SizeConfig().init(context);
+    // Internal bool to lock animation if user tried to edit its mark
+    bool noAnimation = false;
+    MediaQueryData mediaQueryData = MediaQuery.of(context);
+    int screenHeightRatio = 66;
+    double mapLatRange = (screenHeightRatio * (mapController.camera.visibleBounds.northWest.latitude - mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
+    // Move map to the marker position
+    MapUtils.animatedMapMove(
+      LatLng(markerData.lat - (mapLatRange / 2), markerData.lng),
+      mapController.camera.zoom + 2,
+      mapController,
+      tickerProvider,
     );
+    // Display POI informations in scrollable modal bottom sheet
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      barrierColor: Colors.black.withOpacity(0.1),
+      builder: (
+        BuildContext context,
+      ) {
+        return Container(
+          height: (screenHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
+          color: Theme.of(context).colorScheme.background,
+          child: Center(
+            child: ListView(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: (SizeConfig.defaultSize * 2),
+                    ),
+                    // Mark name
+                    Text(
+                      markerData.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20,
+                      ),
+                    ),
+                    SizedBox(
+                      height: SizeConfig.defaultSize,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Center(
+                        child: RichText(
+                          text: TextSpan(
+                            children: <TextSpan>[
+                              const TextSpan(
+                                text: 'Un spot découvert par ',
+                                style: TextStyle(
+                                    fontSize: 12, fontStyle: FontStyle.italic),
+                              ),
+                              TextSpan(
+                                  text: markerData.user,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Center(
+                        child: RichText(
+                          text: TextSpan(
+                            children: <TextSpan>[
+                              const TextSpan(
+                                text: 'Depuis le ',
+                                style: TextStyle(
+                                    fontSize: 12, fontStyle: FontStyle.italic),
+                              ),
+                              TextSpan(
+                                  text: markerData.creationDate,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    RatingBarIndicator(
+                      rating: markerData.rate + 1,
+                      direction: Axis.horizontal,
+                      itemCount: 5,
+                      itemSize: 14,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                    ),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      children: MarkerView.buildListElements(context, markerData.type, markerData.types, false, [], (fn) => {}),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Center(
+                        child: Text(
+                          markerData.description,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                    ),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      children: MarkerView.buildListElements(context, markerData.type, markerData.modifiers, false, [], (fn) => {}),
+                    ),
+                    // Check if currentMark is created by user, allow him to delete/edit
+                    (mapView.controller.userId == markerData.userId)
+                      ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.edit,
+                            ),
+                            iconSize: 24,
+                            onPressed: () {
+                              noAnimation = true; // Forbid animation when bottom sheet switch to edit
+                              Navigator.of(context).pop(false);
+                              editCallback(markerData);
+                            },
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                            ),
+                            iconSize: 24,
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(AppLocalizations.of(context)!.deleteMarkDialogTitle),
+                                      content: Text(AppLocalizations.of(context)!.deleteMarkDialogDescription),
+                                      actions: [
+                                        ElevatedButton(
+                                          child: Text(AppLocalizations.of(context)!.deleteMarkDialogNo),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                        ),
+                                        ElevatedButton(
+                                          child: Text(AppLocalizations.of(context)!.deleteMarkDialogYes),
+                                          onPressed: () async {
+                                            if (markerData.type == 'spot') {
+                                              MapService.deleteSpot(await mapView.controller.getAuthToken(), markerData.id);
+                                            } else if (markerData.type == 'shop') {
+                                              MapService.deleteShop(await mapView.controller.getAuthToken(), markerData.id);
+                                            } else if (markerData.type == 'bar') {
+                                              MapService.deleteBar(await mapView.controller.getAuthToken(), markerData.id);
+                                            }
+                                            // Now remove from view to end process
+                                            removeCallback(markerData);
+                                            if (context.mounted) {
+                                              Navigator.of(context).pop(false);
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                            },
+                          ),
+                        ],
+                      )
+                      : const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                        ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ).whenComplete(() {
+      // Move back camera only if allowed
+      if (noAnimation == false) {
+        MapUtils.animatedMapMove(
+          LatLng(markerData.lat, markerData.lng),
+          mapController.camera.zoom - 2,
+          mapController,
+          tickerProvider,
+        );
+      }
+    });
   }
-
+  // Build a temporary marker, used when a new marker is being created
   static Marker buildWIPMarkerView(
     LatLng latLng,
     BuildContext context,
@@ -102,266 +295,12 @@ class MarkerView {
       point: latLng,
       child: GestureDetector(
         child: const Image(
-          image: AssetImage('assets/images/marker/marker-icon-black.png')
+          image: AssetImage(
+            'assets/images/marker/marker-icon-black.png',
+          ),
         ),
       ),
     );
-  }
-
-  static void onMarkerTapped(
-    MarkerData data,
-    BuildContext context,
-    MapView mapView,
-    MapController mapController,
-    Function animatedMapMove,
-    int userId,
-    Function removeCallback,
-    Function editCallback
-  ) {
-    // Internal method to build types/modifiers "button"-like elements
-    List<Widget> buildListElements(types) {
-      List<Widget> output = [];
-      for (var element in types) {
-        Container typeElem = Container(
-          margin: const EdgeInsets.all(4.0),
-          padding: const EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: SizedBox(
-            height: 18,
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  const WidgetSpan(
-                    child: SizedBox(width: 4.0),
-                  ),
-                  WidgetSpan(
-                    child: SvgPicture.asset(
-                      'assets/images/icon/$element.svg',
-                      width: 14.0,
-                      height: 14.0,
-                    ),
-                  ),
-                  const WidgetSpan(
-                    child: SizedBox(width: 4.0),
-                  ),
-                  TextSpan(
-                    text: (data.type == 'spot')
-                      ? AppLocalizations.of(context)!.spotFeatures(element)
-                      : ((data.type == 'shop')
-                        ? AppLocalizations.of(context)!.shopFeatures(element)
-                        : AppLocalizations.of(context)!.barFeatures(element)),
-                  ),
-                  const WidgetSpan(
-                    child: SizedBox(width: 4.0),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-        output.add(typeElem);
-      }
-      return output;
-    }
-
-    bool noAnimation = false;
-
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
-    int screenHeightRatio = 66;
-    double mapLatRange = (screenHeightRatio * (mapController.camera.visibleBounds.northWest.latitude - mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
-    // Move map to the marker position
-    animatedMapMove(LatLng(data.lat - (mapLatRange / 2), data.lng), mapController.camera.zoom + 2);
-    // Display POI informations in scrollable modal bottom sheet
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      barrierColor: Colors.black.withOpacity(0.1),
-      builder: (BuildContext context) {
-        return Container(
-          height: (screenHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
-          color: Theme.of(context).colorScheme.background,
-          child: Center(
-            child: ListView(children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                  ),
-                  Text(
-                    data.name,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(
-                      child: RichText(
-                        text: TextSpan(
-                          children: <TextSpan>[
-                            const TextSpan(
-                              text: 'Un spot découvert par ',
-                              style: TextStyle(
-                                  fontSize: 12, fontStyle: FontStyle.italic),
-                            ),
-                            TextSpan(
-                                text: data.user,
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Center(
-                      child: RichText(
-                        text: TextSpan(
-                          children: <TextSpan>[
-                            const TextSpan(
-                              text: 'Depuis le ',
-                              style: TextStyle(
-                                  fontSize: 12, fontStyle: FontStyle.italic),
-                            ),
-                            TextSpan(
-                                text: data.creationDate,
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  RatingBarIndicator(
-                    rating: data.rate + 1,
-                    direction: Axis.horizontal,
-                    itemCount: 5,
-                    itemSize: 14,
-                    itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-                    itemBuilder: (context, _) => const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    children: buildListElements(data.types)
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Center(
-                      child: Text(
-                        data.description,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    children: buildListElements(data.modifiers)
-                  ),
-                  // Check if currentMak is created by user, allow him to delete/edit
-                  (userId == data.userId)
-                    ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.edit,
-                          ),
-                          iconSize: 24,
-                          onPressed: () {
-                            noAnimation = true; // Forbid animation when bottom sheet switch to edit
-                            Navigator.of(context).pop(false);
-                            editCallback(data);
-                          },
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.0),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                          ),
-                          iconSize: 24,
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(AppLocalizations.of(context)!.deleteMarkDialogTitle),
-                                    content: Text(AppLocalizations.of(context)!.deleteMarkDialogDescription),
-                                    actions: [
-                                      ElevatedButton(
-                                        child: Text(AppLocalizations.of(context)!.deleteMarkDialogNo),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(false);
-                                        },
-                                      ),
-                                      ElevatedButton(
-                                        child: Text(AppLocalizations.of(context)!.deleteMarkDialogYes),
-                                        onPressed: () async {
-                                          if (data.type == 'spot') {
-                                            MapService.deleteSpot(await mapView.controller.getAuthToken(), data.id);
-                                          } else if (data.type == 'shop') {
-                                            MapService.deleteShop(await mapView.controller.getAuthToken(), data.id);
-                                          } else if (data.type == 'bar') {
-                                            MapService.deleteBar(await mapView.controller.getAuthToken(), data.id);
-                                          }
-                                          // Now remove from view to end process
-                                          removeCallback(data);
-                                          if (context.mounted) {
-                                            Navigator.of(context).pop(false);
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                          },
-                        ),
-                      ],
-                    )
-                    : const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                      ),
-                ],
-              )
-            ]),
-          ),
-        );
-      },
-    ).whenComplete(() {
-      // Move back camera only if allowed
-      if (noAnimation == false) {
-        animatedMapMove(LatLng(data.lat, data.lng), mapController.camera.zoom - 2);
-      }
-    });
   }
 
   // For POI types and modifiers

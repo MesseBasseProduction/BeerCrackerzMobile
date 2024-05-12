@@ -1,4 +1,4 @@
-import 'package:beercrackerz/src/map/object/marker_data.dart';
+import 'package:beercrackerz/src/map/marker/marker_data.dart';
 import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

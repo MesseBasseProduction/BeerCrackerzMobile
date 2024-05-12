@@ -9,7 +9,7 @@ import '/src/auth/auth_view.dart';
 import '/src/map/map_view.dart';
 import '/src/settings/settings_view.dart';
 import '/src/settings/settings_controller.dart';
-import '/src/settings/theme_controller.dart';
+import 'utils/theme_config.dart';
 
 class BeerCrackerzMobile extends StatelessWidget {
   const BeerCrackerzMobile({
@@ -18,15 +18,14 @@ class BeerCrackerzMobile extends StatelessWidget {
   });
 
   final SettingsController settingsController;
-  static String baseServerURL = 'https://beercrackerz.org'; // Ensure no trailing slash remains
 
   @override
   Widget build(
     BuildContext context,
   ) {
     // First get Themes for proper customization
-    ThemeData darkTheme = ThemeController.darkTheme();
-    ThemeData lighTheme = ThemeController.lightTheme();
+    ThemeData darkTheme = ThemeConfig.darkTheme();
+    ThemeData lighTheme = ThemeConfig.lightTheme();
     // MaterialApp encapsulated in loading overlay, itself encapsulated in Listenable for settings updates
     return ListenableBuilder(
       listenable: settingsController,

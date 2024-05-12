@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:beercrackerz/src/map/modal/new_poi_view.dart';
-import 'package:beercrackerz/src/map/modal/edit_poi_view.dart';
-import 'package:beercrackerz/src/map/object/marker_data.dart';
+import 'package:beercrackerz/src/map/utils/map_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -10,18 +8,21 @@ import 'package:latlong2/latlong.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:beercrackerz/src/map/map_service.dart';
-import 'package:beercrackerz/src/auth/auth_view.dart';
-import 'package:beercrackerz/src/settings/settings_controller.dart';
+import '/src/auth/auth_view.dart';
+import '/src/map/map_service.dart';
+import '/src/map/modal/edit_poi_view.dart';
+import '/src/map/modal/new_poi_view.dart';
+import '/src/map/marker/marker_data.dart';
+import '/src/map/marker/marker_view.dart';
+import '/src/settings/settings_controller.dart';
 
 class MapView extends StatefulWidget {
   const MapView({
     super.key,
-    required this.controller
+    required this.controller,
   });
 
   static const routeName = '/map';
-
   final SettingsController controller;
 
   @override
@@ -35,16 +36,17 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final List<Marker> _spotMarkerView = [];
   final List<Marker> _shopMarkerView = [];
   final List<Marker> _barMarkerView = [];
-  final List<Marker> wipMarker = []; // Temporary marker when user wants to add a new poi
+  // Temporary marker when user wants to add a new poi
+  final List<Marker> wipMarker = [];
 
   late MapController _mapController;
-
+  // Map user session settings (not saved upon restart)
   bool showSpots = true;
   bool showShops = true;
   bool showBars = true;
   bool showWIP = false;
   String mapLayer = 'osm';
-
+  // Position alignment stream controller
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
 
@@ -57,12 +59,20 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     _alignPositionStreamController = StreamController<double?>();
     // Create internal MapController
     _mapController = MapController();
+    // Fetch and build Spots, Shops and Bars.
     // Must delay data server calls to ensure context is set in buid
     Future.delayed(Duration.zero, () {
       MapService.getSpots().then((spotMarkersData) {
         for (var markerData in spotMarkersData) {
-           // TODO userId can be remove as its used in widget arg
-          _spotMarkerView.add(MapService.buildMarkerView('spot', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
+          _spotMarkerView.add(MarkerView.buildMarkerView(
+            context,
+            _mapController,
+            widget,
+            markerData,
+            this,
+            removeMarker,
+            editMarker,
+          ));
         }
         // Render UI modifications
         setState(() {});
@@ -70,7 +80,15 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getShops().then((shopMarkersData) {
         for (var markerData in shopMarkersData) {
-          _shopMarkerView.add(MapService.buildMarkerView('shop', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
+          _shopMarkerView.add(MarkerView.buildMarkerView(
+            context,
+            _mapController,
+            widget,
+            markerData,
+            this,
+            removeMarker,
+            editMarker,
+          ));
         }
         // Render UI modifications
         setState(() {});
@@ -78,7 +96,15 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
 
       MapService.getBars().then((barMarkersData) {
         for (var markerData in barMarkersData) {
-          _barMarkerView.add(MapService.buildMarkerView('bar', markerData, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
+          _barMarkerView.add(MarkerView.buildMarkerView(
+            context,
+            _mapController,
+            widget,
+            markerData,
+            this,
+            removeMarker,
+            editMarker,
+          ));
         }
         // Render UI modifications
         setState(() {});
@@ -91,44 +117,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     // Release user position stream on dispose widget
     _alignPositionStreamController.close();
     super.dispose();
-  }
-
-  void _animatedMapMove(LatLng destLocation, double destZoom) {
-    final camera = _mapController.camera;
-    final latTween = Tween<double>(begin: camera.center.latitude, end: destLocation.latitude);
-    final lngTween = Tween<double>(begin: camera.center.longitude, end: destLocation.longitude);
-    final zoomTween = Tween<double>(begin: camera.zoom, end: destZoom);
-    final controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
-    final Animation<double> animation = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
-    final startIdWithTarget = 'AnimatedMapController#MoveStarted#${destLocation.latitude},${destLocation.longitude},$destZoom';
-    bool hasTriggeredMove = false;
-
-    controller.addListener(() {
-      final String id;
-      if (animation.value == 1.0) {
-        id = 'AnimatedMapController#MoveFinished';
-      } else if (!hasTriggeredMove) {
-        id = startIdWithTarget;
-      } else {
-        id = 'AnimatedMapController#MoveInProgress';
-      }
-
-      hasTriggeredMove |= _mapController.move(
-        LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
-        zoomTween.evaluate(animation),
-        id: id,
-      );
-    });
-
-    animation.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.dispose();
-      } else if (status == AnimationStatus.dismissed) {
-        controller.dispose();
-      }
-    });
-
-    controller.forward();
   }
 
   void displayNewPOIModal(LatLng latLng, double mapLatRange) {
@@ -154,23 +142,39 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(),
       builder: (BuildContext context) {
-        return NewPOIView(mapView: widget, data: newPoiData, callback: addNewMarker);
+        return NewPOIView(mapView: widget, data: newPoiData, callback: addMarker);
       },
     ).whenComplete(() {
-      _animatedMapMove(LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude), _mapController.camera.zoom - 2);
+      MapUtils.animatedMapMove(
+        LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude),
+        _mapController.camera.zoom - 2,
+        _mapController,
+        this,
+      );
       showWIP = false;
       wipMarker.clear();
       setState(() {});
     });
   }
   // Callback method to be sent in NewPoi bottom sheet
-  void addNewMarker(String type, MarkerData marker) {
+  void addMarker(String type, MarkerData markerData) {
+    // Create marker
+    Marker marker = MarkerView.buildMarkerView(
+      context,
+      _mapController,
+      widget,
+      markerData,
+      this,
+      removeMarker,
+      editMarker,
+    );
+    // Push it to associated Marker List
     if (type == 'spot') {
-      _spotMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
+      _spotMarkerView.add(marker);
     } else if (type == 'shop') {
-      _shopMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
+      _shopMarkerView.add(marker);
     } else if (type == 'bar') {
-      _barMarkerView.add(MapService.buildMarkerView(type, marker, context, widget, _mapController, _animatedMapMove, widget.controller.userId, removeMarker, editMarkerStart));
+      _barMarkerView.add(marker);
     }
     // Render UI modifications
     setState(() {});
@@ -207,7 +211,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Navigator.pop(context);
   }
 
-  void editMarkerStart(MarkerData marker) {
+  void editMarker(MarkerData marker) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -218,13 +222,14 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         return EditPOIView(mapView: widget, data: marker);
       },
     ).whenComplete(() {
-      _animatedMapMove(LatLng(marker.lat, marker.lng), _mapController.camera.zoom - 2);
+      MapUtils.animatedMapMove(
+        LatLng(marker.lat, marker.lng),
+        _mapController.camera.zoom - 2,
+        _mapController,
+        this,
+      );
       setState(() {});
     });
-  }
-
-  void editMarkerEnd() {
-
   }
 
   void displayFilteringModal() {
@@ -399,7 +404,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       appBar: null,
       resizeToAvoidBottomInset: false, // Do not move map when keyboard appear
@@ -413,7 +420,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           minZoom: 0,
           maxZoom: 19,
-          onPositionChanged:  (MapPosition position, bool hasGesture) {
+          onPositionChanged: (
+            MapPosition position,
+            bool hasGesture,
+          ) {
             if (hasGesture && _alignPositionOnUpdate != AlignOnUpdate.never) {
               setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
             }
@@ -423,9 +433,14 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               // Match value in new_poi.screenHeightRatio
               double mapLatRange = (66 * (_mapController.camera.visibleBounds.northWest.latitude - _mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
               if (showWIP == false) {
-                wipMarker.add(MapService.buildWIPMarkerView(latLng, context, _mapController));
+                wipMarker.add(MarkerView.buildWIPMarkerView(latLng, context, _mapController));
                 // Move map to the marker position
-                _animatedMapMove(LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude), _mapController.camera.zoom + 2);
+                MapUtils.animatedMapMove(
+                  LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude),
+                  _mapController.camera.zoom + 2,
+                  _mapController,
+                  this,
+                );
                 displayNewPOIModal(latLng, mapLatRange);
               }
               showWIP = !showWIP;
@@ -534,7 +549,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               backgroundColor: null,
               child: Icon(
                 Icons.gps_fixed,
-                color: (_alignPositionOnUpdate == AlignOnUpdate.always) ? Theme.of(context).colorScheme.secondary : null,
+                color: (_alignPositionOnUpdate == AlignOnUpdate.always)
+                  ? Theme.of(context).colorScheme.secondary
+                  : null,
               ),
             ),
           ),
@@ -543,9 +560,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             margin: const EdgeInsets.symmetric(vertical: 5),
             child: FloatingActionButton(
               heroTag: 'profileButton',
-              onPressed: () {
-                Navigator.restorablePushNamed(context, AuthView.routeName);
-              },
+              onPressed: () => Navigator.restorablePushNamed(context, AuthView.routeName),
               foregroundColor: null,
               backgroundColor: null,
               child: const Icon(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '/src/settings/settings_controller.dart';
-import '/src/settings/size_config.dart';
+import '/src/utils/size_config.dart';
 // Displayed when the registration process went successfull.
 // Invite user to confirm its account from its mail address and
 // when done, invite to click on button to go to login.

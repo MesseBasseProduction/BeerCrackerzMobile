@@ -8,11 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
-import '/src/beercrackerz.dart';
 import '/src/auth/profile_service.dart';
 import '/src/settings/settings_controller.dart';
 import '/src/settings/settings_view.dart';
-import '/src/settings/size_config.dart';
+import '/src/utils/app_const.dart';
+import '/src/utils/size_config.dart';
 // Displays the user profile with its profile picture,
 // username and email. Also provide BeerCrackerz description
 // and version, and finally offer a logout button.
@@ -277,7 +277,7 @@ class ProfileViewState extends State<ProfileView> {
                 width: (MediaQuery.of(context).size.width / 2),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage('${BeerCrackerzMobile.baseServerURL}${widget.controller.ppPath}'),
+                    image: NetworkImage('${AppConst.baseURL}${widget.controller.ppPath}'),
                     fit: BoxFit.fill,
                   ),
                 ),
