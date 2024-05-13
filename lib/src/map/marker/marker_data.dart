@@ -28,9 +28,9 @@ class MarkerData {
     required this.modifiers,
     required this.user,
     required this.userId,
-    required this.creationDate,    
+    required this.creationDate,
   });
-  // Factory method to build MarkerData from JSON received from server 
+  // Factory method to build MarkerData from JSON received from server
   factory MarkerData.fromJson(
     Map<String, dynamic> json,
   ) {

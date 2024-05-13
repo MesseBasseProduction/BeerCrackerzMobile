@@ -161,5 +161,16 @@
   "barDiscoveredBy": "A bar discovered by",
   "markDiscoveredSince": "Since",
   "markEdit": "Edit",
-  "markDelete": "Delete"
+  "markDelete": "Delete",
+  "mapOptionsTitle": "Map options",
+  "mapOptionsLayerStyle": "Map layer style",
+  "mapOptionsLayerPlan": "Plan",
+  "mapOptionsLayerSatellite": "Satellite",
+  "mapOptionsDisplayedMarkers": "Markers visibility",
+  "mapOptionsDisplaySpots": "Display spots",
+  "mapOptionsDisplayShops": "Display shops",
+  "mapOptionsDisplayBars": "Display bars",
+  "mapOSMContributors": "OpenStreeMap contributors",
+  "mapEsriContributors": "Powered by Esri",
+  "mapFlutterMapContributors": "Flutter Map developers"
 }

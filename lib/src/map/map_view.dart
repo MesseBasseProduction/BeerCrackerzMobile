@@ -1,21 +1,26 @@
 import 'dart:async';
 
-import 'package:beercrackerz/src/map/utils/map_utils.dart';
+import 'package:beercrackerz/src/map/modal/map_options_view.dart';
+import 'package:beercrackerz/src/utils/size_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '/src/auth/auth_view.dart';
 import '/src/map/map_service.dart';
-import '/src/map/modal/edit_poi_view.dart';
-import '/src/map/modal/new_poi_view.dart';
 import '/src/map/marker/marker_data.dart';
 import '/src/map/marker/marker_view.dart';
+import '/src/map/modal/edit_marker_view.dart';
+import '/src/map/modal/new_marker_view.dart';
+import '/src/utils/app_const.dart';
+import '/src/map/utils/map_utils.dart';
 import '/src/settings/settings_controller.dart';
-
+// Hold the main widget map view, that contains
+// all spots, shops and bars saved on server. Handle
+// the user interctaion with map to add/edit/remove markers.
 class MapView extends StatefulWidget {
   const MapView({
     super.key,
@@ -38,7 +43,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final List<Marker> _barMarkerView = [];
   // Temporary marker when user wants to add a new poi
   final List<Marker> wipMarker = [];
-
+  // FlutterMap controller
   late MapController _mapController;
   // Map user session settings (not saved upon restart)
   bool showSpots = true;
@@ -49,7 +54,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   // Position alignment stream controller
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
-
   // InitState main purpose is to async load spots/shops/bars
   @override
   void initState() {
@@ -111,52 +115,14 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       });
     });
   }
-
+  // Clear position stream upon dispose
   @override
   void dispose() {
     // Release user position stream on dispose widget
     _alignPositionStreamController.close();
     super.dispose();
   }
-
-  void displayNewPOIModal(LatLng latLng, double mapLatRange) {
-    MarkerData newPoiData = MarkerData(
-      id: 42, // Fake data, won't be sent to server
-      type: 'spot',
-      name: '',
-      description: '',
-      lat: latLng.latitude,
-      lng: latLng.longitude,
-      rate: 3.0,
-      types: [],
-      modifiers: [],
-      user: widget.controller.username,
-      userId: widget.controller.userId,
-      creationDate: '' // Fake data, won't be sent to server
-    );
-
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.background,
-      barrierColor: Colors.black.withOpacity(0.1),
-      shape: const RoundedRectangleBorder(),
-      builder: (BuildContext context) {
-        return NewPOIView(mapView: widget, data: newPoiData, callback: addMarker);
-      },
-    ).whenComplete(() {
-      MapUtils.animatedMapMove(
-        LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude),
-        _mapController.camera.zoom - 2,
-        _mapController,
-        this,
-      );
-      showWIP = false;
-      wipMarker.clear();
-      setState(() {});
-    });
-  }
-  // Callback method to be sent in NewPoi bottom sheet
+  // Add new marker callback
   void addMarker(String type, MarkerData markerData) {
     // Create marker
     Marker marker = MarkerView.buildMarkerView(
@@ -181,7 +147,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     // Close bottom sheet as this callback is performed upon success
     Navigator.pop(context);
   }
-
+  // Remove marker callback
   void removeMarker(MarkerData marker) {
     if (marker.type == 'spot') {
       for (var mark in _spotMarkerView) {
@@ -210,7 +176,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     // Close bottom sheet as this callback is performed upon success
     Navigator.pop(context);
   }
-
+  // Edit marker modal sheet
   void editMarker(MarkerData marker) {
     showModalBottomSheet<void>(
       context: context,
@@ -218,12 +184,20 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       backgroundColor: Theme.of(context).colorScheme.background,
       barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(),
-      builder: (BuildContext context) {
-        return EditPOIView(mapView: widget, data: marker);
+      builder: (
+        BuildContext context,
+      ) {
+        return EditMarkerView(
+          mapView: widget,
+          data: marker,
+        );
       },
     ).whenComplete(() {
       MapUtils.animatedMapMove(
-        LatLng(marker.lat, marker.lng),
+        LatLng(
+          marker.lat,
+          marker.lng,
+        ),
         _mapController.camera.zoom - 2,
         _mapController,
         this,
@@ -231,189 +205,102 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       setState(() {});
     });
   }
+  // New marker modal sheet
+  void newMarkerModal(LatLng latLng, double mapLatRange) {
+    // Fake data, won't be sent to server
+    MarkerData newPoiData = MarkerData(
+      id: 42,
+      type: 'spot',
+      name: '',
+      description: '',
+      lat: latLng.latitude,
+      lng: latLng.longitude,
+      rate: 3.0,
+      types: [],
+      modifiers: [],
+      user: widget.controller.username,
+      userId: widget.controller.userId,
+      creationDate: '',
+    );
 
-  void displayFilteringModal() {
-    MediaQueryData mediaQueryData = MediaQuery.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      barrierColor: Colors.black.withOpacity(0.1),
+      shape: const RoundedRectangleBorder(),
+      builder: (
+        BuildContext context,
+      ) {
+        return NewMarkerView(
+          mapView: widget,
+          data: newPoiData,
+          callback: addMarker,
+        );
+      },
+    ).whenComplete(() {
+      MapUtils.animatedMapMove(
+        LatLng(
+          latLng.latitude - (mapLatRange / 2),
+          latLng.longitude,
+        ),
+        _mapController.camera.zoom - 2,
+        _mapController,
+        this,
+      );
+      showWIP = false;
+      wipMarker.clear();
+      setState(() {});
+    });
+  }
+  // Map options modal sheet
+  void mapOptionsModal() {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       barrierColor: Colors.black.withOpacity(0.1),
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (BuildContext context, StateSetter setModalState) {
-          return Container(
-            height: (35 * mediaQueryData.size.height) / 100, // Taking 35% of screen height
-            color: Theme.of(context).colorScheme.background,
-            child: Center(
-              child: ListView(
-                children: [
-                  Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4.0),
-                      ),
-                      const Text(
-                        'Map options',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4.0),
-                      ),
-                      const Text(
-                        'Map layer style',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        ),
-                      ),
-                      ToggleSwitch(
-                        customWidths: [mediaQueryData.size.width / 3, mediaQueryData.size.width / 3],
-                        initialLabelIndex: (mapLayer == 'osm') ? 0 : 1,
-                        totalSwitches: 2,
-                        labels: const ['Plan', 'Satellite'],
-                        onToggle: (index) {
-                          if (index == 0) {
-                            setState(() => mapLayer = 'osm');
-                            setModalState(() {});
-                          } else {
-                            setState(() => mapLayer = 'esri');
-                            setModalState(() {});
-                          }
-                        },
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                      ),
-                      const Text(
-                        'Points of interest',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.0)
-                          ),
-                          const Image(
-                            image: AssetImage('assets/images/marker/marker-icon-green.png'),
-                            height: 24.0,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.0)
-                          ),
-                          const Text(
-                            'Display spots',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18
-                            ),
-                          ),
-                          const Spacer(),
-                          Switch(
-                            value: showSpots,
-                            onChanged: (value) {
-                              setState(() => showSpots = !showSpots);
-                              setModalState(() {});
-                            },
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.0)
-                          ),
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.0)
-                          ),
-                          const Image(
-                            image: AssetImage('assets/images/marker/marker-icon-blue.png'),
-                            height: 24.0,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.0)
-                          ),
-                          const Text(
-                            'Display shops',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18
-                            ),
-                          ),
-                          const Spacer(),
-                          Switch(
-                            value: showShops,
-                            onChanged: (value) {
-                              setState(() => showShops = !showShops);
-                              setModalState(() {});
-                            },
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.0)
-                          ),
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.0)
-                          ),
-                          const Image(
-                            image: AssetImage('assets/images/marker/marker-icon-red.png'),
-                            height: 24.0,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.0)
-                          ),
-                          const Text(
-                            'Display bars',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18
-                            ),
-                          ),
-                          const Spacer(),
-                          Switch(
-                            value: showBars,
-                            onChanged: (value) {
-                              setState(() => showBars = !showBars);
-                              setModalState(() {});
-                            },
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.0)
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
+      builder: (
+        BuildContext context,
+      ) {
+        return MapOptionsView(
+          mapLayer: mapLayer,
+          showSpots: showSpots,
+          showShops: showShops,
+          showBars: showBars,
+          setter: mapOptionsSetter,
+        );
       },
     );
   }
-
+  // Calback function to set MapView internal values according to option changed
+  void mapOptionsSetter(String type, dynamic value) {
+    if (type == 'mapLayer') {
+      mapLayer = value;
+    } else if (type == 'showSpots') {
+      showSpots = value;
+    } else if (type == 'showShops') {
+      showShops = value;
+    } else if (type == 'showBars') {
+      showBars = value;
+    }
+    setState(() {});
+  }
+  // Map widget builing
   @override
   Widget build(
     BuildContext context,
   ) {
+    SizeConfig().init(context);
     return Scaffold(
       appBar: null,
       resizeToAvoidBottomInset: false, // Do not move map when keyboard appear
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
-          initialCenter: const LatLng(48.8605277263, 2.34402407374),
+          initialCenter: const LatLng(
+            48.8605277263,
+            2.34402407374,
+          ),
           initialZoom: 11.0,
           interactionOptions: const InteractionOptions(
             flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
@@ -428,32 +315,47 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
             }
           },
-          onTap: (widget.controller.isLoggedIn == true) 
-            ? (TapPosition position, LatLng latLng) {
-              // Match value in new_poi.screenHeightRatio
-              double mapLatRange = (66 * (_mapController.camera.visibleBounds.northWest.latitude - _mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
-              if (showWIP == false) {
-                wipMarker.add(MarkerView.buildWIPMarkerView(latLng, context, _mapController));
-                // Move map to the marker position
-                MapUtils.animatedMapMove(
-                  LatLng(latLng.latitude - (mapLatRange / 2), latLng.longitude),
-                  _mapController.camera.zoom + 2,
-                  _mapController,
-                  this,
-                );
-                displayNewPOIModal(latLng, mapLatRange);
+          onTap: (widget.controller.isLoggedIn == true)
+            ? (
+                TapPosition position,
+                LatLng latLng,
+              ) {
+                if (showWIP == false) {
+                  // Add temporary marker
+                  wipMarker.add(MarkerView.buildWIPMarkerView(
+                    context,
+                    _mapController,
+                    latLng,
+                  ));
+                  LatLngBounds bounds = _mapController.camera.visibleBounds;
+                  double mapLatRange = (AppConst.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
+                  // Move map to the marker position
+                  MapUtils.animatedMapMove(
+                    LatLng(
+                      latLng.latitude - (mapLatRange / 2),
+                      latLng.longitude,
+                    ),
+                    _mapController.camera.zoom + 2,
+                    _mapController,
+                    this,
+                  );
+                  // Then create new marker modal
+                  newMarkerModal(
+                    latLng,
+                    mapLatRange,
+                  );
+                }
+                // Invert wip state
+                showWIP = !showWIP;
+                setState(() {});
               }
-              showWIP = !showWIP;
-              setState(() {});
-            }
             : (TapPosition position, LatLng latLng) {},
         ),
         children: [
           TileLayer(
-            urlTemplate: (mapLayer == 'osm') ?
-              'https://tile.openstreetmap.org/{z}/{x}/{y}.png' :
-              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-            ,
+            urlTemplate: (mapLayer == 'osm')
+              ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+              : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             userAgentPackageName: 'com.example.beercrackerz',
           ),
           CurrentLocationLayer(
@@ -461,28 +363,41 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             alignPositionOnUpdate: _alignPositionOnUpdate,
             style: const LocationMarkerStyle(
               showHeadingSector: false,
-              showAccuracyCircle: true
+              showAccuracyCircle: true,
             ),
           ),
           MarkerLayer(
-            markers: (showSpots == true) ? _spotMarkerView : [],
+            markers: (showSpots == true)
+              ? _spotMarkerView
+              : [],
           ),
           MarkerLayer(
-            markers: (showShops == true) ? _shopMarkerView : [],
+            markers: (showShops == true)
+              ? _shopMarkerView
+              : [],
           ),
           MarkerLayer(
-            markers: (showBars == true) ? _barMarkerView : [],
+            markers: (showBars == true)
+              ? _barMarkerView
+              : [],
           ),
           MarkerLayer(
-            markers: (showWIP == true) ? wipMarker : [],
+            markers: (showWIP == true)
+              ? wipMarker
+              : [],
           ),
           RichAttributionWidget(
             alignment: AttributionAlignment.bottomLeft,
             showFlutterMapAttribution: false,
             popupBackgroundColor: Theme.of(context).colorScheme.primary,
-            closeButton: (BuildContext context, Function close) {
+            closeButton: (
+              BuildContext context,
+              Function close,
+            ) {
               return IconButton(
-                icon: const Icon(Icons.cancel_outlined),
+                icon: const Icon(
+                  Icons.cancel_outlined,
+                ),
                 color: Theme.of(context).colorScheme.surface,
                 onPressed: () => close(),
                 style: const ButtonStyle(),
@@ -490,22 +405,21 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             },
             attributions: [
               TextSourceAttribution(
-                (mapLayer == 'osm') ? 
-                  'OpenStreeMap contributors' :
-                  'Powered by Esri'
-                ,
+                (mapLayer == 'osm')
+                  ? AppLocalizations.of(context)!.mapOSMContributors
+                  : AppLocalizations.of(context)!.mapEsriContributors,
                 textStyle: TextStyle(
                   color: Theme.of(context).colorScheme.surface,
                   fontStyle: FontStyle.italic,
                 ),
                 onTap: () => launchUrl(
-                  (mapLayer == 'osm') ? 
-                    Uri.parse('https://openstreetmap.org/copyright') :
-                    Uri.parse('https://www.esri.com'),
+                  (mapLayer == 'osm')
+                    ? Uri.parse('https://openstreetmap.org/copyright')
+                    : Uri.parse('https://www.esri.com'),
                 ),
               ),
               TextSourceAttribution(
-                'Flutter Map developers',
+                AppLocalizations.of(context)!.mapFlutterMapContributors,
                 textStyle: TextStyle(
                   color: Theme.of(context).colorScheme.surface,
                   fontStyle: FontStyle.italic,
@@ -521,10 +435,12 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         children: <Widget>[
           // Map filtering operztions
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 5),
+            margin: EdgeInsets.symmetric(
+              vertical: SizeConfig.paddingTiny,
+            ),
             child: FloatingActionButton(
               heroTag: 'filterButton',
-              onPressed: () => displayFilteringModal(),
+              onPressed: () => mapOptionsModal(),
               foregroundColor: null,
               backgroundColor: null,
               child: const Icon(
@@ -534,7 +450,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           // Center on user (and lock position on it)
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 5),
+            margin: EdgeInsets.symmetric(
+              vertical: SizeConfig.paddingTiny,
+            ),
             child: FloatingActionButton(
               heroTag: 'centerOnButton',
               onPressed: () {
@@ -557,7 +475,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           // Auth/Profile section
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 5),
+            margin: EdgeInsets.symmetric(
+              vertical: SizeConfig.paddingTiny,
+            ),
             child: FloatingActionButton(
               heroTag: 'profileButton',
               onPressed: () => Navigator.restorablePushNamed(context, AuthView.routeName),

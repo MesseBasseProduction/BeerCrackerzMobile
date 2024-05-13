@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 import '/src/map/map_service.dart';
 import '/src/map/map_view.dart';
@@ -11,23 +14,26 @@ import '/src/map/marker/marker_enums.dart';
 import '/src/map/marker/marker_view.dart';
 import '/src/utils/size_config.dart';
 
-class EditPOIView extends StatefulWidget {
-  const EditPOIView({
+class NewMarkerView extends StatefulWidget {
+  const NewMarkerView({
     super.key,
     required this.mapView,
-    required this.data
+    required this.data,
+    required this.callback
   });
 
   final MapView mapView;
   final MarkerData data;
+  final Function callback;
 
   @override
-  EditPOIViewState createState() {
-    return EditPOIViewState();
+  NewMarkerViewState createState() {
+    return NewMarkerViewState();
   }
 }
 
-class EditPOIViewState extends State<EditPOIView> {
+class NewMarkerViewState extends State<NewMarkerView> {
+  String poiType = 'spot';
   // Must be defined in here instead of MarkerView to avoid reset each build call
   final _formKey = GlobalKey<FormState>();
 
@@ -45,11 +51,11 @@ class EditPOIViewState extends State<EditPOIView> {
         child: Column(
           children: [
             Text(
-              (widget.data.type == 'spot')
-              ? AppLocalizations.of(context)!.editSpotTitle
-              : (widget.data.type == 'shop')
-                ? AppLocalizations.of(context)!.editShopTitle
-                : AppLocalizations.of(context)!.editBarTitle,
+              (poiType == 'spot')
+              ? AppLocalizations.of(context)!.newSpotTitle
+              : (poiType == 'shop')
+                ? AppLocalizations.of(context)!.newShopTitle
+                : AppLocalizations.of(context)!.newBarTitle,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 28
@@ -58,13 +64,32 @@ class EditPOIViewState extends State<EditPOIView> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 4.0),
             ),
+            // POI type switch
+            ToggleSwitch(
+              customWidths: [mediaQueryData.size.width / 4, mediaQueryData.size.width / 4, mediaQueryData.size.width / 4],
+              initialLabelIndex: (poiType == 'spot') ? 0 : (poiType == 'shop') ? 1 : 2,
+              totalSwitches: 3,
+              labels: const ['Spot', 'Shop', 'Bar'],
+              onToggle: (index) {
+                if (index == 0) {
+                  setState(() => poiType = 'spot');
+                } else if (index == 1) {
+                  setState(() => poiType = 'shop');
+                } else {
+                  setState(() => poiType = 'bar');
+                }
+              },
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.0),
+            ),
             // BottomModal content built depending on switch value
             SingleChildScrollView(
-              child: (widget.data.type == 'spot')
-                ? buildEditSpotModal(context, widget.mapView, _formKey, widget.data)
-                : (widget.data.type == 'shop')
-                  ? buildEditShopModal(context, widget.mapView, _formKey, widget.data)
-                  : buildEditBarModal(context, widget.mapView, _formKey, widget.data),
+              child: (poiType == 'spot')
+                ? buildNewSpotModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback)
+                : (poiType == 'shop')
+                  ? buildNewShopModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback)
+                  : buildNewBarModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback),
             ),
           ],
         ),
@@ -72,11 +97,13 @@ class EditPOIViewState extends State<EditPOIView> {
     );
   }
 
-  static Widget buildEditSpotModal(
+  static Widget buildNewSpotModal(
     BuildContext context,
     MapView mapView,
+    String type,
     GlobalKey<FormState> formKey,
-    MarkerData data
+    MarkerData data,
+    Function callback
   ) {
     SizeConfig().init(context);
 
@@ -92,9 +119,11 @@ class EditPOIViewState extends State<EditPOIView> {
       if (formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.patchSpot(await mapView.controller.getAuthToken(), data).then((response) async {
-          if (response.statusCode == 200) {
-            Navigator.pop(context);
+        MapService.postSpot(await mapView.controller.getAuthToken(), data).then((response) async {
+          if (response.statusCode == 201) {
+            final parsedJson = jsonDecode(response.body);
+            MarkerData newMark = MarkerData.fromJson(parsedJson);
+            callback('spot', newMark);
           }
         }).catchError((handleError) {
           print(handleError);
@@ -163,7 +192,6 @@ class EditPOIViewState extends State<EditPOIView> {
                   ),
                   errorText: nameErrorMsg,
                 ),
-                initialValue: data.name,
                 inputFormatters: [
                   // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
                   LengthLimitingTextInputFormatter(50),
@@ -186,7 +214,7 @@ class EditPOIViewState extends State<EditPOIView> {
               // POI types
               Wrap(
                 alignment: WrapAlignment.center,
-                children: MarkerView.buildListElements(context, data.type, SpotTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
+                children: MarkerView.buildListElements(context, type, SpotTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
               ),
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
@@ -230,7 +258,6 @@ class EditPOIViewState extends State<EditPOIView> {
                   ),
                   errorText: descErrorMsg,
                 ),
-                initialValue: data.description,
                 inputFormatters: [
                   // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
                   LengthLimitingTextInputFormatter(500),
@@ -248,7 +275,7 @@ class EditPOIViewState extends State<EditPOIView> {
               // POI Modifiers
               Wrap(
                 alignment: WrapAlignment.center,
-                children: MarkerView.buildListElements(context, data.type, SpotModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
+                children: MarkerView.buildListElements(context, type, SpotModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
               ),
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
@@ -258,7 +285,7 @@ class EditPOIViewState extends State<EditPOIView> {
                 textAlign: TextAlign.center,
               ),
               RatingBar.builder(
-                initialRating: data.rate + 1,
+                initialRating: data.rate,
                 direction: Axis.horizontal,
                 itemCount: 5,
                 itemSize: SizeConfig.iconSize,
@@ -290,11 +317,13 @@ class EditPOIViewState extends State<EditPOIView> {
     });
   }
 
-  static Widget buildEditShopModal(
+  static Widget buildNewShopModal(
     BuildContext context,
     MapView mapView,
+    String type,
     GlobalKey<FormState> formKey,
-    MarkerData data
+    MarkerData data,
+    Function callback
   ) {
     SizeConfig().init(context);
 
@@ -310,9 +339,11 @@ class EditPOIViewState extends State<EditPOIView> {
       if (formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.patchShop(await mapView.controller.getAuthToken(), data).then((response) async {
-          if (response.statusCode == 200) {
-            Navigator.pop(context);
+        MapService.postShop(await mapView.controller.getAuthToken(), data).then((response) async {
+          if (response.statusCode == 201) {
+            final parsedJson = jsonDecode(response.body);
+            MarkerData newMark = MarkerData.fromJson(parsedJson);
+            callback('shop', newMark);
           }
         }).catchError((handleError) {
           print(handleError);
@@ -404,7 +435,7 @@ class EditPOIViewState extends State<EditPOIView> {
               Wrap(
                 alignment: WrapAlignment.center,
                 // We must replace $ char from Shop enum
-                children: MarkerView.buildListElements(context, data.type, ShopTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
+                children: MarkerView.buildListElements(context, type, ShopTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
               ),
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
@@ -465,7 +496,7 @@ class EditPOIViewState extends State<EditPOIView> {
               // POI Modifiers
               Wrap(
                 alignment: WrapAlignment.center,
-                children: MarkerView.buildListElements(context, data.type, ShopModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
+                children: MarkerView.buildListElements(context, type, ShopModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
               ),
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
@@ -502,7 +533,7 @@ class EditPOIViewState extends State<EditPOIView> {
                         textAlign: TextAlign.center,
                       ),
                       RatingBar.builder(
-                        initialRating: data.price!.toDouble(),
+                        initialRating: data.price!.toDouble() + 1,
                         direction: Axis.horizontal,
                         itemCount: 3,
                         itemSize: SizeConfig.iconSize,
@@ -538,11 +569,13 @@ class EditPOIViewState extends State<EditPOIView> {
     });
   }
 
-  static Widget buildEditBarModal(
+  static Widget buildNewBarModal(
     BuildContext context,
     MapView mapView,
+    String type,
     GlobalKey<FormState> formKey,
-    MarkerData data
+    MarkerData data,
+    Function callback
   ) {
     SizeConfig().init(context);
 
@@ -558,9 +591,11 @@ class EditPOIViewState extends State<EditPOIView> {
       if (formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.patchBar(await mapView.controller.getAuthToken(), data).then((response) async {
-          if (response.statusCode == 200) {
-            Navigator.pop(context);
+        MapService.postBar(await mapView.controller.getAuthToken(), data).then((response) async {
+          if (response.statusCode == 201) {
+            final parsedJson = jsonDecode(response.body);
+            MarkerData newMark = MarkerData.fromJson(parsedJson);
+            callback('bar', newMark);
           }
         }).catchError((handleError) {
           print(handleError);
@@ -652,7 +687,7 @@ class EditPOIViewState extends State<EditPOIView> {
               Wrap(
                 alignment: WrapAlignment.center,
                 // We must replace $ char from Shop enum
-                children: MarkerView.buildListElements(context, data.type, BarTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
+                children: MarkerView.buildListElements(context, type, BarTypes.values.map((e) => e.name).toList(), false, data.types, setModalState),
               ),
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
@@ -713,7 +748,7 @@ class EditPOIViewState extends State<EditPOIView> {
               // POI Modifiers
               Wrap(
                 alignment: WrapAlignment.center,
-                children: MarkerView.buildListElements(context, data.type, BarModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
+                children: MarkerView.buildListElements(context, type, BarModifiers.values.map((e) => e.name).toList(), false, data.modifiers, setModalState),
               ),
               SizedBox(
                 height: (SizeConfig.defaultSize * 2),
@@ -731,7 +766,7 @@ class EditPOIViewState extends State<EditPOIView> {
                         initialRating: data.rate,
                         direction: Axis.horizontal,
                         itemCount: 5,
-                        itemSize: 24,
+                        itemSize: SizeConfig.iconSize,
                         itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
                         itemBuilder: (context, _) => const Icon(
                           Icons.star,

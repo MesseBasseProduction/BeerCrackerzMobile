@@ -9,9 +9,10 @@ import '/src/map/map_service.dart';
 import '/src/map/map_view.dart';
 import '/src/map/marker/marker_data.dart';
 import '/src/map/utils/map_utils.dart';
+import '/src/utils/app_const.dart';
 import '/src/utils/size_config.dart';
 // MarkerView clas shandle the whole content for the flutter_map ;
-// the pin on map, and the modal sheet that opens when marker is clicked. 
+// the pin on map, and the modal sheet that opens when marker is clicked.
 class MarkerView {
   // Generic marker creator, used for Shops, Spots and bars
   static Marker buildMarkerView(
@@ -26,18 +27,18 @@ class MarkerView {
     String iconPath = '';
     switch (markerData.type) {
       case 'spot':
-        iconPath = 'assets/images/marker/marker-icon-green.png';
+        iconPath = AppConst.spotImagePath;
         break;
       case 'shop':
-        iconPath = 'assets/images/marker/marker-icon-blue.png';
+        iconPath = AppConst.shopImagePath;
         break;
       case 'bar':
-        iconPath = 'assets/images/marker/marker-icon-red.png';
+        iconPath = AppConst.barImagePath;
         break;
     }
     return Marker(
-      height: 30.0,
-      width: 30.0,
+      height: AppConst.mapMarkerSize,
+      width: AppConst.mapMarkerSize,
       point: LatLng(
         markerData.lat,
         markerData.lng,
@@ -74,11 +75,15 @@ class MarkerView {
     // Internal bool to lock animation if user tried to edit its mark
     bool noAnimation = false;
     MediaQueryData mediaQueryData = MediaQuery.of(context);
-    int screenHeightRatio = 66;
-    double mapLatRange = (screenHeightRatio * (mapController.camera.visibleBounds.northWest.latitude - mapController.camera.visibleBounds.southEast.latitude).abs()) / 400;
+    // Compute map lat/lng range with apsect ratio in consideration
+    LatLngBounds bounds = mapController.camera.visibleBounds;
+    double mapLatRange = (AppConst.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
     // Move map to the marker position
     MapUtils.animatedMapMove(
-      LatLng(markerData.lat - (mapLatRange / 2), markerData.lng),
+      LatLng(
+        markerData.lat - (mapLatRange / 2),
+        markerData.lng,
+      ),
       mapController.camera.zoom + 2,
       mapController,
       tickerProvider,
@@ -92,13 +97,11 @@ class MarkerView {
         BuildContext context,
       ) {
         return Container(
-          height: (screenHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
+          height: (AppConst.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
           color: Theme.of(context).colorScheme.background,
-          padding: EdgeInsets.only(
-            bottom: (SizeConfig.defaultSize * 2),
-            left: (SizeConfig.defaultSize * 2),
-            right: (SizeConfig.defaultSize * 2),
-            top: (SizeConfig.defaultSize * 2),
+          // Modal inner padding
+          padding: EdgeInsets.symmetric(
+            horizontal: SizeConfig.padding,
           ),
           child: Center(
             child: ListView(
@@ -107,16 +110,20 @@ class MarkerView {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    SizedBox(
+                      height: SizeConfig.padding,
+                    ),
                     // Mark name
                     Text(
                       markerData.name,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: SizeConfig.fontTextTitleSize,
                       ),
                     ),
                     SizedBox(
-                      height: SizeConfig.defaultSize,
+                      height: SizeConfig.padding,
                     ),
                     // User that discovered the mark
                     Center(
@@ -171,7 +178,7 @@ class MarkerView {
                       ),
                     ),
                     SizedBox(
-                      height: SizeConfig.defaultSize,
+                      height: SizeConfig.padding,
                     ),
                     // Mark rating
                     RatingBarIndicator(
@@ -179,7 +186,9 @@ class MarkerView {
                       direction: Axis.horizontal,
                       itemCount: 5,
                       itemSize: SizeConfig.iconSize,
-                      itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      itemPadding: const EdgeInsets.symmetric(
+                        horizontal: 2.0,
+                      ),
                       itemBuilder: (context, _) => const Icon(
                         Icons.star,
                         color: Colors.amber,
@@ -192,7 +201,9 @@ class MarkerView {
                         direction: Axis.horizontal,
                         itemCount: 3,
                         itemSize: SizeConfig.iconSize,
-                        itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        itemPadding: const EdgeInsets.symmetric(
+                          horizontal: 2.0,
+                        ),
                         itemBuilder: (context, _) => const Icon(
                           Icons.attach_money,
                           color: Colors.green,
@@ -200,86 +211,98 @@ class MarkerView {
                       )
                     : const SizedBox.shrink(),
                     SizedBox(
-                      height: (SizeConfig.defaultSize * 2),
+                      height: SizeConfig.padding,
                     ),
                     // Mark types
                     Wrap(
                       alignment: WrapAlignment.center,
-                      children: MarkerView.buildListElements(context, markerData.type, markerData.types, false, [], (fn) => {}),
+                      children: MarkerView.buildListElements(
+                        context,
+                        markerData.type,
+                        markerData.types,
+                        false,
+                        [],
+                        (fn) => {},
+                      ),
                     ),
                     SizedBox(
-                      height: (SizeConfig.defaultSize * 2),
+                      height: SizeConfig.paddingLarge,
                     ),
                     // Mark description
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Center(
+                    Center(
                         child: Text(
                           markerData.description,
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
                     SizedBox(
-                      height: (SizeConfig.defaultSize * 2),
+                      height: SizeConfig.paddingLarge,
                     ),
                     // Mark modifiers
                     Wrap(
                       alignment: WrapAlignment.center,
-                      children: MarkerView.buildListElements(context, markerData.type, markerData.modifiers, false, [], (fn) => {}),
+                      children: MarkerView.buildListElements(
+                        context,
+                        markerData.type,
+                        markerData.modifiers,
+                        false,
+                        [],
+                        (fn) => {},
+                      ),
                     ),
                     SizedBox(
-                      height: (SizeConfig.defaultSize * 2),
+                      height: SizeConfig.padding,
                     ),
                     // Check if currentMark is created by user, allow him to delete/edit if so
                     (mapView.controller.userId == markerData.userId)
                       ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Edit mark button
-                          ElevatedButton(
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.edit,
-                                ),
-                                SizedBox(
-                                  width: SizeConfig.defaultSize,
-                                ),
-                                Text(
-                                  AppLocalizations.of(context)!.markEdit,
-                                ),
-                              ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Edit mark button
+                            ElevatedButton(
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.edit,
+                                  ),
+                                  SizedBox(
+                                    width: SizeConfig.paddingSmall,
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!.markEdit,
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                // Forbid animation when bottom sheet switch to edit
+                                noAnimation = true;
+                                Navigator.of(context).pop(false);
+                                editCallback(markerData);
+                              },
                             ),
-                            onPressed: () {
-                              // Forbid animation when bottom sheet switch to edit
-                              noAnimation = true;
-                              Navigator.of(context).pop(false);
-                              editCallback(markerData);
-                            },
-                          ),
-                          SizedBox(
-                            width: (SizeConfig.defaultSize * 2),
-                          ),
-                          // Delete mark button
-                          ElevatedButton(
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.delete,
-                                ),
-                                SizedBox(
-                                  width: SizeConfig.defaultSize,
-                                ),
-                                Text(
-                                  AppLocalizations.of(context)!.markDelete,
-                                ),
-                              ],
+                            SizedBox(
+                              width: SizeConfig.padding,
                             ),
-                            onPressed: () {
-                              showDialog(
+                            // Delete mark button
+                            ElevatedButton(
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.delete,
+                                  ),
+                                  SizedBox(
+                                    width: SizeConfig.paddingSmall,
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!.markDelete,
+                                  ),
+                                ],
+                              ),
+                              onPressed: () => showDialog(
                                 context: context,
-                                builder: (BuildContext context) {
+                                builder: (
+                                  BuildContext context,
+                                ) {
                                   return AlertDialog(
                                     title: Text(
                                       AppLocalizations.of(context)!.deleteMarkDialogTitle,
@@ -295,7 +318,9 @@ class MarkerView {
                                         onPressed: () => Navigator.of(context).pop(false),
                                       ),
                                       ElevatedButton(
-                                        child: Text(AppLocalizations.of(context)!.deleteMarkDialogYes),
+                                        child: Text(
+                                          AppLocalizations.of(context)!.deleteMarkDialogYes,
+                                        ),
                                         onPressed: () async {
                                           if (markerData.type == 'spot') {
                                             MapService.deleteSpot(await mapView.controller.getAuthToken(), markerData.id);
@@ -312,12 +337,11 @@ class MarkerView {
                                     ],
                                   );
                                 },
-                              );
-                            },
-                          ),
-                        ],
-                      )
-                      : const SizedBox.shrink(),
+                              ),
+                            ),
+                          ],
+                        )
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ],
@@ -326,7 +350,7 @@ class MarkerView {
         );
       },
     ).whenComplete(() {
-      // Move back camera only if allowed
+      // Move back camera only if allowed (user didn't clicked on edit)
       if (noAnimation == false) {
         MapUtils.animatedMapMove(
           LatLng(markerData.lat, markerData.lng),
@@ -339,18 +363,18 @@ class MarkerView {
   }
   // Build a temporary marker, used when a new marker is being created
   static Marker buildWIPMarkerView(
-    LatLng latLng,
     BuildContext context,
-    MapController mapController
+    MapController mapController,
+    LatLng latLng,
   ) {
     return Marker(
-      height: 30.0,
-      width: 30.0,
+      height: AppConst.mapMarkerSize,
+      width: AppConst.mapMarkerSize,
       point: latLng,
       child: GestureDetector(
         child: const Image(
           image: AssetImage(
-            'assets/images/marker/marker-icon-black.png',
+            AppConst.wipMarkerImagePath,
           ),
         ),
       ),
@@ -373,7 +397,7 @@ class MarkerView {
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
           border: Border.all(
-            color: selected.contains(element) 
+            color: selected.contains(element)
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.onSurface,
           ),
@@ -385,21 +409,25 @@ class MarkerView {
             text: TextSpan(
               children: [
                 const WidgetSpan(
-                  child: SizedBox(width: 4.0),
+                  child: SizedBox(
+                    width: 4.0,
+                  ),
                 ),
                 WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
                   child: SvgPicture.asset(
                     'assets/images/icon/$element.svg',
-                    width: SizeConfig.iconSize,
                     height: SizeConfig.iconSize,
-                    colorFilter: selected.contains(element) 
+                    width: SizeConfig.iconSize,
+                    colorFilter: selected.contains(element)
                       ? ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn)
                       : ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                   ),
                 ),
                 const WidgetSpan(
-                  child: SizedBox(width: 8.0),
+                  child: SizedBox(
+                    width: 8.0,
+                  ),
                 ),
                 TextSpan(
                   text: (poiType == 'spot')
@@ -408,13 +436,15 @@ class MarkerView {
                       ? AppLocalizations.of(context)!.shopFeatures(element)
                       : AppLocalizations.of(context)!.barFeatures(element)),
                   style: TextStyle(
-                    color: selected.contains(element) 
+                    color: selected.contains(element)
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const WidgetSpan(
-                  child: SizedBox(width: 4.0),
+                  child: SizedBox(
+                    width: 4.0,
+                  ),
                 ),
               ],
             ),

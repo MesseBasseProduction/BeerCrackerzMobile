@@ -25,7 +25,9 @@ class MapUtils {
       end: destZoom,
     );
     final controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(
+        milliseconds: 500,
+      ),
       vsync: tickerProvider,
     );
     final Animation<double> animation = CurvedAnimation(

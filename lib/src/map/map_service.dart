@@ -4,20 +4,22 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '/src/map/marker/marker_data.dart';
-
-// Utils class to use geolocation, perform HTTP call and build markers
+import '/src/utils/app_const.dart';
+// Utils class to perform HTTP calls for spots/shops/bars
 class MapService {
 
   /* Marker fetching and building */
 
-  static Future<List> fetchMarkersFromType(type) async {
-    final response = await http.get(Uri.parse('https://beercrackerz.org/api/$type/'));
+  static Future<List> fetchMarkersFromType(
+    type,
+  ) async {
+    final response = await http.get(Uri.parse('${AppConst.baseURL}/api/$type/'));
     if (response.statusCode == 200) {
       String source = const Utf8Decoder().convert(response.bodyBytes);
       return jsonDecode(source);
     } else {
       // Something went wrong with request
-      throw Exception('HTTP call failed : https://beercrackerz.org/api/$type/ returned ${response.statusCode}');
+      throw Exception('HTTP call failed : ${AppConst.baseURL}/api/$type/ returned ${response.statusCode}');
     }
   }
 
@@ -85,7 +87,7 @@ class MapService {
     MarkerData markerData,
   ) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/api/spot/'),
+      Uri.parse('${AppConst.baseURL}/api/spot/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -108,7 +110,7 @@ class MapService {
     MarkerData markerData,
   ) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/api/shop/'),
+      Uri.parse('${AppConst.baseURL}/api/shop/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -132,7 +134,7 @@ class MapService {
     MarkerData markerData,
   ) async {
     return await http.post(
-      Uri.parse('https://beercrackerz.org/api/bar/'),
+      Uri.parse('${AppConst.baseURL}/api/bar/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -150,13 +152,13 @@ class MapService {
       }),
     );
   }
-  
+
   static Future<http.Response> patchSpot(
     String token,
     MarkerData markerData,
   ) async {
     return await http.patch(
-      Uri.parse('https://beercrackerz.org/api/spot/${markerData.id}/'),
+      Uri.parse('${AppConst.baseURL}/api/spot/${markerData.id}/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -180,7 +182,7 @@ class MapService {
     MarkerData markerData,
   ) async {
     return await http.patch(
-      Uri.parse('https://beercrackerz.org/api/shop/${markerData.id}/'),
+      Uri.parse('${AppConst.baseURL}/api/shop/${markerData.id}/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -204,7 +206,7 @@ class MapService {
     MarkerData markerData,
   ) async {
     return await http.patch(
-      Uri.parse('https://beercrackerz.org/api/bar/${markerData.id}/'),
+      Uri.parse('${AppConst.baseURL}/api/bar/${markerData.id}/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -228,7 +230,7 @@ class MapService {
     int id,
   ) async {
     return await http.delete(
-      Uri.parse('https://beercrackerz.org/api/spot/$id/'),
+      Uri.parse('${AppConst.baseURL}/api/spot/$id/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -242,7 +244,7 @@ class MapService {
     int id,
   ) async {
     return await http.delete(
-      Uri.parse('https://beercrackerz.org/api/shop/$id/'),
+      Uri.parse('${AppConst.baseURL}/api/shop/$id/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
@@ -256,7 +258,7 @@ class MapService {
     int id,
   ) async {
     return await http.delete(
-      Uri.parse('https://beercrackerz.org/api/bar/$id/'),
+      Uri.parse('${AppConst.baseURL}/api/bar/$id/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',

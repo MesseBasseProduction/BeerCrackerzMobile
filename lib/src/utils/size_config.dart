@@ -9,6 +9,12 @@ class SizeConfig {
   static late double borderRadius;
   static late double defaultSize;
   static late Orientation orientation;
+  // Spacing
+  static late double paddingTiny;
+  static late double paddingSmall;
+  static late double padding;
+  static late double paddingLarge;
+  static late double paddingBig;
   // Icon sizes
   static late double inputIcon;
   static late double iconSize;
@@ -30,6 +36,12 @@ class SizeConfig {
     defaultSize = (orientation == Orientation.landscape)
       ? screenHeight * 0.024
       : screenWidth * 0.024;
+    // Spacing
+    paddingTiny = (defaultSize / 2);
+    paddingSmall = defaultSize;
+    padding = (defaultSize * 2);
+    paddingLarge = (defaultSize * 3);
+    paddingBig = (defaultSize * 4);
     // Icon sizes
     inputIcon = defaultSize * 2;
     iconSize = 24;
