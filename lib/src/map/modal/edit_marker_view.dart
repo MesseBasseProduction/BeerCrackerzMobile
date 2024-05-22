@@ -1,3 +1,4 @@
+import 'package:beercrackerz/src/utils/app_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -12,11 +13,11 @@ class EditMarkerView extends StatefulWidget {
   const EditMarkerView({
     super.key,
     required this.mapView,
-    required this.data
+    required this.markerData,
   });
 
   final MapView mapView;
-  final MarkerData data;
+  final MarkerData markerData;
 
   @override
   EditMarkerViewState createState() {
@@ -25,64 +26,66 @@ class EditMarkerView extends StatefulWidget {
 }
 
 class EditMarkerViewState extends State<EditMarkerView> {
-  // Must be defined in here instead of MarkerView to avoid reset each build call
+  // Must be defined in here instead of inside build
   final _formKey = GlobalKey<FormState>();
-
+  // Generic build method for each marker type
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
+    SizeConfig().init(context);
     MediaQueryData mediaQueryData = MediaQuery.of(context);
-
-    int screenHeightRatio = 66;
-
+    // Bottom sheet modal content to be injected
     return Container(
-      height: (screenHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
+      height: (AppConst.modalHeightRatio * mediaQueryData.size.height) / 100,
       width: mediaQueryData.size.width,
-      padding: const EdgeInsets.all(4),
+      padding: EdgeInsets.symmetric(
+        horizontal: SizeConfig.padding,
+      ),
       child: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: SizeConfig.padding,
+            ),
+            // Modal edit mark title
             Text(
-              (widget.data.type == 'spot')
+              (widget.markerData.type == 'spot')
               ? AppLocalizations.of(context)!.editSpotTitle
-              : (widget.data.type == 'shop')
+              : (widget.markerData.type == 'shop')
                 ? AppLocalizations.of(context)!.editShopTitle
                 : AppLocalizations.of(context)!.editBarTitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 28
+                fontSize: SizeConfig.fontTextTitleSize,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0),
-            ),
+            // No SizedBox has its handled in ModalHelper
             // BottomModal content built depending on switch value
             SingleChildScrollView(
-              child: (widget.data.type == 'spot')
-                ? buildEditSpotModal(context, widget.mapView, _formKey, widget.data)
-                : (widget.data.type == 'shop')
-                  ? buildEditShopModal(context, widget.mapView, _formKey, widget.data)
-                  : buildEditBarModal(context, widget.mapView, _formKey, widget.data),
+              child: (widget.markerData.type == 'spot')
+                ? buildEditSpotModal()
+                : (widget.markerData.type == 'shop')
+                  ? buildEditShopModal()
+                  : buildEditBarModal(),
             ),
           ],
         ),
       ),
     );
   }
-
-  static Widget buildEditSpotModal(
-    BuildContext context,
-    MapView mapView,
-    GlobalKey<FormState> formKey,
-    MarkerData data
-  ) {
-    SizeConfig().init(context);
-
+  // Edit spot modal validation
+  Widget buildEditSpotModal() {
+    // Specific form validation
     void formValidation() async {
-      formKey.currentState!.save();
-      if (formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.patchSpot(await mapView.controller.getAuthToken(), data).then((response) async {
+        MapService.patchSpot(
+          await widget.mapView.controller.getAuthToken(),
+          widget.markerData,
+        ).then((response) async {
           if (response.statusCode == 200) {
             Navigator.pop(context);
           }
@@ -94,27 +97,26 @@ class EditMarkerViewState extends State<EditMarkerView> {
         });
       }
     }
-
+    // Build modal content from generic helper
     return ModalHelper.markerEditor(
       context,
-      formKey,
-      data,
+      _formKey,
+      widget.markerData,
       formValidation,
     );
   }
-
-  static Widget buildEditShopModal(
-    BuildContext context,
-    MapView mapView,
-    GlobalKey<FormState> formKey,
-    MarkerData data
-  ) {
+  // Edit shop modal validation
+  Widget buildEditShopModal() {
+    // Specific form validation
     void formValidation() async {
-      formKey.currentState!.save();
-      if (formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.patchShop(await mapView.controller.getAuthToken(), data).then((response) async {
+        MapService.patchShop(
+          await widget.mapView.controller.getAuthToken(),
+          widget.markerData,
+        ).then((response) async {
           if (response.statusCode == 200) {
             Navigator.pop(context);
           }
@@ -126,27 +128,26 @@ class EditMarkerViewState extends State<EditMarkerView> {
         });
       }
     }
-
+    // Build modal content from generic helper
     return ModalHelper.markerEditor(
       context,
-      formKey,
-      data,
+      _formKey,
+      widget.markerData,
       formValidation,
     );
   }
-
-  static Widget buildEditBarModal(
-    BuildContext context,
-    MapView mapView,
-    GlobalKey<FormState> formKey,
-    MarkerData data
-  ) {
+  // Edit bar modal validation
+  Widget buildEditBarModal() {
+    // Specific form validation
     void formValidation() async {
-      formKey.currentState!.save();
-      if (formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.patchBar(await mapView.controller.getAuthToken(), data).then((response) async {
+        MapService.patchBar(
+          await widget.mapView.controller.getAuthToken(),
+          widget.markerData,
+        ).then((response) async {
           if (response.statusCode == 200) {
             Navigator.pop(context);
           }
@@ -158,11 +159,11 @@ class EditMarkerViewState extends State<EditMarkerView> {
         });
       }
     }
-
+    // Build modal content from generic helper
     return ModalHelper.markerEditor(
       context,
-      formKey,
-      data,
+      _formKey,
+      widget.markerData,
       formValidation,
     );
   }

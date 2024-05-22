@@ -63,9 +63,9 @@ class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
                             : 0.0,
                         ),
                         padding: EdgeInsets.only(
-                          bottom: (SizeConfig.defaultSize * 2),
-                          left: (SizeConfig.defaultSize * 2),
-                          right: (SizeConfig.defaultSize * 2),
+                          bottom: SizeConfig.padding,
+                          left: SizeConfig.padding,
+                          right: SizeConfig.padding,
                           top: (SizeConfig.defaultSize * 4),
                         ),
                         decoration: BoxDecoration(
@@ -85,14 +85,14 @@ class ResetPasswordSuccessViewState extends State<ResetPasswordSuccessView> {
                               ),
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             Text(
                               AppLocalizations.of(context)!.authResetPasswordSuccessContent,
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Go to login button
                             ButtonTheme(

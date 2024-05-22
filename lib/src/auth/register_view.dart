@@ -219,9 +219,9 @@ class RegisterViewState extends State<RegisterView> {
                         // Form inner padding
                         padding: EdgeInsets.only(
                           top: (SizeConfig.defaultSize * 6),
-                          bottom: (SizeConfig.defaultSize * 2),
-                          left: (SizeConfig.defaultSize * 2),
-                          right: (SizeConfig.defaultSize * 2),
+                          bottom: SizeConfig.padding,
+                          left: SizeConfig.padding,
+                          right: SizeConfig.padding,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
@@ -282,7 +282,7 @@ class RegisterViewState extends State<RegisterView> {
                               },
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Email input field
                             TextFormField(
@@ -345,7 +345,7 @@ class RegisterViewState extends State<RegisterView> {
                               },
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Password input field
                             TextFormField(
@@ -440,7 +440,7 @@ class RegisterViewState extends State<RegisterView> {
                               },
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Repeat password input field
                             TextFormField(
@@ -455,7 +455,7 @@ class RegisterViewState extends State<RegisterView> {
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.lock,
-                                  size: (SizeConfig.defaultSize * 2),
+                                  size: SizeConfig.padding,
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 suffixIcon: Align(
@@ -465,7 +465,7 @@ class RegisterViewState extends State<RegisterView> {
                                     onPressed: () => setState(() => showPassword2 = !showPassword2),
                                     icon: Icon(
                                       Icons.remove_red_eye,
-                                      size: (SizeConfig.defaultSize * 2),
+                                      size: SizeConfig.padding,
                                       color: (showPassword2 == true) ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
@@ -522,7 +522,7 @@ class RegisterViewState extends State<RegisterView> {
                               },
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Submit register to the server
                             ButtonTheme(
@@ -542,7 +542,7 @@ class RegisterViewState extends State<RegisterView> {
                               ),
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Go to login link
                             Row(

@@ -269,7 +269,7 @@ class ProfileViewState extends State<ProfileView> {
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: (SizeConfig.defaultSize * 2),
+                height: SizeConfig.padding,
               ),
               // Image container, with upload new profile picture icon
               Container(
@@ -302,7 +302,7 @@ class ProfileViewState extends State<ProfileView> {
                 ),
               ),
               SizedBox(
-                height: (SizeConfig.defaultSize * 2),
+                height: SizeConfig.padding,
               ),
               // Username as title
               Text(
@@ -323,12 +323,12 @@ class ProfileViewState extends State<ProfileView> {
                 ),
               ),
               SizedBox(
-                height: (SizeConfig.defaultSize * 2),
+                height: SizeConfig.padding,
               ),
               // BeerCrackerz presentation text
               Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: (SizeConfig.defaultSize * 2)
+                  horizontal: SizeConfig.padding
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.authProfileAboutBeerCrackerz,
@@ -339,12 +339,12 @@ class ProfileViewState extends State<ProfileView> {
                 ),
               ),
               SizedBox(
-                height: (SizeConfig.defaultSize * 2),
+                height: SizeConfig.padding,
               ),
               // App version
               Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: (SizeConfig.defaultSize * 2)
+                  horizontal: SizeConfig.padding
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.authProfileAboutVersion,
@@ -356,7 +356,7 @@ class ProfileViewState extends State<ProfileView> {
                 ),
               ),
               SizedBox(
-                height: (SizeConfig.defaultSize * 2),
+                height: SizeConfig.padding,
               ),
               // Logout button
               ButtonTheme(
@@ -370,7 +370,7 @@ class ProfileViewState extends State<ProfileView> {
                 ),
               ),
               SizedBox(
-                height: (SizeConfig.defaultSize * 2),
+                height: SizeConfig.padding,
               ),
             ],
           ),

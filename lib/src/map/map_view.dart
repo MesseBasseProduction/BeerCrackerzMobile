@@ -41,7 +41,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   final List<Marker> _spotMarkerView = [];
   final List<Marker> _shopMarkerView = [];
   final List<Marker> _barMarkerView = [];
-  // Temporary marker when user wants to add a new poi
+  // Temporary marker when user wants to add a new mark
   final List<Marker> wipMarker = [];
   // FlutterMap controller
   late MapController _mapController;
@@ -148,24 +148,24 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Navigator.pop(context);
   }
   // Remove marker callback
-  void removeMarker(MarkerData marker) {
-    if (marker.type == 'spot') {
+  void removeMarker(MarkerData markerData) {
+    if (markerData.type == 'spot') {
       for (var mark in _spotMarkerView) {
-        if (mark.point.latitude == marker.lat && mark.point.longitude == marker.lng) {
+        if (mark.point.latitude == markerData.lat && mark.point.longitude == markerData.lng) {
           _spotMarkerView.remove(mark);
           break;
         }
       }
-    } else if (marker.type == 'shop') {
+    } else if (markerData.type == 'shop') {
       for (var mark in _shopMarkerView) {
-        if (mark.point.latitude == marker.lat && mark.point.longitude == marker.lng) {
+        if (mark.point.latitude == markerData.lat && mark.point.longitude == markerData.lng) {
           _shopMarkerView.remove(mark);
           break;
         }
       }
-    } else if (marker.type == 'bar') {
+    } else if (markerData.type == 'bar') {
       for (var mark in _barMarkerView) {
-        if (mark.point.latitude == marker.lat && mark.point.longitude == marker.lng) {
+        if (mark.point.latitude == markerData.lat && mark.point.longitude == markerData.lng) {
           _barMarkerView.remove(mark);
           break;
         }
@@ -177,7 +177,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Navigator.pop(context);
   }
   // Edit marker modal sheet
-  void editMarker(MarkerData marker) {
+  void editMarker(MarkerData markerData) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -189,14 +189,14 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       ) {
         return EditMarkerView(
           mapView: widget,
-          data: marker,
+          markerData: markerData,
         );
       },
     ).whenComplete(() {
       MapUtils.animatedMapMove(
         LatLng(
-          marker.lat,
-          marker.lng,
+          markerData.lat,
+          markerData.lng,
         ),
         _mapController.camera.zoom - 2,
         _mapController,
@@ -208,7 +208,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   // New marker modal sheet
   void newMarkerModal(LatLng latLng, double mapLatRange) {
     // Fake data, won't be sent to server
-    MarkerData newPoiData = MarkerData(
+    MarkerData markerData = MarkerData(
       id: 42,
       type: 'spot',
       name: '',
@@ -234,7 +234,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       ) {
         return NewMarkerView(
           mapView: widget,
-          data: newPoiData,
+          markerData: markerData,
           callback: addMarker,
         );
       },

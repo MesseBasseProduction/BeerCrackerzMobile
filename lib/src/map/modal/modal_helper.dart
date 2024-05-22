@@ -19,21 +19,21 @@ class ModalHelper {
 
     String? nameErrorMsg;
     String? descErrorMsg;
-
+    // Build mark available types based on type enum
     List<String> types = SpotTypes.values.map((e) => e.name).toList();
     if (markerData.type == 'shop') {
       types = ShopTypes.values.map((e) => e.name).toList();
     } else if (markerData.type == 'bar') {
       types = BarTypes.values.map((e) => e.name).toList();
     }
-
+    // Build mark available modifiers based on type enum
     List<String> modifiers = SpotModifiers.values.map((e) => e.name).toList();
     if (markerData.type == 'shop') {
       modifiers = ShopModifiers.values.map((e) => e.name).toList();
     } else if (markerData.type == 'bar') {
       modifiers = BarModifiers.values.map((e) => e.name).toList();
     }
-
+    // Modal content builder
     return StatefulBuilder(
       builder: (
         BuildContext context,
@@ -43,15 +43,16 @@ class ModalHelper {
           key: formKey,
           child: Container(
             padding: EdgeInsets.only(
-              top: (SizeConfig.defaultSize * 2),
-              bottom: (SizeConfig.defaultSize * 2),
-              left: (SizeConfig.defaultSize * 2),
-              right: (SizeConfig.defaultSize * 2),
+              top: SizeConfig.padding,
+              bottom: SizeConfig.padding,
+              left: SizeConfig.padding,
+              right: SizeConfig.padding,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                // Mark description based on type
                 Text(
                   (markerData.type == 'spot')
                     ? AppLocalizations.of(context)!.newSpotInformation
@@ -61,9 +62,9 @@ class ModalHelper {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(
-                  height: (SizeConfig.defaultSize * 2),
+                  height: SizeConfig.padding,
                 ),
-                // POI name
+                // Mark name input
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: (markerData.type == 'spot')
@@ -77,7 +78,7 @@ class ModalHelper {
                     filled: true,
                     prefixIcon: Icon(
                       Icons.label,
-                      size: (SizeConfig.defaultSize * 2),
+                      size: SizeConfig.padding,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -124,26 +125,33 @@ class ModalHelper {
                   },
                 ),
                 SizedBox(
-                  height: (SizeConfig.defaultSize * 2),
+                  height: SizeConfig.padding,
                 ),
+                // Mark types section title
                 Text(
                   (markerData.type == 'spot')
-                      ? AppLocalizations.of(context)!.newSpotTypesTitle
-                      : (markerData.type == 'shop')
-                        ? AppLocalizations.of(context)!.newShopTypesTitle
-                        : AppLocalizations.of(context)!.newBarTypesTitle,
+                    ? AppLocalizations.of(context)!.newSpotTypesTitle
+                    : (markerData.type == 'shop')
+                      ? AppLocalizations.of(context)!.newShopTypesTitle
+                      : AppLocalizations.of(context)!.newBarTypesTitle,
                   textAlign: TextAlign.center,
                 ),
-                // POI types
+                // Mark types
                 Wrap(
                   alignment: WrapAlignment.center,
-                  // We must replace $ char from Shop enum
-                  children: MarkerView.buildListElements(context, markerData.type, types, false, markerData.types, setModalState),
+                  children: MarkerView.buildListElements(
+                    context,
+                    markerData.type,
+                    types,
+                    false,
+                    markerData.types,
+                    setModalState,
+                  ),
                 ),
                 SizedBox(
-                  height: (SizeConfig.defaultSize * 2),
+                  height: SizeConfig.padding,
                 ),
-                // POI description
+                // Mark description input
                 TextFormField(
                   minLines: 3,
                   maxLines: 3,
@@ -159,7 +167,7 @@ class ModalHelper {
                     filled: true,
                     prefixIcon: Icon(
                       Icons.edit,
-                      size: (SizeConfig.defaultSize * 2),
+                      size: SizeConfig.padding,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -192,27 +200,36 @@ class ModalHelper {
                     LengthLimitingTextInputFormatter(500),
                   ],
                   onSaved: (String? value) => markerData.description = value!,
-                  // No validator as this fiel is optionnal
+                  // No validator as this field is optionnal
                 ),
                 SizedBox(
-                  height: (SizeConfig.defaultSize * 2),
+                  height: SizeConfig.padding,
                 ),
+                // Mark modifiers section title
                 Text(
                   (markerData.type == 'spot')
-                      ? AppLocalizations.of(context)!.newSpotModifiersTitle
-                      : (markerData.type == 'shop')
-                        ? AppLocalizations.of(context)!.newShopModifiersTitle
-                        : AppLocalizations.of(context)!.newBarModifiersTitle,
+                    ? AppLocalizations.of(context)!.newSpotModifiersTitle
+                    : (markerData.type == 'shop')
+                      ? AppLocalizations.of(context)!.newShopModifiersTitle
+                      : AppLocalizations.of(context)!.newBarModifiersTitle,
                   textAlign: TextAlign.center,
                 ),
-                // POI Modifiers
+                // Mark Modifiers
                 Wrap(
                   alignment: WrapAlignment.center,
-                  children: MarkerView.buildListElements(context, markerData.type, modifiers, false, markerData.modifiers, setModalState),
+                  children: MarkerView.buildListElements(
+                    context,
+                    markerData.type,
+                    modifiers,
+                    false,
+                    markerData.modifiers,
+                    setModalState,
+                  ),
                 ),
                 SizedBox(
-                  height: (SizeConfig.defaultSize * 2),
+                  height: SizeConfig.padding,
                 ),
+                // Mark rating (and price for shop and bar types)
                 Row(
                   mainAxisAlignment: (markerData.type == 'spot')
                     ? MainAxisAlignment.center
@@ -233,14 +250,14 @@ class ModalHelper {
                           direction: Axis.horizontal,
                           itemCount: 5,
                           itemSize: SizeConfig.iconSize,
-                          itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          itemPadding: const EdgeInsets.symmetric(
+                            horizontal: 2.0,
+                          ),
                           itemBuilder: (context, _) => const Icon(
                             Icons.star,
                             color: Colors.amber,
                           ),
-                          onRatingUpdate: (rating) {
-                            markerData.rate = rating;
-                          },
+                          onRatingUpdate: (rating) => markerData.rate = rating,
                         ),
                       ],
                     ),
@@ -259,14 +276,14 @@ class ModalHelper {
                               direction: Axis.horizontal,
                               itemCount: 3,
                               itemSize: SizeConfig.iconSize,
-                              itemPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              itemPadding: const EdgeInsets.symmetric(
+                                horizontal: 2.0,
+                              ),
                               itemBuilder: (context, _) => const Icon(
                                 Icons.attach_money,
                                 color: Colors.green,
                               ),
-                              onRatingUpdate: (rating) {
-                                markerData.price = rating.toInt();
-                              },
+                              onRatingUpdate: (rating) => markerData.price = rating.toInt(),
                             ),
                           ],
                         )
@@ -274,9 +291,9 @@ class ModalHelper {
                   ],
                 ),
                 SizedBox(
-                  height: (SizeConfig.defaultSize * 2),
+                  height: SizeConfig.padding,
                 ),
-                // Submit new spot
+                // Submit mark (new and edit)
                 ButtonTheme(
                   height: (SizeConfig.defaultSize * 5),
                   minWidth: MediaQuery.of(context).size.width,

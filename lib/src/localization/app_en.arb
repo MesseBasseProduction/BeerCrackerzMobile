@@ -120,6 +120,9 @@
       "feature": {}
     }
   },
+  "newMarkSpotType": "Spot",
+  "newMarkShopType": "Shop",
+  "newMarkBarType": "Bar",
   "newSpotTitle": "New spot",
   "newSpotInformation": "A spot is a remarkable place to crack a beer ! Share it with the community, wether it is for the astonishing view or for whatever it is enjoyable to drink a beer!",
   "newSpotNameInput": "Spot name",

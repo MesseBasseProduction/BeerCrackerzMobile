@@ -68,9 +68,9 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                       // Form inner padding
                       padding: EdgeInsets.only(
                         top: (SizeConfig.defaultSize * 4),
-                        bottom: (SizeConfig.defaultSize * 2),
-                        left: (SizeConfig.defaultSize * 2),
-                        right: (SizeConfig.defaultSize * 2),
+                        bottom: SizeConfig.padding,
+                        left: SizeConfig.padding,
+                        right: SizeConfig.padding,
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
@@ -89,7 +89,7 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                             ),
                           ),
                           SizedBox(
-                            height: (SizeConfig.defaultSize * 2),
+                            height: SizeConfig.padding,
                           ),
                           Text(
                             AppLocalizations.of(context)!.authRegisterSuccessContent,
@@ -99,7 +99,7 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                             ),
                           ),
                           SizedBox(
-                            height: (SizeConfig.defaultSize * 2),
+                            height: SizeConfig.padding,
                           ),
                           // Back to Login button, once mail confirmed
                           ButtonTheme(

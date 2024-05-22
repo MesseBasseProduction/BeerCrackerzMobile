@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:beercrackerz/src/map/modal/modal_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -9,17 +8,20 @@ import 'package:toggle_switch/toggle_switch.dart';
 import '/src/map/map_service.dart';
 import '/src/map/map_view.dart';
 import '/src/map/marker/marker_data.dart';
+import '/src/map/modal/modal_helper.dart';
+import '/src/utils/app_const.dart';
+import '/src/utils/size_config.dart';
 
 class NewMarkerView extends StatefulWidget {
   const NewMarkerView({
     super.key,
     required this.mapView,
-    required this.data,
-    required this.callback
+    required this.markerData,
+    required this.callback,
   });
 
   final MapView mapView;
-  final MarkerData data;
+  final MarkerData markerData;
   final Function callback;
 
   @override
@@ -29,88 +31,101 @@ class NewMarkerView extends StatefulWidget {
 }
 
 class NewMarkerViewState extends State<NewMarkerView> {
-  String poiType = 'spot';
+  String markType = 'spot'; // Start modal with default to spot
   // Must be defined in here instead of MarkerView to avoid reset each build call
   final _formKey = GlobalKey<FormState>();
-
+  // Generic build method for each marker type
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
+    SizeConfig().init(context);
     MediaQueryData mediaQueryData = MediaQuery.of(context);
-
-    int screenHeightRatio = 66;
+    // In case of new mark we update each setState the WIP marker type
+    widget.markerData.type = markType;
 
     return Container(
-      height: (screenHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
+      height: (AppConst.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
       width: mediaQueryData.size.width,
-      padding: const EdgeInsets.all(4),
+      padding: EdgeInsets.symmetric(
+        horizontal: SizeConfig.padding,
+      ),
       child: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: SizeConfig.padding,
+            ),
+            // Modal new mark title
             Text(
-              (poiType == 'spot')
+              (markType == 'spot')
               ? AppLocalizations.of(context)!.newSpotTitle
-              : (poiType == 'shop')
+              : (markType == 'shop')
                 ? AppLocalizations.of(context)!.newShopTitle
                 : AppLocalizations.of(context)!.newBarTitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 28
+                fontSize: SizeConfig.fontTextTitleSize,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0),
+            SizedBox(
+              height: SizeConfig.paddingSmall,
             ),
-            // POI type switch
+            // New mark type switch
             ToggleSwitch(
               customWidths: [mediaQueryData.size.width / 4, mediaQueryData.size.width / 4, mediaQueryData.size.width / 4],
-              initialLabelIndex: (poiType == 'spot') ? 0 : (poiType == 'shop') ? 1 : 2,
+              initialLabelIndex: (markType == 'spot')
+                ? 0
+                : (markType == 'shop')
+                  ? 1
+                  : 2,
               totalSwitches: 3,
-              labels: const ['Spot', 'Shop', 'Bar'],
+              labels: [
+                AppLocalizations.of(context)!.newMarkSpotType,
+                AppLocalizations.of(context)!.newMarkShopType,
+                AppLocalizations.of(context)!.newMarkBarType,
+              ],
               onToggle: (index) {
                 if (index == 0) {
-                  setState(() => poiType = 'spot');
+                  setState(() => markType = 'spot');
                 } else if (index == 1) {
-                  setState(() => poiType = 'shop');
+                  setState(() => markType = 'shop');
                 } else {
-                  setState(() => poiType = 'bar');
+                  setState(() => markType = 'bar');
                 }
               },
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0),
+            SizedBox(
+              height: SizeConfig.paddingSmall,
             ),
             // BottomModal content built depending on switch value
             SingleChildScrollView(
-              child: (poiType == 'spot')
-                ? buildNewSpotModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback)
-                : (poiType == 'shop')
-                  ? buildNewShopModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback)
-                  : buildNewBarModal(context, widget.mapView, poiType, _formKey, widget.data, widget.callback),
+              child: (markType == 'spot')
+                ? buildNewSpotModal()
+                : (markType == 'shop')
+                  ? buildNewShopModal()
+                  : buildNewBarModal(),
             ),
           ],
         ),
       ),
     );
   }
-
-  static Widget buildNewSpotModal(
-    BuildContext context,
-    MapView mapView,
-    String type,
-    GlobalKey<FormState> formKey,
-    MarkerData data,
-    Function callback
-  ) {
+  // New spot modal validation
+  Widget buildNewSpotModal() {
     void formValidation() async {
-      formKey.currentState!.save();
-      if (formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.postSpot(await mapView.controller.getAuthToken(), data).then((response) async {
+        MapService.postSpot(
+          await widget.mapView.controller.getAuthToken(),
+          widget.markerData,
+        ).then((response) async {
           if (response.statusCode == 201) {
             final parsedJson = jsonDecode(response.body);
             MarkerData newMark = MarkerData.fromJson(parsedJson);
-            callback('spot', newMark);
+            widget.callback('spot', newMark);
           }
         }).catchError((handleError) {
           print(handleError);
@@ -123,30 +138,26 @@ class NewMarkerViewState extends State<NewMarkerView> {
 
     return ModalHelper.markerEditor(
       context,
-      formKey,
-      data,
+      _formKey,
+      widget.markerData,
       formValidation,
     );
   }
-
-  static Widget buildNewShopModal(
-    BuildContext context,
-    MapView mapView,
-    String type,
-    GlobalKey<FormState> formKey,
-    MarkerData data,
-    Function callback
-  ) {
+  // New shop modal validation
+  Widget buildNewShopModal() {
     void formValidation() async {
-      formKey.currentState!.save();
-      if (formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.postShop(await mapView.controller.getAuthToken(), data).then((response) async {
+        MapService.postShop(
+          await widget.mapView.controller.getAuthToken(),
+          widget.markerData,
+        ).then((response) async {
           if (response.statusCode == 201) {
             final parsedJson = jsonDecode(response.body);
             MarkerData newMark = MarkerData.fromJson(parsedJson);
-            callback('shop', newMark);
+            widget.callback('shop', newMark);
           }
         }).catchError((handleError) {
           print(handleError);
@@ -159,30 +170,26 @@ class NewMarkerViewState extends State<NewMarkerView> {
 
     return ModalHelper.markerEditor(
       context,
-      formKey,
-      data,
+      _formKey,
+      widget.markerData,
       formValidation,
     );
   }
-
-  static Widget buildNewBarModal(
-    BuildContext context,
-    MapView mapView,
-    String type,
-    GlobalKey<FormState> formKey,
-    MarkerData data,
-    Function callback
-  ) {
+  // New bar modal validation
+  Widget buildNewBarModal() {
     void formValidation() async {
-      formKey.currentState!.save();
-      if (formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
-        MapService.postBar(await mapView.controller.getAuthToken(), data).then((response) async {
+        MapService.postBar(
+          await widget.mapView.controller.getAuthToken(),
+          widget.markerData,
+        ).then((response) async {
           if (response.statusCode == 201) {
             final parsedJson = jsonDecode(response.body);
             MarkerData newMark = MarkerData.fromJson(parsedJson);
-            callback('bar', newMark);
+            widget.callback('bar', newMark);
           }
         }).catchError((handleError) {
           print(handleError);
@@ -195,8 +202,8 @@ class NewMarkerViewState extends State<NewMarkerView> {
 
     return ModalHelper.markerEditor(
       context,
-      formKey,
-      data,
+      _formKey,
+      widget.markerData,
       formValidation,
     );
   }

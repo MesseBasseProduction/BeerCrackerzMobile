@@ -238,9 +238,9 @@ class LoginViewState extends State<LoginView> {
                         ),
                         // Form inner padding
                         padding: EdgeInsets.only(
-                          bottom: (SizeConfig.defaultSize * 2),
-                          left: (SizeConfig.defaultSize * 2),
-                          right: (SizeConfig.defaultSize * 2),
+                          bottom: SizeConfig.padding,
+                          left: SizeConfig.padding,
+                          right: SizeConfig.padding,
                           top: (SizeConfig.defaultSize * 6),
                         ),
                         decoration: BoxDecoration(
@@ -305,7 +305,7 @@ class LoginViewState extends State<LoginView> {
                               },
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Password input field
                             TextFormField(
@@ -376,7 +376,7 @@ class LoginViewState extends State<LoginView> {
                               },
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Forgogt password link
                             Align(
@@ -393,7 +393,7 @@ class LoginViewState extends State<LoginView> {
                               ),
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Submit login form
                             ButtonTheme(
@@ -405,7 +405,7 @@ class LoginViewState extends State<LoginView> {
                               ),
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             // Register link
                             Row(

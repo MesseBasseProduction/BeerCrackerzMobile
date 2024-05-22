@@ -135,9 +135,9 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                             : 0.0,
                         ),
                         padding: EdgeInsets.only(
-                          bottom: (SizeConfig.defaultSize * 2),
-                          left: (SizeConfig.defaultSize * 2),
-                          right: (SizeConfig.defaultSize * 2),
+                          bottom: SizeConfig.padding,
+                          left: SizeConfig.padding,
+                          right: SizeConfig.padding,
                           top: (SizeConfig.defaultSize * 6),
                         ),
                         decoration: BoxDecoration(
@@ -162,7 +162,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                                 filled: true,
                                 prefixIcon: Icon(
                                   Icons.mail,
-                                  size: (SizeConfig.defaultSize * 2),
+                                  size: SizeConfig.padding,
                                   color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 enabledBorder: UnderlineInputBorder(
@@ -208,7 +208,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                               },
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                             ButtonTheme(
                               height: (SizeConfig.defaultSize * 5),
@@ -224,7 +224,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                               ),
                             ),
                             SizedBox(
-                              height: (SizeConfig.defaultSize * 2),
+                              height: SizeConfig.padding,
                             ),
                           ],
                         ),

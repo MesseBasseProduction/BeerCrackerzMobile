@@ -88,7 +88,7 @@ class MarkerView {
       mapController,
       tickerProvider,
     );
-    // Display POI informations in scrollable modal bottom sheet
+    // Display mark informations in scrollable modal bottom sheet
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -380,17 +380,17 @@ class MarkerView {
       ),
     );
   }
-  // Util method for POI types and modifiers lists
+  // Util method for mark types and modifiers lists
   static List<Widget> buildListElements(
     BuildContext context,
-    String poiType,
-    List<String> poiElements,
+    String markType,
+    List<String> listElements,
     bool readOnly,
     List<String> selected,
     StateSetter setModalState
   ) {
     List<Widget> output = [];
-    for (var element in poiElements) {
+    for (var element in listElements) {
       element = element.replaceAll('_', ''); // Clear special chars
       Container typeElem = Container(
         margin: const EdgeInsets.all(4.0),
@@ -430,9 +430,9 @@ class MarkerView {
                   ),
                 ),
                 TextSpan(
-                  text: (poiType == 'spot')
+                  text: (markType == 'spot')
                     ? AppLocalizations.of(context)!.spotFeatures(element)
-                    : ((poiType == 'shop')
+                    : ((markType == 'shop')
                       ? AppLocalizations.of(context)!.shopFeatures(element)
                       : AppLocalizations.of(context)!.barFeatures(element)),
                   style: TextStyle(
