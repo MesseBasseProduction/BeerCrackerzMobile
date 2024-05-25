@@ -1,0 +1,203 @@
+{
+  "appTitle": "BeerCrackerz",
+  "appTitleWithCase": "BeerCrackerz",
+  "@appTitle": {
+    "description": "O app para os amantes de cerveja, para compartilhar o melhor lugar para quebrar uma cerveja, ou para reabastecer facilmente essa bebida dos deuses!"
+  },
+  "httpServerErrorToastTitle": "O servidor parece confuso",
+  "httpServerErrorToastDescription": "O servidor não respondeu como deveria. Entre em contato com o suporte para obter assistência com o código de erro {field}.",
+  "@httpServerErrorToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
+  "httpWrongResponseToastTitle": "Resposta inesperada do servidor",
+  "httpWrongResponseToastDescription": "O servidor não respondeu como de costume. Entre em contato com o suporte para obter assistência com o código de erro {field}.",
+  "@httpWrongResponseToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
+  "httpFrontErrorToastTitle": "Erro de aplicação",
+  "httpFrontErrorToastDescription": "Algo deu errado ao tentar acessar o servidor. Entre em contato com o suporte para obter assistência com o código de erro {field}.",
+  "authLoginTitle": "Conecte-se",
+  "authLoginUsernameInput": "Nome de usuário ou email",
+  "authLoginUsername": "nome de usuário",
+  "authLoginPasswordInput": "Senha",
+  "authLoginPassword": "senha",
+  "authLoginForgotPassword": "Esqueceu sua senha?",
+  "authLoginSubmit": "Conecte-se",
+  "authLoginNoAccount": "Não tem uma conta? ",
+  "authLoginRegister": "Registro",
+  "authLoginInvalidCredentials": "Credenciais inválidas, incorretas ou inexistentes",
+  "authLoginEmptyCredentials": "Credenciais vazias recebidas",
+  "authLoginSuccessToastTitle": "Bem vindo de volta!",
+  "authLoginSuccessToastDescription": "Logado com sucesso em sua conta BeerCrackerz. Pegue um lugar e uma cerveja e divirta-se!",
+  "authRegisterTitle": "Registro",
+  "authRegisterUsernameInput": "Entre com seu nome de usuário",
+  "authRegisterUsername": "nome de usuário",
+  "authRegisterUsernameAlreadyTaken": "Este nome de usuário já está registrado",
+  "authRegisterEmailInput": "Digite seu email",
+  "authRegisterEmail": "email",
+  "authRegisterEmailInvalid": "Este email é inválido",
+  "authRegisterEmailAlreadyTaken": "Este email já está registado",
+  "authRegisterPasswordInput": "Coloque sua senha",
+  "authRegisterPassword": "senha",
+  "authRegisterPasswordTooCommon": "Esta senha é muito comum",
+  "authRegisterPasswordNotStrongEnough": "A senha não é forte o suficiente",
+  "authRegisterPasswordNotStrongEnoughToastTitle": "Sobre a força da senha",
+  "authRegisterPasswordNotStrongEnoughToastDescription": "Sua senha deve conter 8 ou mais caracteres, com pelo menos uma letra maiúscula, um dígito e um caractere especial.",
+  "authRegisterPasswordNotMatching": "As senhas não correspondem",
+  "authRegisterRepeatPasswordInput": "Repita sua senha",
+  "authRegisterRepeatPassword": "repita sua senha",
+  "authRegisterSubmit": "Registro",
+  "authRegisterHaveAccount": "Você tem uma conta? ",
+  "authRegisterLogin": "Conecte-se",
+  "authRegisterSuccessTitle": "Cadastro enviado",
+  "authRegisterSuccessHeader": "Você está quase dentro!",
+  "authRegisterSuccessContent": "Você está um passo mais perto de editar o mapa e aproveitar ao máximo o BeerCrackerz! Vá verificar seu e-mail, valide sua conta e faça login.",
+  "authRegisterSuccessSubmit": "Liberar",
+  "authResetPasswordTitle": "Redefinir senha",
+  "authResetPasswordInput": "Digite seu email",
+  "authResetPassword": "email",
+  "authResetPasswordInvalidEmail": "Este email é inválido",
+  "authResetPasswordSubmit": "Redefinir senha",
+  "authResetPasswordSuccessTitle": "Redefinição de senha enviada",
+  "authResetPasswordSuccessHeader": "Senha quase redefinida!",
+  "authResetPasswordSuccessContent": "Agora consulte seus emails e siga o link para definir uma nova senha na interface web e faça login novamente.",
+  "authResetPasswordSuccessSubmit": "Liberar",
+  "authProfileTitle": "Perfil",
+  "authProfileCropTitle": "Cortar imagem",
+  "authProfileFatalErrorTitle": "Erro ao cortar imagem",
+  "authProfileFatalErrorContent": "Ocorreu um erro fatal ao abrir o cortador de imagem. Entre em contato com o suporte para obter assistência.",
+  "authProfileErrorMinimalPPSizeTitle": "Tamanho de imagem inválido",
+  "authProfileErrorMinimalPPSizeContent": "A imagem recortada está abaixo de 512x512 pixels. Forneça uma imagem com mais pixels.",
+  "authProfileErrorPPUploadErrorTitle": "Erro no processamento de imagem",
+  "authProfileErrorPPUploadErrorDescription": "Algo deu errado no servidor com a imagem fornecida. Entre em contato com o suporte para obter assistência com o código de erro {field}.",
+  "@authProfileErrorPPUploadErrorDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
+  "authProfileAboutBeerCrackerz": "BeerCrackerz é a comunidade dos amantes da cerveja, repleta de caçadores de cerveja e amantes de cereais. Uma ideia brilhante de David Béché, concretizada pela Messe Basse Production! BeerCrackerz é um site de código aberto e um aplicativo móvel lançado sob a licença GPL-3.0.",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "authProfileLogout": "Sair",
+  "authProfileLogoutSuccessToastTitle": "Sucesso no logout",
+  "authProfileLogoutSuccessToastDescription": "Você foi desconectado da sua conta com sucesso. Vejo você em breve!",
+  "settingsTitle": "Configurações",
+  "settingsInterfaceSection": "Interface",
+  "settingsInterfaceLanguageSetting": "Linguagem",
+  "settingsInterfaceLanguageDialogTitle": "Selecione o idioma",
+  "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 Inglês} fr{🇫🇷 Francês} es{🇪🇸 Espanhol} de{🇩🇪 Alemão} it{🇮🇹 Italiano} pt{🇵🇹 Português} other{Desconhecido}}",
+  "settingsInterfaceClose": "Fechar",
+  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "@shopFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "settingsInterfaceTheme": "Tema escuro",
+  "emptyInput": "O campo {field} não pode ficar vazio",
+  "@emptyInput": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "selected"
+      }
+    }
+  },
+  "spotFeatures": "{feature, select, forest{Floresta} river{Rio} lake{Lago} cliff{Penhasco} mountain{Montanha} beach{Praia} sea{Mar} city{Cidade} pov{Ponto de Vista} bench{Banco} covered{Abordado} toilet{Banheiro} store{Loja próxima} trash{Lixo} parking{Estacionamento} other{Outro}}",
+  "@spotFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "shopFeatures": "{feature, select, store{Bomboneria} super{Supermercado} hyper{Hipermercado} cellar{Porão} bio{Bio} craft{Artesanal} fresh{Refrigerado} card{Cartão de crédito} choice{Ampla escolha} other{Outro}}",
+  "@shopFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "barFeatures": "{feature, select, regular{Normal} snack{Lanche} cellar{Cervejaria} rooftop{Telhado} tobacco{Cigarros} food{Comida} card{Cartão de crédito} choice{Ampla escolha} outdoor{Ar livre} other{Outro}}",
+  "@barFeatures": {
+    "placeholders": {
+      "feature": {}
+    }
+  },
+  "newMarkSpotType": "Spot",
+  "newMarkShopType": "Loja",
+  "newMarkBarType": "Bar",
+  "newSpotTitle": "Novo spot",
+  "newSpotInformation": "Um spot é um lugar notável para quebrar uma cerveja! Compartilhe com a comunidade, seja pela vista deslumbrante ou pelo que é gostoso tomar uma cerveja!",
+  "newSpotNameInput": "Nome do spot",
+  "newSpotNameInputEmpty": "nome do spot",
+  "newSpotTypesTitle": "Que tipo de spot é esse?",
+  "newSpotDescriptionInput": "Descreva esse spot",
+  "newSpotModifiersTitle": "Possui alguma característica específica?",
+  "newSpotRatingTitle": "Dê uma nota",
+  "newSpotSubmit": "Salvar spot",
+  "newShopTitle": "Nova loja",
+  "newShopInformation": "O local obrigatório para reabastecer seu estoque de cerveja. Quanto mais informações você fornecer, melhor você ajudará seus colegas BeerCrackerz!",
+  "newShopNameInput": "Nome da loja",
+  "newShopNameInputEmpty": "nome da loja",
+  "newShopTypesTitle": "Que tipo de loja é?",
+  "newShopDescriptionInput": "Descreva essa loja",
+  "newShopModifiersTitle": "Possui alguma característica específica?",
+  "newShopRatingTitle": "Dê uma nota",
+  "newShopPriceTitle": "Dê uma taxa",
+  "newShopSubmit": "Salvar loja",
+  "newBarTitle": "Novo bar",
+  "newBarInformation": "Um bar é um lugar sagrado onde você pode tomar chopes bem gelados!",
+  "newBarNameInput": "Nome da barra",
+  "newBarNameInputEmpty": "nome da barra",
+  "newBarTypesTitle": "Que tipo de bar é esse?",
+  "newBarDescriptionInput": "Descreva essa barra",
+  "newBarModifiersTitle": "Possui alguma característica específica?",
+  "newBarRatingTitle": "Dê uma nota",
+  "newBarPriceTitle": "Dê uma taxa",
+  "newBarSubmit": "Salvar barra",
+  "newMarkErrorToastTitle": "Dados incompletos",
+  "editSpotTitle": "Editar spot",
+  "editShopTitle": "Editar loja",
+  "editBarTitle": "Editar bar",
+  "editMarkErrorToastTitle": "Dados incompletos",
+  "editMarkErrorToastDescription": "Preencha um título e um tipo para esta marca. Entre em contato com o suporte para obter assistência com o código de erro {field}.",
+  "@editMarkErrorToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
+  "deleteMarkDialogTitle": "Excluir marcador",
+  "deleteMarkDialogDescription": "Você está prestes a excluir este ponto de interesse. É isso mesmo que você deseja?",
+  "deleteMarkDialogYes": "Sim",
+  "deleteMarkDialogNo": "Não",
+  "spotDiscoveredBy": "Um spot descoberto por",
+  "shopDiscoveredBy": "Uma loja descoberta por",
+  "barDiscoveredBy": "Um bar descoberto por",
+  "markDiscoveredSince": "Desde",
+  "markEdit": "Editar",
+  "markDelete": "Excluir",
+  "mapOptionsTitle": "Opções de mapa",
+  "mapOptionsLayerStyle": "Estilo da camada do mapa",
+  "mapOptionsLayerPlan": "Plano",
+  "mapOptionsLayerSatellite": "Satélite",
+  "mapOptionsDisplayedMarkers": "Visibilidade dos marcadores",
+  "mapOptionsDisplaySpots": "Exibir spots",
+  "mapOptionsDisplayShops": "Exibir lojas",
+  "mapOptionsDisplayBars": "Exibir barras",
+  "mapOSMContributors": "Colaboradores do OpenStreeMap",
+  "mapEsriContributors": "Desenvolvido por Esri",
+  "mapFlutterMapContributors": "Desenvolvedores do Flutter Map"
+}

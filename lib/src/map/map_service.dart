@@ -10,7 +10,7 @@ class MapService {
 
   /* Marker fetching and building */
 
-  static Future<List> fetchMarkersFromType(
+  static Future<List> getMark(
     type,
   ) async {
     final response = await http.get(Uri.parse('${AppConst.baseURL}/api/$type/'));
@@ -23,60 +23,48 @@ class MapService {
     }
   }
 
-  static Future<List> fetchSpots() async {
-    return await fetchMarkersFromType('spot');
-  }
-
-  static Future<List> fetchShops() async {
-    return await fetchMarkersFromType('shop');
-  }
-
-  static Future<List> fetchBars() async {
-    return await fetchMarkersFromType('bar');
-  }
-
   static Future<List<MarkerData>> getSpots() async {
     List<MarkerData> output = [];
-
-    await MapService.fetchSpots().then((spots) {
+    await MapService.getMark('spot').then((spots) {
       for (var spot in spots) {
-        output.add(MarkerData.fromJson(spot));
+        output.add(
+          MarkerData.fromJson(spot),
+        );
       }
     }).catchError((handleError) {
       // An eror occured while creating individual MarkerData
       throw Exception(handleError);
     });
-
     return output;
   }
 
   static Future<List<MarkerData>> getShops() async {
     List<MarkerData> output = [];
-
-    await MapService.fetchShops().then((shops) {
+    await MapService.getMark('shop').then((shops) {
       for (var shop in shops) {
-        output.add(MarkerData.fromJson(shop));
+        output.add(
+          MarkerData.fromJson(shop),
+        );
       }
     }).catchError((handleError) {
       // An eror occured while creating individual MarkerData
       throw Exception(handleError);
     });
-
     return output;
   }
 
   static Future<List<MarkerData>> getBars() async {
     List<MarkerData> output = [];
-
-    await MapService.fetchBars().then((bars) {
+    await MapService.getMark('bar').then((bars) {
       for (var bar in bars) {
-        output.add(MarkerData.fromJson(bar));
+        output.add(
+          MarkerData.fromJson(bar),
+        );
       }
     }).catchError((handleError) {
       // An eror occured while creating individual MarkerData
       throw Exception(handleError);
     });
-
     return output;
   }
 
@@ -225,17 +213,29 @@ class MapService {
     );
   }
 
-  static Future<http.Response> deleteSpot(
+  static Future<http.Response> deleteMark(
+    String type,
     String token,
     int id,
   ) async {
     return await http.delete(
-      Uri.parse('${AppConst.baseURL}/api/spot/$id/'),
+      Uri.parse('${AppConst.baseURL}/api/$type/$id/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json',
         'Authorization': 'Bearer $token'
       },
+    );
+  }
+
+  static Future<http.Response> deleteSpot(
+    String token,
+    int id,
+  ) async {
+    return deleteMark(
+      'spot',
+      token,
+      id,
     );
   }
 
@@ -243,13 +243,10 @@ class MapService {
     String token,
     int id,
   ) async {
-    return await http.delete(
-      Uri.parse('${AppConst.baseURL}/api/shop/$id/'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
+    return deleteMark(
+      'shop',
+      token,
+      id,
     );
   }
 
@@ -257,13 +254,10 @@ class MapService {
     String token,
     int id,
   ) async {
-    return await http.delete(
-      Uri.parse('${AppConst.baseURL}/api/bar/$id/'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
+    return deleteMark(
+      'bar',
+      token,
+      id,
     );
   }
 }

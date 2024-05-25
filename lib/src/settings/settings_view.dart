@@ -3,18 +3,20 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 import '/src/settings/settings_controller.dart';
+import '/src/utils/app_const.dart';
 import '/src/utils/size_config.dart';
 // This settings view handle global app settings.
-// They are stored on the phone so they are permanent
+// They are stored on the phone so they are permanent.
+// This view allow the end user to modify those settings.
 class SettingsView extends StatefulWidget {
   const SettingsView({
     super.key,
-    required this.controller,
+    required this.settingsController,
   });
 
   static const routeName = '/settings';
-  final SettingsController controller;
-  
+  final SettingsController settingsController;
+
   @override
   SettingsViewState createState() {
     return SettingsViewState();
@@ -27,7 +29,8 @@ class SettingsViewState extends State<SettingsView> {
     BuildContext context,
   ) {
     SizeConfig().init(context);
-    Locale localeValue = widget.controller.appLocale;
+    Locale localeValue = widget.settingsController.appLocale;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -37,6 +40,7 @@ class SettingsViewState extends State<SettingsView> {
       ),
       body: SettingsList(
         sections: [
+          // Interface section
           SettingsSection(
             title: Text(
               AppLocalizations.of(context)!.settingsInterfaceSection,
@@ -53,24 +57,71 @@ class SettingsViewState extends State<SettingsView> {
                 value: Text(
                   AppLocalizations.of(context)!.settingsInterfaceLanguage(localeValue.toString()),
                 ),
-                onPressed: (context) {
+                onPressed: (
+                  context,
+                ) {
                   showDialog(
                     context: context,
-                    builder: (context) {
+                    builder: (
+                      context,
+                    ) {
                       return StatefulBuilder(
-                        builder: (context, setDialogState) {
+                        builder: (
+                          context,
+                          setDialogState,
+                        ) {
+                          // Internal method to build supported lang Dialog ListTiles
+                          List<ListTile> buildSupportedLocale() {
+                            List<ListTile> output = [];
+                            for (var locale in AppConst.supportedLang) {
+                              output.add(
+                                ListTile(
+                                  title: Text(
+                                    AppLocalizations.of(context)!.settingsInterfaceLanguage(locale),
+                                    style: TextStyle(
+                                      fontSize: SizeConfig.fontTextSize,
+                                    ),
+                                  ),
+                                  visualDensity: const VisualDensity(
+                                    horizontal: 0,
+                                    vertical: -4, // Tighten list entries
+                                  ),
+                                  leading: Radio<Locale>(
+                                    value: Locale.fromSubtags(
+                                      languageCode: locale,
+                                    ),
+                                    groupValue: localeValue,
+                                    onChanged: (
+                                      Locale? value,
+                                    ) {
+                                      localeValue = value!;
+                                      setDialogState(() {});
+                                    },
+                                  ),
+                                ),
+                              );
+                            }
+                            return output;
+                          }
+                          // Build locale update radio dialog
                           return Dialog(
                             child: Padding(
-                              padding: const EdgeInsets.all(12.0),
+                              padding: EdgeInsets.all(
+                                SizeConfig.padding,
+                              ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
+                                  // Dialog title
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(left: 28.0, bottom: 8.0),
+                                        padding: EdgeInsets.only(
+                                          left: SizeConfig.paddingSmall,
+                                          bottom: SizeConfig.paddingSmall,
+                                        ),
                                         child: Text(
                                           AppLocalizations.of(context)!.settingsInterfaceLanguageDialogTitle,
                                           style: TextStyle(
@@ -80,108 +131,11 @@ class SettingsViewState extends State<SettingsView> {
                                       ),
                                     ],
                                   ),
-                                  ListTile(
-                                    title: Text(
-                                      AppLocalizations.of(context)!.settingsInterfaceLanguage('en'),
-                                      style: TextStyle(
-                                        fontSize: SizeConfig.fontTextSize,
-                                      ),
-                                    ),
-                                    visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                    leading: Radio<Locale>(
-                                      value: const Locale.fromSubtags(languageCode: 'en'),
-                                      groupValue: localeValue,
-                                      onChanged: (Locale? value) {
-                                        localeValue = value!;
-                                        setDialogState(() {});
-                                      },
-                                    ),
+                                  // Lists for all supported lang
+                                  Column(
+                                    children: buildSupportedLocale(),
                                   ),
-                                  ListTile(
-                                    title: Text(
-                                      AppLocalizations.of(context)!.settingsInterfaceLanguage('fr'),
-                                      style: TextStyle(
-                                        fontSize: SizeConfig.fontTextSize,
-                                      ),
-                                    ),
-                                    visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                    leading: Radio<Locale>(
-                                      value: const Locale.fromSubtags(languageCode: 'fr'),
-                                      groupValue: localeValue,
-                                      onChanged: (Locale? value) {
-                                        localeValue = value!;
-                                        setDialogState(() {});
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: Text(
-                                      AppLocalizations.of(context)!.settingsInterfaceLanguage('es'),
-                                      style: TextStyle(
-                                        fontSize: SizeConfig.fontTextSize,
-                                      ),
-                                    ),
-                                    visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                    leading: Radio<Locale>(
-                                      value: const Locale.fromSubtags(languageCode: 'es'),
-                                      groupValue: localeValue,
-                                      onChanged: (Locale? value) {
-                                        localeValue = value!;
-                                        setDialogState(() {});
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: Text(
-                                      AppLocalizations.of(context)!.settingsInterfaceLanguage('de'),
-                                      style: TextStyle(
-                                        fontSize: SizeConfig.fontTextSize,
-                                      ),
-                                    ),
-                                    visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                    leading: Radio<Locale>(
-                                      value: const Locale.fromSubtags(languageCode: 'de'),
-                                      groupValue: localeValue,
-                                      onChanged: (Locale? value) {
-                                        localeValue = value!;
-                                        setDialogState(() {});
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: Text(
-                                      AppLocalizations.of(context)!.settingsInterfaceLanguage('it'),
-                                      style: TextStyle(
-                                        fontSize: SizeConfig.fontTextSize,
-                                      ),
-                                    ),
-                                    visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                    leading: Radio<Locale>(
-                                      value: const Locale.fromSubtags(languageCode: 'it'),
-                                      groupValue: localeValue,
-                                      onChanged: (Locale? value) {
-                                        localeValue = value!;
-                                        setDialogState(() {});
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: Text(
-                                      AppLocalizations.of(context)!.settingsInterfaceLanguage('pt'),
-                                      style: TextStyle(
-                                        fontSize: SizeConfig.fontTextSize,
-                                      ),
-                                    ),
-                                    visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-                                    leading: Radio<Locale>(
-                                      value: const Locale.fromSubtags(languageCode: 'pt'),
-                                      groupValue: localeValue,
-                                      onChanged: (Locale? value) {
-                                        localeValue = value!;
-                                        setDialogState(() {});
-                                      },
-                                    ),
-                                  ),
+                                  // Close dialog text button
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
@@ -202,21 +156,14 @@ class SettingsViewState extends State<SettingsView> {
                     },
                   ).then((_) async {
                     // Update app locale then update SettingsView state
-                    await widget.controller.updateAppLocale(localeValue);
+                    await widget.settingsController.updateAppLocale(localeValue);
                     setState(() {});
                   });
                 }
               ),
               // UI dark theme switch
               SettingsTile.switchTile(
-                onToggle: (value) async {
-                  if (value == true) {
-                    await widget.controller.updateThemeMode(ThemeMode.dark);
-                  } else {
-                    await widget.controller.updateThemeMode(ThemeMode.light);
-                  }
-                },
-                initialValue: (widget.controller.themeMode == ThemeMode.dark)
+                initialValue: (widget.settingsController.themeMode == ThemeMode.dark)
                   ? true
                   : false,
                 leading: const Icon(
@@ -225,6 +172,15 @@ class SettingsViewState extends State<SettingsView> {
                 title: Text(
                   AppLocalizations.of(context)!.settingsInterfaceTheme,
                 ),
+                onToggle: (
+                  checked,
+                ) async {
+                  if (checked == true) {
+                    await widget.settingsController.updateThemeMode(ThemeMode.dark);
+                  } else {
+                    await widget.settingsController.updateThemeMode(ThemeMode.light);
+                  }
+                },
               ),
             ],
           ),

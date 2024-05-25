@@ -36,7 +36,7 @@ class SettingsController with ChangeNotifier {
         isLoggedIn = false;
       } else {
         // Call server to request user info
-        isLoggedIn = await processUserInfo();
+        isLoggedIn = await getUserInfo();
       }
     } else {
       isLoggedIn = false;
@@ -76,7 +76,10 @@ class SettingsController with ChangeNotifier {
     String? token,
   ) async {
     if (expiry == null || token == null) return;
-    await _settingsService.updateAuthToken(expiry, token);
+    await _settingsService.updateAuthToken(
+      expiry,
+      token,
+    );
     notifyListeners();
   }
   // Test that the user token is expired or not
@@ -87,8 +90,8 @@ class SettingsController with ChangeNotifier {
   Future<String> getAuthToken() async {
     return _settingsService.getAuthToken();
   }
-  // Fetch user information and store them
-  Future<bool> processUserInfo() async {
+  // Fetch user information and store them, only if token if saved on secure storage
+  Future<bool> getUserInfo() async {
     bool loggedIn = false;
     String token = await _settingsService.getAuthToken();
     if (token != '') {

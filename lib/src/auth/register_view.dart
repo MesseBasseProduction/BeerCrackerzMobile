@@ -8,7 +8,6 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
 import '/src/auth/profile_service.dart';
-import '/src/settings/settings_controller.dart';
 import '/src/settings/settings_view.dart';
 import '/src/utils/size_config.dart';
 // Registration view to allow new user to create an account
@@ -16,11 +15,9 @@ import '/src/utils/size_config.dart';
 class RegisterView extends StatefulWidget {
   const RegisterView({
     super.key,
-    required this.controller,
     required this.setAuthPage,
   });
 
-  final SettingsController controller;
   final Function setAuthPage;
 
   @override

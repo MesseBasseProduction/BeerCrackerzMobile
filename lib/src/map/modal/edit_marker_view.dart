@@ -1,7 +1,7 @@
-import 'package:beercrackerz/src/utils/app_const.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:toastification/toastification.dart';
 
 import '/src/map/map_service.dart';
 import '/src/map/map_view.dart';
@@ -37,7 +37,7 @@ class EditMarkerViewState extends State<EditMarkerView> {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     // Bottom sheet modal content to be injected
     return Container(
-      height: (AppConst.modalHeightRatio * mediaQueryData.size.height) / 100,
+      height: (SizeConfig.modalHeightRatio * mediaQueryData.size.height) / 100,
       width: mediaQueryData.size.width,
       padding: EdgeInsets.symmetric(
         horizontal: SizeConfig.padding,
@@ -79,18 +79,63 @@ class EditMarkerViewState extends State<EditMarkerView> {
     // Specific form validation
     void formValidation() async {
       _formKey.currentState!.save();
+      // Dismiss keyboard by removing focus on current input if any
+      FocusScopeNode currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
       if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
         MapService.patchSpot(
-          await widget.mapView.controller.getAuthToken(),
+          await widget.mapView.settingsController.getAuthToken(),
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 200) {
             Navigator.pop(context);
+          } else {
+            // Invalid/incomplete data sent
+            // Error ESP1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastDescription('ESP1'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
           }
         }).catchError((handleError) {
-          print(handleError);
+          // Unable to perform server call
+          // Error ESP2
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('ESP2'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
         }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();
@@ -110,18 +155,63 @@ class EditMarkerViewState extends State<EditMarkerView> {
     // Specific form validation
     void formValidation() async {
       _formKey.currentState!.save();
+      // Dismiss keyboard by removing focus on current input if any
+      FocusScopeNode currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
       if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
         MapService.patchShop(
-          await widget.mapView.controller.getAuthToken(),
+          await widget.mapView.settingsController.getAuthToken(),
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 200) {
             Navigator.pop(context);
+          } else {
+            // Invalid/incomplete data sent
+            // Error ESH1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastDescription('ESH1'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
           }
         }).catchError((handleError) {
-          print(handleError);
+          // Unable to perform server call
+          // Error ESH2
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('ESH2'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
         }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();
@@ -141,18 +231,63 @@ class EditMarkerViewState extends State<EditMarkerView> {
     // Specific form validation
     void formValidation() async {
       _formKey.currentState!.save();
+      // Dismiss keyboard by removing focus on current input if any
+      FocusScopeNode currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
       if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
         MapService.patchBar(
-          await widget.mapView.controller.getAuthToken(),
+          await widget.mapView.settingsController.getAuthToken(),
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 200) {
             Navigator.pop(context);
+          } else {
+            // Invalid/incomplete data sent
+            // Error EBA1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastDescription('EBA1'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
           }
         }).catchError((handleError) {
-          print(handleError);
+          // Unable to perform server call
+          // Error EBA2
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('EBA2'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
         }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();

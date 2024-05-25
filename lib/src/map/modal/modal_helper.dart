@@ -1,4 +1,3 @@
-import 'package:beercrackerz/src/map/marker/marker_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '/src/map/marker/marker_data.dart';
 import '/src/map/marker/marker_enums.dart';
+import '/src/map/marker/marker_view.dart';
 import '/src/utils/size_config.dart';
 
 class ModalHelper {
@@ -313,6 +313,6 @@ class ModalHelper {
           ),
         );
       },
-    );    
+    );
   }
 }

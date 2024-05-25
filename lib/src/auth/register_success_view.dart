@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '/src/settings/settings_controller.dart';
 import '/src/utils/size_config.dart';
 // Displayed when the registration process went successfull.
 // Invite user to confirm its account from its mail address and
@@ -9,11 +8,9 @@ import '/src/utils/size_config.dart';
 class RegisterSuccessView extends StatefulWidget {
   const RegisterSuccessView({
     super.key,
-    required this.controller,
     required this.setAuthPage,
   });
 
-  final SettingsController controller;
   final Function setAuthPage;
 
   @override

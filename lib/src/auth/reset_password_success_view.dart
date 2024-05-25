@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '/src/settings/settings_controller.dart';
 import '/src/utils/size_config.dart';
 // After successfull password request, we ask use to check emails,
 // so he can update password in the web app. Once done, he can come
@@ -9,11 +8,9 @@ import '/src/utils/size_config.dart';
 class ResetPasswordSuccessView extends StatefulWidget {
   const ResetPasswordSuccessView({
     super.key,
-    required this.controller,
     required this.setAuthPage,
   });
 
-  final SettingsController controller;
   final Function setAuthPage;
 
   @override

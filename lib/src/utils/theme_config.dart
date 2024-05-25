@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // The global theme configuration for light/dark
 class ThemeConfig {
   ThemeConfig();
-  // Main app theme is dark
+  // Light theme definition
   static ThemeData lightTheme() {
     return ThemeData(
       useMaterial3: true,
@@ -24,7 +24,7 @@ class ThemeConfig {
       ),
     );
   }
-  // Light theme data
+  // Dark theme definition
   static ThemeData darkTheme() {
     return ThemeData(
       useMaterial3: true,

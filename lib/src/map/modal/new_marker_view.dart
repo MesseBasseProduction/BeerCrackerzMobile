@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:toastification/toastification.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '/src/map/map_service.dart';
 import '/src/map/map_view.dart';
 import '/src/map/marker/marker_data.dart';
 import '/src/map/modal/modal_helper.dart';
-import '/src/utils/app_const.dart';
 import '/src/utils/size_config.dart';
 
 class NewMarkerView extends StatefulWidget {
@@ -25,9 +25,7 @@ class NewMarkerView extends StatefulWidget {
   final Function callback;
 
   @override
-  NewMarkerViewState createState() {
-    return NewMarkerViewState();
-  }
+  NewMarkerViewState createState() => NewMarkerViewState();
 }
 
 class NewMarkerViewState extends State<NewMarkerView> {
@@ -45,7 +43,7 @@ class NewMarkerViewState extends State<NewMarkerView> {
     widget.markerData.type = markType;
 
     return Container(
-      height: (AppConst.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
+      height: (SizeConfig.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
       width: mediaQueryData.size.width,
       padding: EdgeInsets.symmetric(
         horizontal: SizeConfig.padding,
@@ -73,7 +71,11 @@ class NewMarkerViewState extends State<NewMarkerView> {
             ),
             // New mark type switch
             ToggleSwitch(
-              customWidths: [mediaQueryData.size.width / 4, mediaQueryData.size.width / 4, mediaQueryData.size.width / 4],
+              customWidths: [
+                mediaQueryData.size.width / 4,
+                mediaQueryData.size.width / 4,
+                mediaQueryData.size.width / 4,
+              ],
               initialLabelIndex: (markType == 'spot')
                 ? 0
                 : (markType == 'shop')
@@ -115,20 +117,68 @@ class NewMarkerViewState extends State<NewMarkerView> {
   Widget buildNewSpotModal() {
     void formValidation() async {
       _formKey.currentState!.save();
+      // Dismiss keyboard by removing focus on current input if any
+      FocusScopeNode currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
       if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
         MapService.postSpot(
-          await widget.mapView.controller.getAuthToken(),
+          await widget.mapView.settingsController.getAuthToken(),
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 201) {
             final parsedJson = jsonDecode(response.body);
             MarkerData newMark = MarkerData.fromJson(parsedJson);
-            widget.callback('spot', newMark);
+            widget.callback(
+              'spot',
+              newMark,
+            );
+          } else {
+            // Invalid/incomplete data sent
+            // Error NSP1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastDescription('NSP1'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
           }
         }).catchError((handleError) {
-          print(handleError);
+          // Unable to perform server call
+          // Error NSP2
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSP2'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
         }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();
@@ -147,20 +197,68 @@ class NewMarkerViewState extends State<NewMarkerView> {
   Widget buildNewShopModal() {
     void formValidation() async {
       _formKey.currentState!.save();
+      // Dismiss keyboard by removing focus on current input if any
+      FocusScopeNode currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
       if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
         MapService.postShop(
-          await widget.mapView.controller.getAuthToken(),
+          await widget.mapView.settingsController.getAuthToken(),
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 201) {
             final parsedJson = jsonDecode(response.body);
             MarkerData newMark = MarkerData.fromJson(parsedJson);
-            widget.callback('shop', newMark);
+            widget.callback(
+              'shop',
+              newMark,
+            );
+          } else {
+            // Invalid/incomplete data sent
+            // Error NSH1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastDescription('NSH1'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
           }
         }).catchError((handleError) {
-          print(handleError);
+          // Unable to perform server call
+          // Error NSH2
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSH2'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
         }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();
@@ -179,20 +277,68 @@ class NewMarkerViewState extends State<NewMarkerView> {
   Widget buildNewBarModal() {
     void formValidation() async {
       _formKey.currentState!.save();
+      // Dismiss keyboard by removing focus on current input if any
+      FocusScopeNode currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
       if (_formKey.currentState!.validate()) {
         // Start loading overlay during server call
         context.loaderOverlay.show();
         MapService.postBar(
-          await widget.mapView.controller.getAuthToken(),
+          await widget.mapView.settingsController.getAuthToken(),
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 201) {
             final parsedJson = jsonDecode(response.body);
             MarkerData newMark = MarkerData.fromJson(parsedJson);
-            widget.callback('bar', newMark);
+            widget.callback(
+              'bar',
+              newMark,
+            );
+          } else {
+            // Invalid/incomplete data sent
+            // Error NBA1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.editMarkErrorToastDescription('NBA1'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
           }
         }).catchError((handleError) {
-          print(handleError);
+          // Unable to perform server call
+          // Error NSH2
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSH2'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
         }).whenComplete(() {
           // Hide overlay loader anyway
           context.loaderOverlay.hide();

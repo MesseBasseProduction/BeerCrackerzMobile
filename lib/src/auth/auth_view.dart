@@ -22,7 +22,7 @@ import '/src/settings/settings_controller.dart';
 class AuthView extends StatefulWidget  {
   const AuthView({
     super.key,
-    required this.settingsController
+    required this.settingsController,
   });
 
   static const routeName = '/auth';
@@ -52,33 +52,29 @@ class AuthViewState extends State<AuthView> {
     // Select the AuthView to display depending on the current state
     if (authPage == 5) {
       return ProfileView(
-        controller: widget.settingsController,
-        setAuthPage: setAuthpage
+        settingsController: widget.settingsController,
+        setAuthPage: setAuthpage,
       );
     } else if (authPage == 4) {
       return ResetPasswordSuccessView(
-        controller: widget.settingsController,
-        setAuthPage: setAuthpage
+        setAuthPage: setAuthpage,
       );
     } else if (authPage == 3) {
       return ResetPasswordView(
-        controller: widget.settingsController,
-        setAuthPage: setAuthpage
+        setAuthPage: setAuthpage,
       );
     } else if (authPage == 2) {
       return RegisterSuccessView(
-        controller: widget.settingsController,
-        setAuthPage: setAuthpage
+        setAuthPage: setAuthpage,
       );
     } else if (authPage == 1) {
       return RegisterView(
-        controller: widget.settingsController,
-        setAuthPage: setAuthpage
+        setAuthPage: setAuthpage,
       );
     } else { // By default, display page
       return LoginView(
         settingsController: widget.settingsController,
-        setAuthPage: setAuthpage
+        setAuthPage: setAuthpage,
       );
     }
   }

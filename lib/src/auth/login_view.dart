@@ -26,9 +26,7 @@ class LoginView extends StatefulWidget {
   final Function setAuthPage;
 
   @override
-  LoginViewState createState() {
-    return LoginViewState();
-  }
+  LoginViewState createState() => LoginViewState();
 }
 // Store variable outside state widget to ensure data preservation
 bool showPassword = false;
@@ -48,7 +46,7 @@ class LoginViewState extends State<LoginView> {
   void formValidation(
     BuildContext context,
     String username,
-    String password
+    String password,
   ) {
     setState(() => errorMsg = null);
     _formKey.currentState!.save();
@@ -73,7 +71,7 @@ class LoginViewState extends State<LoginView> {
               parsedJson['expiry'],
               parsedJson['token'],
             );
-            widget.settingsController.isLoggedIn = await widget.settingsController.processUserInfo();
+            widget.settingsController.isLoggedIn = await widget.settingsController.getUserInfo();
             // Ensure context is mounted, then redirect user to MapView
             if (context.mounted) {
               Navigator.popAndPushNamed(
@@ -185,7 +183,7 @@ class LoginViewState extends State<LoginView> {
     BuildContext context
   ) {
     SizeConfig().init(context);
-    double formHeight = SizeConfig.defaultSize * 45;
+    double formHeight = (SizeConfig.defaultSize * 45);
     bool isPortrait = (MediaQuery.of(context).orientation == Orientation.portrait);
 
     return Scaffold(
@@ -199,11 +197,11 @@ class LoginViewState extends State<LoginView> {
           // Open application SettingsView
           IconButton(
             icon: const Icon(
-              Icons.settings
+              Icons.settings,
             ),
             onPressed: () => Navigator.restorablePushNamed(
               context,
-              SettingsView.routeName
+              SettingsView.routeName,
             ),
           ),
         ],

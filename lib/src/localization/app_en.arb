@@ -1,5 +1,5 @@
 {
-  "appTitle": "beercrackerz",
+  "appTitle": "BeerCrackerz",
   "appTitleWithCase": "BeerCrackerz",
   "@appTitle": {
     "description": "The app for beer lovers, to share the best spot to crack a beer, or to easily refill this beverage of the gods!"
@@ -49,7 +49,7 @@
   "authRegisterEmailAlreadyTaken": "This email is already registered",
   "authRegisterPasswordInput": "Enter your password",
   "authRegisterPassword": "password",
-  "authRegisterPasswordTooCommon": "This password to common",
+  "authRegisterPasswordTooCommon": "This password is too common",
   "authRegisterPasswordNotStrongEnough": "Password not strong enough",
   "authRegisterPasswordNotStrongEnoughToastTitle": "About password strength",
   "authRegisterPasswordNotStrongEnoughToastDescription": "Your password must contain 8 or more characters, with at least one capital letter, one digit and one special character.",
@@ -74,8 +74,20 @@
   "authResetPasswordSuccessSubmit": "Dismiss",
   "authProfileTitle": "Profile",
   "authProfileCropTitle": "Crop image",
+  "authProfileFatalErrorTitle": "Crop image error",
+  "authProfileFatalErrorContent": "A fatal error occured whild opening image cropper. Please contact support for assistance.",
   "authProfileErrorMinimalPPSizeTitle": "Invalid image size",
-  "authProfileErrorMinimalPPSizeContent": "The cropped image is bellow 512x512 pixels. Please provide an image with mode pixels.",
+  "authProfileErrorMinimalPPSizeContent": "The cropped image is bellow 512x512 pixels. Please provide an image with more pixels.",
+  "authProfileErrorPPUploadErrorTitle": "Image processing error",
+  "authProfileErrorPPUploadErrorDescription": "Something went wrong on the server with provided image. Please contact support for assistance with error code {field}.",
+  "@authProfileErrorPPUploadErrorDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
   "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production! BeerCrackerz is an open source website and mobile application released under the GPL-3.0 licence.",
   "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
   "authProfileLogout": "Logout",
@@ -87,6 +99,7 @@
   "settingsInterfaceLanguageDialogTitle": "Select language",
   "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 English} fr{🇫🇷 French} es{🇪🇸 Spanish} de{🇩🇪 German} it{🇮🇹 Italian} pt{🇵🇹 Portuguese} other{Unknown}}",
   "settingsInterfaceClose": "Close",
+  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
   "@shopFeatures": {
     "placeholders": {
       "feature": {}
@@ -129,32 +142,43 @@
   "newSpotNameInputEmpty": "spot name",
   "newSpotTypesTitle": "What kind of spot it is?",
   "newSpotDescriptionInput": "Describe that spot",
-  "newSpotModifiersTitle": "Has it any specific features",
+  "newSpotModifiersTitle": "Has it any specific features?",
   "newSpotRatingTitle": "Give it a rate",
   "newSpotSubmit": "Save spot",
   "newShopTitle": "New shop",
-  "newShopInformation": "The must have place to refill your beer stock. The more info you provide, the better you help your fellow beer crackerz!",
+  "newShopInformation": "The must have place to refill your beer stock. The more info you provide, the better you help your fellow BeerCrackerz!",
   "newShopNameInput": "Shop name",
-  "newShopNameInputEmpty": "Shop name",
+  "newShopNameInputEmpty": "shop name",
   "newShopTypesTitle": "What kind of shop it is?",
   "newShopDescriptionInput": "Describe that shop",
-  "newShopModifiersTitle": "Has it any specific features",
+  "newShopModifiersTitle": "Has it any specific features?",
   "newShopRatingTitle": "Give it a rate",
   "newShopPriceTitle": "Give it a price",
-  "newShopSubmit": "Add shop",
+  "newShopSubmit": "Save shop",
   "newBarTitle": "New bar",
   "newBarInformation": "A bar is a holly place where you can get some nicely colded draft beers!",
   "newBarNameInput": "Bar name",
   "newBarNameInputEmpty": "Bar name",
   "newBarTypesTitle": "What kind of bar it is?",
   "newBarDescriptionInput": "Describe that bar",
-  "newBarModifiersTitle": "Has it any specific features",
+  "newBarModifiersTitle": "Has it any specific features?",
   "newBarRatingTitle": "Give it a rate",
   "newBarPriceTitle": "Give it a price",
   "newBarSubmit": "Add bar",
+  "newMarkErrorToastTitle": "Incomplete data",
   "editSpotTitle": "Edit spot",
   "editShopTitle": "Edit shop",
   "editBarTitle": "Edit bar",
+  "editMarkErrorToastTitle": "Incomplete data",
+  "editMarkErrorToastDescription": "Please fill a title and a type for this mark. Please contact support for assistance with error code {field}.",
+  "@editMarkErrorToastDescription": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "XXX1"
+      }
+    }
+  },
   "deleteMarkDialogTitle": "Delete marker",
   "deleteMarkDialogDescription": "You're about to delete this point of interest, is that really what you want?",
   "deleteMarkDialogYes": "Yes",

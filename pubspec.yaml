@@ -1,7 +1,6 @@
 name: beercrackerz
-description: "A new Flutter project."
+description: "The app for beer lovers, to share the best spot to crack a beer, or to easily refill this beverage of the gods!"
 
-# Prevent accidental publishing to pub.dev.
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -34,17 +33,21 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
-
   # Enable generation of localized Strings from arb files.
   generate: true
-
+  # Add assets from the images directory into the application.
   assets:
-    # Add assets from the images directory to the application.
     - assets/images/
     - assets/images/marker/
     - assets/images/icon/
+
+flutter_launcher_icons: # To update icon, run "flutter pub run flutter_launcher_icons"
+  android: "launcher_icon"
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: #FFFFBF
+  min_sdk_android: 21

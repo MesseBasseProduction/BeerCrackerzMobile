@@ -32,6 +32,7 @@ class MapOptionsViewState extends State<MapOptionsView> {
   Widget build(
     BuildContext context,
   ) {
+    SizeConfig().init(context);
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     // Local working values
     String mapLayer = widget.mapLayer;
@@ -45,7 +46,7 @@ class MapOptionsViewState extends State<MapOptionsView> {
         StateSetter setModalState,
       ) {
         return Container(
-          height: (AppConst.modalHeightRatio * mediaQueryData.size.height) / 100,
+          height: (SizeConfig.modalHeightRatio * mediaQueryData.size.height) / 100,
           color: Theme.of(context).colorScheme.background,
           // Modal inner padding
           padding: EdgeInsets.symmetric(
@@ -94,14 +95,22 @@ class MapOptionsViewState extends State<MapOptionsView> {
                         AppLocalizations.of(context)!.mapOptionsLayerPlan,
                         AppLocalizations.of(context)!.mapOptionsLayerSatellite,
                       ],
-                      onToggle: (index) {
+                      onToggle: (
+                        index,
+                      ) {
                         if (index == 0) {
                           mapLayer = 'osm';
-                          widget.setter('mapLayer', mapLayer);
+                          widget.setter(
+                            'mapLayer',
+                            mapLayer,
+                          );
                           setModalState(() {});
                         } else {
                           mapLayer = 'esri';
-                          widget.setter('mapLayer', mapLayer);
+                          widget.setter(
+                            'mapLayer',
+                            mapLayer,
+                          );
                           setModalState(() {});
                         }
                       },
@@ -143,9 +152,14 @@ class MapOptionsViewState extends State<MapOptionsView> {
                         const Spacer(),
                         Switch(
                           value: showSpots,
-                          onChanged: (value) {
+                          onChanged: (
+                            value,
+                          ) {
                             showSpots = !showSpots;
-                            widget.setter('showSpots', showSpots);
+                            widget.setter(
+                              'showSpots',
+                              showSpots,
+                            );
                             setModalState(() {});
                           },
                         ),
@@ -175,9 +189,14 @@ class MapOptionsViewState extends State<MapOptionsView> {
                         const Spacer(),
                         Switch(
                           value: showShops,
-                          onChanged: (value) {
+                          onChanged: (
+                            value,
+                          ) {
                             showShops = !showShops;
-                            widget.setter('showShops', showShops);
+                            widget.setter(
+                              'showShops',
+                              showShops,
+                            );
                             setModalState(() {});
                           },
                         ),
@@ -207,9 +226,14 @@ class MapOptionsViewState extends State<MapOptionsView> {
                         const Spacer(),
                         Switch(
                           value: showBars,
-                          onChanged: (value) {
+                          onChanged: (
+                            value,
+                          ) {
                             showBars = !showBars;
-                            widget.setter('showBars', showBars);
+                            widget.setter(
+                              'showBars',
+                              showBars,
+                            );
                             setModalState(() {});
                           },
                         ),

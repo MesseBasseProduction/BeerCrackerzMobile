@@ -24,6 +24,7 @@ class MarkerView {
     Function removeCallback,
     Function editCallback,
   ) {
+    SizeConfig().init(context);
     String iconPath = '';
     switch (markerData.type) {
       case 'spot':
@@ -37,8 +38,8 @@ class MarkerView {
         break;
     }
     return Marker(
-      height: AppConst.mapMarkerSize,
-      width: AppConst.mapMarkerSize,
+      height: SizeConfig.mapMarkerSize,
+      width: SizeConfig.mapMarkerSize,
       point: LatLng(
         markerData.lat,
         markerData.lng,
@@ -77,7 +78,7 @@ class MarkerView {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     // Compute map lat/lng range with apsect ratio in consideration
     LatLngBounds bounds = mapController.camera.visibleBounds;
-    double mapLatRange = (AppConst.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
+    double mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
     // Move map to the marker position
     MapUtils.animatedMapMove(
       LatLng(
@@ -96,8 +97,9 @@ class MarkerView {
       builder: (
         BuildContext context,
       ) {
+        bool isPortrait = (MediaQuery.of(context).orientation == Orientation.portrait);
         return Container(
-          height: (AppConst.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
+          height: (SizeConfig.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
           color: Theme.of(context).colorScheme.background,
           // Modal inner padding
           padding: EdgeInsets.symmetric(
@@ -254,7 +256,7 @@ class MarkerView {
                       height: SizeConfig.padding,
                     ),
                     // Check if currentMark is created by user, allow him to delete/edit if so
-                    (mapView.controller.userId == markerData.userId)
+                    (mapView.settingsController.userId == markerData.userId)
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -323,11 +325,11 @@ class MarkerView {
                                         ),
                                         onPressed: () async {
                                           if (markerData.type == 'spot') {
-                                            MapService.deleteSpot(await mapView.controller.getAuthToken(), markerData.id);
+                                            MapService.deleteSpot(await mapView.settingsController.getAuthToken(), markerData.id);
                                           } else if (markerData.type == 'shop') {
-                                            MapService.deleteShop(await mapView.controller.getAuthToken(), markerData.id);
+                                            MapService.deleteShop(await mapView.settingsController.getAuthToken(), markerData.id);
                                           } else if (markerData.type == 'bar') {
-                                            MapService.deleteBar(await mapView.controller.getAuthToken(), markerData.id);
+                                            MapService.deleteBar(await mapView.settingsController.getAuthToken(), markerData.id);
                                           }
                                           // Now remove from view to end process
                                           removeCallback(markerData);
@@ -342,6 +344,11 @@ class MarkerView {
                           ],
                         )
                         : const SizedBox.shrink(),
+                    SizedBox(
+                      height: (isPortrait == false)
+                        ? SizeConfig.padding
+                        : 0,
+                    ),
                   ],
                 ),
               ],
@@ -367,9 +374,10 @@ class MarkerView {
     MapController mapController,
     LatLng latLng,
   ) {
+    SizeConfig().init(context);
     return Marker(
-      height: AppConst.mapMarkerSize,
-      width: AppConst.mapMarkerSize,
+      height: SizeConfig.mapMarkerSize,
+      width: SizeConfig.mapMarkerSize,
       point: latLng,
       child: GestureDetector(
         child: const Image(
@@ -387,32 +395,34 @@ class MarkerView {
     List<String> listElements,
     bool readOnly,
     List<String> selected,
-    StateSetter setModalState
+    StateSetter setModalState,
   ) {
+    SizeConfig().init(context);
     List<Widget> output = [];
     for (var element in listElements) {
       element = element.replaceAll('_', ''); // Clear special chars
       Container typeElem = Container(
-        margin: const EdgeInsets.all(4.0),
-        padding: const EdgeInsets.all(4.0),
+        margin: EdgeInsets.all(SizeConfig.paddingTiny),
+        padding: EdgeInsets.all(SizeConfig.paddingTiny),
         decoration: BoxDecoration(
           border: Border.all(
             color: selected.contains(element)
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.onSurface,
           ),
-          borderRadius: BorderRadius.circular(4.0),
+          borderRadius: BorderRadius.circular(SizeConfig.paddingTiny),
         ),
         child: SizedBox(
           height: SizeConfig.fontTextBigSize,
           child: RichText(
             text: TextSpan(
               children: [
-                const WidgetSpan(
+                WidgetSpan(
                   child: SizedBox(
-                    width: 4.0,
+                    width: SizeConfig.paddingTiny,
                   ),
                 ),
+                // Element icon from assets
                 WidgetSpan(
                   alignment: PlaceholderAlignment.middle,
                   child: SvgPicture.asset(
@@ -424,26 +434,27 @@ class MarkerView {
                       : ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
                   ),
                 ),
-                const WidgetSpan(
+                WidgetSpan(
                   child: SizedBox(
-                    width: 8.0,
+                    width: SizeConfig.paddingSmall,
                   ),
                 ),
+                // Element value from localization
                 TextSpan(
                   text: (markType == 'spot')
                     ? AppLocalizations.of(context)!.spotFeatures(element)
-                    : ((markType == 'shop')
+                    : (markType == 'shop')
                       ? AppLocalizations.of(context)!.shopFeatures(element)
-                      : AppLocalizations.of(context)!.barFeatures(element)),
+                      : AppLocalizations.of(context)!.barFeatures(element),
                   style: TextStyle(
                     color: selected.contains(element)
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const WidgetSpan(
+                WidgetSpan(
                   child: SizedBox(
-                    width: 4.0,
+                    width: SizeConfig.paddingTiny,
                   ),
                 ),
               ],

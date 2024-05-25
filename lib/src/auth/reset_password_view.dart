@@ -6,18 +6,15 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
 import '/src/auth/profile_service.dart';
-import '/src/settings/settings_controller.dart';
 import '/src/utils/size_config.dart';
 // User request to reset password, to do so, we ask for email,
 // then sent an email for user to confirm request.
 class ResetPasswordView extends StatefulWidget {
   const ResetPasswordView({
     super.key,
-    required this.controller,
     required this.setAuthPage,
   });
 
-  final SettingsController controller;
   final Function setAuthPage;
 
   @override
@@ -35,6 +32,11 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
     String email,
   ) {
     _formKey.currentState!.save();
+    // Dismiss keyboard by removing focus on current input if any
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
     if (_formKey.currentState!.validate()) {
       // Start loading overlay during server call
       context.loaderOverlay.show();
@@ -118,11 +120,11 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                 Center(
                   child: Padding(
                     padding: EdgeInsets.only(
-                      bottom: (SizeConfig.defaultSize * 3),
-                      left: (SizeConfig.defaultSize * 3),
-                      right: (SizeConfig.defaultSize * 3),
+                      bottom: SizeConfig.paddingLarge,
+                      left: SizeConfig.paddingLarge,
+                      right: SizeConfig.paddingLarge,
                       top: (isPortrait == false)
-                        ? (SizeConfig.defaultSize * 3) // Avoid form to be sticked to AppBar in landscape
+                        ? SizeConfig.paddingLarge // Avoid form to be sticked to AppBar in landscape
                         : 0.0,
                     ),
                     child: Form(
@@ -131,14 +133,14 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                         height: formHeight,
                         margin: EdgeInsets.only(
                           top: (isPortrait == true)
-                            ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - (SizeConfig.defaultSize * 4)
+                            ? (SizeConfig.screenHeight / 2) - (formHeight / 2) - SizeConfig.paddingBig
                             : 0.0,
                         ),
                         padding: EdgeInsets.only(
                           bottom: SizeConfig.padding,
                           left: SizeConfig.padding,
                           right: SizeConfig.padding,
-                          top: (SizeConfig.defaultSize * 6),
+                          top: SizeConfig.paddingHuge,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
@@ -192,7 +194,9 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                                 // See https://github.com/MesseBasseProduction/BeerCrackerz backend for this char limitation
                                 LengthLimitingTextInputFormatter(100),
                               ],
-                              onSaved: (String? value) => email = value!,
+                              onSaved: (
+                                String? value,
+                              ) => email = value!,
                               validator: (value) {
                                 // Field value can not be empty to be a valid input
                                 if (value == null || value.isEmpty) {
@@ -236,7 +240,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(
-                      top: (SizeConfig.screenHeight / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - (SizeConfig.defaultSize * 4),
+                      top: (SizeConfig.screenHeight / 2) - (formHeight / 2) - ((SizeConfig.defaultSize * 5) / 2) - SizeConfig.paddingBig,
                     ),
                     height: (SizeConfig.defaultSize * 5),
                     width: (SizeConfig.defaultSize * 20),

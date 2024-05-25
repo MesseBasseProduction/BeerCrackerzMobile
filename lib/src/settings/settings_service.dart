@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// The service responsible for saving preferences to 
+
+import '/src/utils/app_const.dart';
+// The service responsible for saving preferences to
 // the device shared preferences so they are persistent
 // upon app restart.
 class SettingsService {
@@ -15,11 +17,17 @@ class SettingsService {
     // Read preference from device shared preference storage
     String? value = appPreferences.getString('bc-theme');
     if (value == 'light') {
-      await appPreferences.setString('bc-theme', 'light');
+      await appPreferences.setString(
+        'bc-theme',
+        'light',
+      );
       return ThemeMode.light;
     } else {
       // Default theme to dark mode
-      await appPreferences.setString('bc-theme', 'dark');
+      await appPreferences.setString(
+        'bc-theme',
+        'dark',
+      );
       return ThemeMode.dark;
     }
   }
@@ -28,20 +36,34 @@ class SettingsService {
     final SharedPreferences appPreferences = await SharedPreferences.getInstance();
     // Read preference from device shared preference storage
     String? value = appPreferences.getString('bc-locale');
-    // First app start or preferences empty
+    // First app start or preferences are empty
     if (value == null) {
+      // Extract device locale
       String deviceLocale = Platform.localeName.substring(0, 2);
-      if (['en', 'fr', 'es', 'de', 'it', 'pt'].contains(value) == false) {
-        // English locale by default
-        await appPreferences.setString('bc-locale', 'en');
-        return const Locale.fromSubtags(languageCode: 'en');
+      if (AppConst.supportedLang.contains(value) == false) {
+        // English locale by default, device locale not supported in app
+        await appPreferences.setString(
+          'bc-locale',
+          'en',
+        );
+        return const Locale.fromSubtags(
+          languageCode: 'en',
+        );
       } else {
-        // Use device locale
-        await appPreferences.setString('bc-locale', deviceLocale);
-        return Locale.fromSubtags(languageCode: deviceLocale);
+        // Use device locale, set saved preference
+        await appPreferences.setString(
+          'bc-locale',
+          deviceLocale,
+        );
+        return Locale.fromSubtags(
+          languageCode: deviceLocale,
+        );
       }
     } else {
-      return Locale.fromSubtags(languageCode: value);      
+      // Retrun saved preference for locale
+      return Locale.fromSubtags(
+        languageCode: value,
+      );
     }
   }
   // Persists the user's preferred ThemeMode to device storage
@@ -54,7 +76,10 @@ class SettingsService {
       value = 'light';
     }
     // Update stored app preferences
-    await appPreferences.setString('bc-theme', value);
+    await appPreferences.setString(
+      'bc-theme',
+      value,
+    );
   }
   // Persists the user's preferred Locale to device storage
   Future<void> updateAppLocale(
@@ -78,15 +103,25 @@ class SettingsService {
         value = 'en';
     }
     // Update stored app preferences
-    await appPreferences.setString('bc-locale', value);
+    await appPreferences.setString(
+      'bc-locale',
+      value,
+    );
   }
   // Persists the user's JWT token in device secure storage
   Future<void> updateAuthToken(
     String expiry,
     String token,
   ) async {
+    // Extract token expiry and value from secure storage
+    String? tokenExpiry = await _secureStorage.read(
+      key: 'auth-expiry',
+    );
+    String? tokenValue = await _secureStorage.read(
+      key: 'auth-token',
+    );
     // Don't update token if its identical
-    if (expiry == await _secureStorage.read(key: 'auth-expiry') && token == await _secureStorage.read(key: 'auth-token')) return;
+    if (expiry == tokenExpiry && token == tokenValue) return;
     // Otherwise, write expiration and token into secure storage
     await _secureStorage.write(
       key: 'auth-expiry',
@@ -99,9 +134,14 @@ class SettingsService {
   }
   // Returns a bool state for token expired state
   Future<bool> isAuthTokenExpired() async {
-    if (await _secureStorage.read(key: 'auth-expiry') == null) return true;
-    final String expiry = (await _secureStorage.read(key: 'auth-expiry'))!;
+    // Extract token expiration from secure storage
+    String? expiry = await _secureStorage.read(
+      key: 'auth-expiry',
+    );
+    // Expiry not saved in secure storage, return true
+    if (expiry == null) return true;
     try {
+      // Perform date parsing on token expiration string
       DateTime expiryDateTime = DateTime.parse(expiry);
       DateTime nowDate = DateTime.now();
       // Expiry date is passed
@@ -110,12 +150,22 @@ class SettingsService {
       }
       return false;
     } catch (e) {
+      // Return false if anything went wrong in the date parsing process
       return true;
     }
   }
   // Return the user's JWT token if any saved in secure storage
   Future<String> getAuthToken() async {
-    if (await _secureStorage.read(key: 'auth-expiry') == null && await _secureStorage.read(key: 'auth-token') == null) return '';
-    return (await _secureStorage.read(key: 'auth-token'))!;
+    // Extract expiry and token from secure storage
+    String? expiry = await _secureStorage.read(
+      key: 'auth-expiry',
+    );
+    String? token = await _secureStorage.read(
+      key: 'auth-token',
+    );
+    // If null, return empty string to caller
+    if (expiry == null && token == null) return '';
+    // Otherwise, send token back
+    return token!;
   }
 }

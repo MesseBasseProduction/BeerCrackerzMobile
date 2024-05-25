@@ -19,11 +19,11 @@ import '/src/utils/size_config.dart';
 class ProfileView extends StatefulWidget {
   const ProfileView({
     super.key,
-    required this.controller,
+    required this.settingsController,
     required this.setAuthPage,
   });
 
-  final SettingsController controller;
+  final SettingsController settingsController;
   final Function setAuthPage;
 
   @override
@@ -40,9 +40,9 @@ class ProfileViewState extends State<ProfileView> {
     BuildContext context,
   ) async {
     // Don't perform anything if token is invalid, force return to login page
-    if (await widget.controller.isAuthTokenExpired() == true) {
-      widget.controller.updateAuthToken('', ''); // Clear remainning token and expiry
-      widget.controller.isLoggedIn = widget.controller.resetUserInfo();
+    if (await widget.settingsController.isAuthTokenExpired() == true) {
+      widget.settingsController.updateAuthToken('', ''); // Clear remainning token and expiry
+      widget.settingsController.isLoggedIn = widget.settingsController.resetUserInfo();
       widget.setAuthPage(0);
       return;
     }
@@ -51,7 +51,7 @@ class ProfileViewState extends State<ProfileView> {
       context.loaderOverlay.show();
       // Perform logout if token remains valid, request is valid aswell
       await ProfileService.submitLogout(
-        await widget.controller.getAuthToken()
+        await widget.settingsController.getAuthToken(),
       ).then((response) {
         if (response.statusCode != 204) {
           // Unexpected response code from server
@@ -75,8 +75,8 @@ class ProfileViewState extends State<ProfileView> {
             showProgressBar: false,
           );
         } else {
-          widget.controller.updateAuthToken('', ''); // Clear remainning token and expiry
-          widget.controller.isLoggedIn = widget.controller.resetUserInfo();
+          widget.settingsController.updateAuthToken('', ''); // Clear remainning token and expiry
+          widget.settingsController.isLoggedIn = widget.settingsController.resetUserInfo();
           widget.setAuthPage(0);
           // Notify user he successfully logged out
           toastification.show(
@@ -202,7 +202,27 @@ class ProfileViewState extends State<ProfileView> {
         }
       }
     } catch (e) {
-      print(e);
+      // Under profile picture minimal size
+      if (context.mounted) {
+        toastification.show(
+          context: context,
+          title: Text(
+            AppLocalizations.of(context)!.authProfileFatalErrorTitle,
+          ),
+          description: Text(
+            AppLocalizations.of(context)!.authProfileFatalErrorContent,
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          type: ToastificationType.error,
+          style: ToastificationStyle.flatColored,
+          autoCloseDuration: const Duration(
+            seconds: 5,
+          ),
+          showProgressBar: false,
+        );
+      }
     }
   }
 
@@ -217,20 +237,58 @@ class ProfileViewState extends State<ProfileView> {
     }
     // Perform logout if token remains valid, request is valid aswell
     await ProfileService.submitProfilePicture(
-      await widget.controller.getAuthToken(),
-      widget.controller.userId,
+      await widget.settingsController.getAuthToken(),
+      widget.settingsController.userId,
       base64Image,
       size,
-    ).then((response) {
-      if (response.statusCode != 204) {
-        // TODO
+    ).then((response) async {
+      if (response.statusCode == 204) {
+        // Request user info from server and perform a view refresh 
+        await widget.settingsController.getUserInfo();
+        setState(() {});
       } else {
-        // TODO
+        // Invalid/incomplete data sent
+        // Error UPP1
+        toastification.show(
+          context: context,
+          title: Text(
+            AppLocalizations.of(context)!.authProfileErrorPPUploadErrorTitle,
+          ),
+          description: Text(
+            AppLocalizations.of(context)!.authProfileErrorPPUploadErrorDescription('UPP1'),
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          type: ToastificationType.error,
+          style: ToastificationStyle.flatColored,
+          autoCloseDuration: const Duration(
+            seconds: 5,
+          ),
+          showProgressBar: false,
+        );
       }
     }).catchError((handleError) {
       // Unable to perform server call
-      // Error
-      throw Exception(handleError);
+      // Error UPP2
+      toastification.show(
+        context: context,
+        title: Text(
+          AppLocalizations.of(context)!.httpFrontErrorToastTitle,
+        ),
+        description: Text(
+          AppLocalizations.of(context)!.httpFrontErrorToastDescription('UPP2'),
+          style: const TextStyle(
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        type: ToastificationType.error,
+        style: ToastificationStyle.flatColored,
+        autoCloseDuration: const Duration(
+          seconds: 5,
+        ),
+        showProgressBar: false,
+      );
     }).whenComplete(() {
       // Hide overlay loader anyway
       context.loaderOverlay.hide();
@@ -277,7 +335,7 @@ class ProfileViewState extends State<ProfileView> {
                 width: (MediaQuery.of(context).size.width / 2),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage('${AppConst.baseURL}${widget.controller.ppPath}'),
+                    image: NetworkImage('${AppConst.baseURL}${widget.settingsController.ppPath}'),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -306,7 +364,7 @@ class ProfileViewState extends State<ProfileView> {
               ),
               // Username as title
               Text(
-                widget.controller.username,
+                widget.settingsController.username,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
@@ -315,7 +373,7 @@ class ProfileViewState extends State<ProfileView> {
               ),
               // User email adress
               Text(
-                widget.controller.email,
+                widget.settingsController.email,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                   fontStyle: FontStyle.italic,
