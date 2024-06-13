@@ -202,27 +202,7 @@ class ProfileViewState extends State<ProfileView> {
         }
       }
     } catch (e) {
-      // Under profile picture minimal size
-      if (context.mounted) {
-        toastification.show(
-          context: context,
-          title: Text(
-            AppLocalizations.of(context)!.authProfileFatalErrorTitle,
-          ),
-          description: Text(
-            AppLocalizations.of(context)!.authProfileFatalErrorContent,
-            style: const TextStyle(
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          type: ToastificationType.error,
-          style: ToastificationStyle.flatColored,
-          autoCloseDuration: const Duration(
-            seconds: 5,
-          ),
-          showProgressBar: false,
-        );
-      }
+      // User canceled the image cropper, nothing to do here.
     }
   }
 
