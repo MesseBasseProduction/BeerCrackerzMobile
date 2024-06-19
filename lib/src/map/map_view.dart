@@ -326,8 +326,15 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           interactionOptions: const InteractionOptions(
             flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
           ),
-          minZoom: 0,
+          minZoom: 2,
           maxZoom: 19,
+          // Force camera to remain on LatLng ranges
+          cameraConstraint: CameraConstraint.contain(
+            bounds: LatLngBounds(
+              const LatLng(-90, -180),
+              const LatLng(90, 180),
+            ),
+          ),
           // User position tracking on map
           onPositionChanged: (
             position,

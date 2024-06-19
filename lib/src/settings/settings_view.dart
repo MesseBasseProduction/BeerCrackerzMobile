@@ -71,11 +71,11 @@ class SettingsViewState extends State<SettingsView> {
                           setDialogState,
                         ) {
                           // Internal method to build supported lang Dialog ListTiles
-                          List<ListTile> buildSupportedLocale() {
-                            List<ListTile> output = [];
+                          List<RadioListTile<Locale>> buildSupportedLocale() {
+                            List<RadioListTile<Locale>> output = [];
                             for (var locale in AppConst.supportedLang) {
                               output.add(
-                                ListTile(
+                                RadioListTile<Locale>(
                                   title: Text(
                                     AppLocalizations.of(context)!.settingsInterfaceLanguage(locale),
                                     style: TextStyle(
@@ -86,18 +86,16 @@ class SettingsViewState extends State<SettingsView> {
                                     horizontal: 0,
                                     vertical: -4, // Tighten list entries
                                   ),
-                                  leading: Radio<Locale>(
-                                    value: Locale.fromSubtags(
-                                      languageCode: locale,
-                                    ),
-                                    groupValue: localeValue,
-                                    onChanged: (
-                                      Locale? value,
-                                    ) {
-                                      localeValue = value!;
-                                      setDialogState(() {});
-                                    },
+                                  value: Locale.fromSubtags(
+                                    languageCode: locale,
                                   ),
+                                  groupValue: localeValue,
+                                  onChanged: (
+                                    Locale? value,
+                                  ) {
+                                    localeValue = value!;
+                                    setDialogState(() {});
+                                  },
                                 ),
                               );
                             }
