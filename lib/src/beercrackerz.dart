@@ -33,7 +33,7 @@ class BeerCrackerzMobile extends StatelessWidget {
     }
     // Then get Themes from configuration
     ThemeData darkTheme = ThemeConfig.darkTheme();
-    ThemeData lighTheme = ThemeConfig.lightTheme();
+    ThemeData lightTheme = ThemeConfig.lightTheme();
     // MaterialApp encapsulated in loading overlay, itself encapsulated in Listenable for settings updates
     return ListenableBuilder(
       listenable: settingsController,
@@ -72,7 +72,7 @@ class BeerCrackerzMobile extends StatelessWidget {
             // Attach app locale to settings value
             locale: settingsController.appLocale,
             onGenerateTitle: (BuildContext context) => AppLocalizations.of(context)!.appTitle,
-            theme: lighTheme,
+            theme: lightTheme,
             darkTheme: darkTheme,
             // Attach app theme to settings value
             themeMode: settingsController.themeMode,

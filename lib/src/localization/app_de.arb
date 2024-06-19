@@ -89,7 +89,7 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz ist die Community für Bierliebhaber, gefüllt mit Pint-Slayern und Müsliliebhabern. Eine clevere Idee von David Béché, umgesetzt von Messe Basse Production! BeerCrackerz ist eine Open-Source-Website und mobile Anwendung, die unter der GPL-3.0-Lizenz veröffentlicht wird.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
   "authProfileLogout": "Ausloggen",
   "authProfileLogoutSuccessToastTitle": "Erfolgreiche Abmeldung",
   "authProfileLogoutSuccessToastDescription": "Sie wurden erfolgreich von Ihrem Konto abgemeldet. Bis bald!",
@@ -99,7 +99,7 @@
   "settingsInterfaceLanguageDialogTitle": "Sprache auswählen",
   "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 Englisch} fr{🇫🇷 Französisch} es{🇪🇸 Spanisch} de{🇩🇪 Deutsch} it{🇮🇹 Italienisch} pt{🇵🇹 Portugiesisch} other{Unbekannt}}",
   "settingsInterfaceClose": "Schließen",
-  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
   "@shopFeatures": {
     "placeholders": {
       "feature": {}

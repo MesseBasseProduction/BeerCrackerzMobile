@@ -19,7 +19,7 @@ import '/src/settings/settings_controller.dart';
 import '/src/utils/size_config.dart';
 // Hold the main widget map view, that contains
 // all spots, shops and bars saved on server. Handle
-// the user interctaion with map to add/edit/remove markers.
+// the user interaction with map to add/edit/remove markers.
 class MapView extends StatefulWidget {
   const MapView({
     super.key,
@@ -328,10 +328,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           minZoom: 0,
           maxZoom: 19,
-          // user position tracking on map
+          // User position tracking on map
           onPositionChanged: (
-            MapPosition position,
-            bool hasGesture,
+            position,
+            hasGesture,
           ) {
             if (hasGesture && _alignPositionOnUpdate != AlignOnUpdate.never) {
               setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
@@ -385,7 +385,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             urlTemplate: (mapLayer == 'osm')
               ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
               : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            userAgentPackageName: 'com.example.beercrackerz',
+            userAgentPackageName: 'com.messebasseproduction.beercrackerz',
           ),
           CurrentLocationLayer(
             alignPositionStream: _alignPositionStreamController.stream,
@@ -465,7 +465,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       floatingActionButton: Wrap(
         direction: Axis.vertical,
         children: <Widget>[
-          // Map filtering operztions
+          // Map filtering operations
           Container(
             margin: EdgeInsets.symmetric(
               vertical: SizeConfig.paddingTiny,

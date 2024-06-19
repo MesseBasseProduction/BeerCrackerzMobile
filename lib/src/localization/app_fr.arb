@@ -89,7 +89,7 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz, c'est la communauté des amoureux de la Bière et du plein air, des pourfendeurs de pinte, des déglingos de la céréale. Une brilliante idée de David Béché, réalisée par Messe Basse Production! BeerCrackerz est un site et une application mobile en source libre, publiée sous licence GPL-3.0.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
   "authProfileLogout": "Se déconnecter",
   "authProfileLogoutSuccessToastTitle": "Déconnexion réussie",
   "authProfileLogoutSuccessToastDescription": "Vous vous ète déconnecté de votre compte avec succès. À tantôt!",
@@ -99,7 +99,7 @@
   "settingsInterfaceLanguageDialogTitle": "Choix de la nague",
   "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 Anglais} fr{🇫🇷 Français} es{🇪🇸 Espagnol} de{🇩🇪 Allemand} it{🇮🇹 Italien} pt{🇵🇹 Portuguais} other{Inconnu}}",
   "settingsInterfaceClose": "Fermer",
-  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.1",
+  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
   "@shopFeatures": {
     "placeholders": {
       "feature": {}
