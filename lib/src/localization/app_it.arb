@@ -89,23 +89,30 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz è la comunità degli amanti della birra, piena di cacciatori di pinte e amanti dei cereali. Un'idea brillante di David Béché, portata in vita da Messe Basse Production! BeerCrackerz è un sito Web open source e un'applicazione mobile rilasciata con licenza GPL-3.0.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.3",
   "authProfileLogout": "Disconnettersi",
   "authProfileLogoutSuccessToastTitle": "Disconnessione riuscita",
   "authProfileLogoutSuccessToastDescription": "Sei stato disconnesso con successo dal tuo account. Arrivederci!",
+  "helpWelcomeTitle": "Benvenuto",
+  "helpWelcomeSlideTitle": "Benvenuto su BeerCrackerz!",
+  "helpWelcomeSlideDescription": "L'app realizzata da e per gli amanti della birra; una mappa della community dove troverai i posti migliori in cui goderti una deliziosa birra. Fornisce anche i negozi e i bar più vicini per riempire la borsa con le birre più belle in circolazione. Chiunque può registrarsi per contribuire aggiungendo i propri migliori posti personali dove rilassarsi e godersi una birra. Detto questo, sentitevi i benvenuti e godetevi il viaggio!",
+  "helpWelcomeMapSlideDescription": "I punti utilizzano indicatori verdi, i negozi utilizzano indicatori blu e le barre sono rosse. Mantenere le cose semplici, all'essenziale: birra.",
+  "helpWelcomeMarkSlideDescription": "Toccando un segno, otterrai informazioni utili al riguardo, compilate dai nostri generosi contributori.",
+  "helpWelcomeNewMarkSlideDescription": "Infine, se vuoi contribuire e avere le tue posizioni sulla mappa, devi semplicemente registrare un account. I tuoi contributi sono benvenuti!",
+  "helpWelcomeCTASlideDescription": "È tutto pronto, ora puoi navigare liberamente nel mondo per trovare il posto migliore dove bere una bibita fresca intorno a te, oppure puoi registrare un account e iniziare la carriera di tuo collaboratore, in entrambi i casi, buon divertimento!",
+  "helpWelcomeCTASlideShowWelcomeScreen": "Mostra questo aiutante all'avvio",
+  "helpWelcomeCTASlideAuth": "Account",
+  "helpWelcomeCTASlideMap": "Carta",
   "settingsTitle": "Impostazioni",
   "settingsInterfaceSection": "Interfaccia",
   "settingsInterfaceLanguageSetting": "Lingua",
   "settingsInterfaceLanguageDialogTitle": "Seleziona la lingua",
   "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 Inglese} fr{🇫🇷 Francese} es{🇪🇸 Spagnolo} de{🇩🇪 Tedesco} it{🇮🇹 Italiano} pt{🇵🇹 Portoghese} other{Sconosciuto}}",
   "settingsInterfaceClose": "Vicino",
-  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
-  "@shopFeatures": {
-    "placeholders": {
-      "feature": {}
-    }
-  },
   "settingsInterfaceTheme": "Tema scuro",
+  "settingsAppSection": "App",
+  "settingsAppShowWelcomeScreenSetting": "Mostra la schermata di benvenuto",
+  "settingsAppShowWelcomeScreenSettingDescription": "Pannello di aiuto all'avvio dell'app",
   "emptyInput": "Il campo {field} non può essere vuoto",
   "@emptyInput": {
     "placeholders": {

@@ -6,6 +6,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
 import '/src/auth/auth_view.dart';
+import '/src/help/welcome_screen_view.dart';
 import '/src/map/map_view.dart';
 import '/src/settings/settings_controller.dart';
 import '/src/settings/settings_view.dart';
@@ -94,8 +95,17 @@ class BeerCrackerzMobile extends StatelessWidget {
                         settingsController: settingsController,
                       );
                     case MapView.routeName:
-                    default:
                       return MapView(
+                        settingsController: settingsController,
+                      );
+                    default:
+                      // Redirect to MapView if pref set to false
+                      if (settingsController.showWelcomeScreen == false) {
+                        return MapView(
+                          settingsController: settingsController,
+                        );
+                      }
+                      return WelcomeScreenView(
                         settingsController: settingsController,
                       );
                   }

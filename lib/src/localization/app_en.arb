@@ -89,23 +89,30 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production! BeerCrackerz is an open source website and mobile application released under the GPL-3.0 licence.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.3",
   "authProfileLogout": "Logout",
   "authProfileLogoutSuccessToastTitle": "Logout success",
   "authProfileLogoutSuccessToastDescription": "You've been successfully logged out of your account. See you soon!",
+  "helpWelcomeTitle": "Welcome",
+  "helpWelcomeSlideTitle": "Welcome to BeerCrackerz!",
+  "helpWelcomeSlideDescription": "The app made by and for Beer lovers ; a community map where you will find the best spots around to enjoy a delightful beer. It also provides the nearest shops ands bars to refill your bag with the sweatests beers around. Anyone can register to contribute by adding their personnal best places to chill and enjoy a beer. With all that said, feel very welcome and enjoy the ride !",
+  "helpWelcomeMapSlideDescription": "Spots are using green markers, shops are using blue ones and bars are in red. Keeping thing simple, to the essential : Beer.",
+  "helpWelcomeMarkSlideDescription": "When tapping on a mark, you will obtain useful information about it, filled by our generous and contributors.",
+  "helpWelcomeNewMarkSlideDescription": "Finally, if you want to contribute and had your own locations to the map, you simply have to register an account. Your contributions are welcome!",
+  "helpWelcomeCTASlideDescription": "You're all set up, now you can freely browse the world to find the best place to drink a cold one around you, or you can register an account and start your contributor's career, in both case, have fun!",
+  "helpWelcomeCTASlideShowWelcomeScreen": "Show this helper on start",
+  "helpWelcomeCTASlideAuth": "Account",
+  "helpWelcomeCTASlideMap": "Map",
   "settingsTitle": "Settings",
   "settingsInterfaceSection": "Interface",
   "settingsInterfaceLanguageSetting": "Language",
   "settingsInterfaceLanguageDialogTitle": "Select language",
   "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 English} fr{🇫🇷 French} es{🇪🇸 Spanish} de{🇩🇪 German} it{🇮🇹 Italian} pt{🇵🇹 Portuguese} other{Unknown}}",
   "settingsInterfaceClose": "Close",
-  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
-  "@shopFeatures": {
-    "placeholders": {
-      "feature": {}
-    }
-  },
   "settingsInterfaceTheme": "Dark Theme",
+  "settingsAppSection": "App",
+  "settingsAppShowWelcomeScreenSetting": "Show welcome screen",
+  "settingsAppShowWelcomeScreenSettingDescription": "Help panel on app startup",
   "emptyInput": "The {field} field can not be empty",
   "@emptyInput": {
     "placeholders": {

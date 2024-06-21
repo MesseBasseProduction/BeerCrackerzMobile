@@ -18,6 +18,8 @@ class SettingsController with ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   late Locale _appLocale;
   Locale get appLocale => _appLocale;
+  late bool _showWelcomeScreen;
+  bool get showWelcomeScreen => _showWelcomeScreen;
   // Auth internals / user infos
   late bool isLoggedIn;
   int userId = -1; // Must be iniatialized
@@ -30,6 +32,7 @@ class SettingsController with ChangeNotifier {
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
     _appLocale = await _settingsService.appLocale();
+    _showWelcomeScreen = await _settingsService.showWelcomeScreen();
     String token = await _settingsService.getAuthToken();
     if (token != '') {
       if (await _settingsService.isAuthTokenExpired() == true) {
@@ -65,6 +68,16 @@ class SettingsController with ChangeNotifier {
     if (newLocale == _appLocale) return;
     _appLocale = newLocale;
     await _settingsService.updateAppLocale(newLocale);
+    notifyListeners();
+  }
+  // Update show welcome screen
+  Future<void> updateShowWelcomeScreen(
+    bool? showWelcomeScreen,
+  ) async {
+    if (showWelcomeScreen == null) return;
+    if (showWelcomeScreen == _showWelcomeScreen) return;
+    _showWelcomeScreen = showWelcomeScreen;
+    await _settingsService.updateShowWelcomeScreen(showWelcomeScreen);
     notifyListeners();
   }
 

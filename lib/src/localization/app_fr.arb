@@ -89,23 +89,30 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz, c'est la communauté des amoureux de la Bière et du plein air, des pourfendeurs de pinte, des déglingos de la céréale. Une brilliante idée de David Béché, réalisée par Messe Basse Production! BeerCrackerz est un site et une application mobile en source libre, publiée sous licence GPL-3.0.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.3",
   "authProfileLogout": "Se déconnecter",
   "authProfileLogoutSuccessToastTitle": "Déconnexion réussie",
   "authProfileLogoutSuccessToastDescription": "Vous vous ète déconnecté de votre compte avec succès. À tantôt!",
+  "helpWelcomeTitle": "Bienvenue",
+  "helpWelcomeSlideTitle": "Bienvenue sur BeerCrackerz!",
+  "helpWelcomeSlideDescription": "L'application faite par et pour les amateurs de bière ; une carte communautaire où vous trouverez les meilleurs endroits pour déguster une délicieuse bière. Il fournit également les magasins et les bars les plus proches pour remplir votre sac avec les meilleures bières du coin. Tout le monde peut s'inscrire pour contribuer en ajoutant ses meilleurs endroits personnels pour se détendre et déguster une bière. Cela dit, soyez les bienvenus et profitez de la balade !",
+  "helpWelcomeMapSlideDescription": "Les spots sont représentés par des marqueurs verts, les magasins utilisent des marqueurs bleus et les bars sont en rouge. Faire simple, aller à l'essentiel : la bière.",
+  "helpWelcomeMarkSlideDescription": "En appuyant sur un marqueur, vous obtiendrez des informations utiles à son sujet, renseignées par nos généreux et contributeurs.",
+  "helpWelcomeNewMarkSlideDescription": "Enfin, si vous souhaitez contribuer et ajouter vos propres emplacements sur la carte, il vous suffit de créer un compte. Vos contributions sont les bienvenues !",
+  "helpWelcomeCTASlideDescription": "*Vous êtes prêt, vous pouvez désormais parcourir librement le monde pour trouver le meilleur endroit pour boire une bière autour de vous, ou vous pouvez créer un compte et commencer votre carrière de contributeur, dans les deux cas, amusez-vous !",
+  "helpWelcomeCTASlideShowWelcomeScreen": "Afficher cette aide au démarrage",
+  "helpWelcomeCTASlideAuth": "Compte",
+  "helpWelcomeCTASlideMap": "Carte",
   "settingsTitle": "Paramètrres",
   "settingsInterfaceSection": "Interface",
   "settingsInterfaceLanguageSetting": "Langue",
   "settingsInterfaceLanguageDialogTitle": "Choix de la nague",
   "settingsInterfaceLanguage": "{feature, select, en{🇬🇧 Anglais} fr{🇫🇷 Français} es{🇪🇸 Espagnol} de{🇩🇪 Allemand} it{🇮🇹 Italien} pt{🇵🇹 Portuguais} other{Inconnu}}",
   "settingsInterfaceClose": "Fermer",
-  "settingsAboutSection": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.2",
-  "@shopFeatures": {
-    "placeholders": {
-      "feature": {}
-    }
-  },
   "settingsInterfaceTheme": "Thème sombre",
+  "settingsAppSection": "Application",
+  "settingsAppShowWelcomeScreenSetting": "Aide au démarrage",
+  "settingsAppShowWelcomeScreenSettingDescription": "Montrer l'aide au lancement",
   "emptyInput": "Le champ {field} ne peut être vide",
   "@emptyInput": {
     "placeholders": {

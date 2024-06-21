@@ -3,7 +3,7 @@ description: "The app for beer lovers, to share the best spot to crack a beer, o
 
 publish_to: 'none'
 
-version: 0.0.2+2
+version: 0.0.3+3
 
 environment:
   sdk: '>=3.2.5 <4.0.0'
@@ -44,8 +44,9 @@ flutter:
   # Add assets from the images directory into the application.
   assets:
     - assets/images/
-    - assets/images/marker/
+    - assets/images/help/
     - assets/images/icon/
+    - assets/images/marker/
 
 flutter_launcher_icons: # To update icon, run "flutter pub run flutter_launcher_icons"
   android: "launcher_icon"

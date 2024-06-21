@@ -182,6 +182,37 @@ class SettingsViewState extends State<SettingsView> {
               ),
             ],
           ),
+          SettingsSection(
+            title: Text(
+              AppLocalizations.of(context)!.settingsAppSection,
+            ),
+            tiles: [
+              // App welcome screen to explain BeerCrackerz
+              SettingsTile.switchTile(
+                initialValue: (widget.settingsController.showWelcomeScreen == true)
+                  ? true
+                  : false,
+                leading: const Icon(
+                  Icons.not_listed_location,
+                ),
+                title: Text(
+                  AppLocalizations.of(context)!.settingsAppShowWelcomeScreenSetting,
+                ),
+                description: Text(
+                  AppLocalizations.of(context)!.settingsAppShowWelcomeScreenSettingDescription,
+                ),
+                onToggle: (
+                  checked,
+                ) async {
+                  if (checked == true) {
+                    await widget.settingsController.updateShowWelcomeScreen(true);
+                  } else {
+                    await widget.settingsController.updateShowWelcomeScreen(false);
+                  }
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );

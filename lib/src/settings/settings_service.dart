@@ -66,6 +66,27 @@ class SettingsService {
       );
     }
   }
+  // Wether to display the welcome screen poresentingbeercrackerz to the user
+  Future<bool> showWelcomeScreen() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    // Read preference from device shared preference storage
+    String? value = appPreferences.getString('bc-show-welcome-screen');
+    // First app launch, set pref value to true and return true
+    if (value == null) {
+      await appPreferences.setString(
+        'bc-show-welcome-screen',
+        'true',
+      );
+      return true;
+    } else {
+      // Else read saved value
+      if (value == 'true') {
+        return true;
+      } else {
+        return false;        
+      }
+    }
+  }
   // Persists the user's preferred ThemeMode to device storage
   Future<void> updateThemeMode(
     ThemeMode theme,
@@ -107,6 +128,23 @@ class SettingsService {
       'bc-locale',
       value,
     );
+  }
+  // Update the saved preference for show welcome screen
+  Future<void> updateShowWelcomeScreen(
+    bool value,
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    if (value == true) {
+      await appPreferences.setString(
+        'bc-show-welcome-screen',
+        'true',
+      );      
+    } else {
+      await appPreferences.setString(
+        'bc-show-welcome-screen',
+        'false',
+      );      
+    }
   }
   // Persists the user's JWT token in device secure storage
   Future<void> updateAuthToken(
