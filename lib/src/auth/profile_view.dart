@@ -315,7 +315,9 @@ class ProfileViewState extends State<ProfileView> {
                 width: (MediaQuery.of(context).size.width / 2),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage('${AppConst.baseURL}${widget.settingsController.ppPath}'),
+                    image: (widget.settingsController.ppPath.contains('profile.png') == true) 
+                      ? AssetImage(widget.settingsController.ppPath) as ImageProvider // Load local default PP
+                      : NetworkImage('${AppConst.baseURL}${widget.settingsController.ppPath}'), // Load server one
                     fit: BoxFit.fill,
                   ),
                 ),

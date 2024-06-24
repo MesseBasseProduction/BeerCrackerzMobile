@@ -115,7 +115,11 @@ class SettingsController with ChangeNotifier {
           userId = parsedJson['id'];
           username = parsedJson['username'];
           email = parsedJson['email'];
-          ppPath = parsedJson['profilePicture'];
+          if (parsedJson['profilePicture'] == null) {
+            ppPath = 'assets/images/icon/profile.png';
+          } else {
+            ppPath = parsedJson['profilePicture'];
+          }
           isUserActive = parsedJson['isActive'];
           isUserStaff = parsedJson['isStaff'];
           loggedIn = true;

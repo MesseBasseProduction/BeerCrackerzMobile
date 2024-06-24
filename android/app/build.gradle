@@ -50,8 +50,8 @@ android {
         applicationId "com.messebasseproduction.beercrackerz"
         multiDexEnabled true
         minSdkVersion 20
-        versionCode 4
-        versionName "0.0.5"
+        versionCode 6
+        versionName "0.0.6"
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
