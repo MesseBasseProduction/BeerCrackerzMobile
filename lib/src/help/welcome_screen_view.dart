@@ -256,6 +256,10 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
                         onPressed: () {
                           Navigator.pushReplacementNamed(
                             context,
+                            MapView.routeName,
+                          );
+                          Navigator.pushNamed(
+                            context,
                             AuthView.routeName,
                           );
                         },

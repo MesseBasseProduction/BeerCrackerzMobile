@@ -1,4 +1,5 @@
 {
+  "@@locale": "pt",
   "appTitle": "BeerCrackerz",
   "appTitleWithCase": "BeerCrackerz",
   "@appTitle": {
@@ -93,7 +94,7 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz é a comunidade dos amantes da cerveja, repleta de caçadores de cerveja e amantes de cereais. Uma ideia brilhante de David Béché, concretizada pela Messe Basse Production! BeerCrackerz é um site de código aberto e um aplicativo móvel lançado sob a licença GPL-3.0.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.4",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.5",
   "authProfileLogout": "Sair",
   "authProfileLogoutSuccessToastTitle": "Sucesso no logout",
   "authProfileLogoutSuccessToastDescription": "Você foi desconectado da sua conta com sucesso. Vejo você em breve!",
@@ -200,6 +201,8 @@
   "markDiscoveredSince": "Desde",
   "markEdit": "Editar",
   "markDelete": "Excluir",
+  "mapLoginInfoTitle": "Sobre adicionar marca",
+  "mapLoginInfoDescription": "Para adicionar sua própria marca ao mapa, você deve estar logado em sua conta. Você pode registrar uma nova conta se ainda não for membro do BeerCrackerz!",
   "mapOptionsTitle": "Opções de mapa",
   "mapOptionsLayerStyle": "Estilo da camada do mapa",
   "mapOptionsLayerPlan": "Plano",

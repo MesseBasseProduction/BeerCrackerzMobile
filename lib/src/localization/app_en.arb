@@ -1,4 +1,5 @@
 {
+  "@@locale": "en",
   "appTitle": "BeerCrackerz",
   "appTitleWithCase": "BeerCrackerz",
   "@appTitle": {
@@ -93,7 +94,7 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production! BeerCrackerz is an open source website and mobile application released under the GPL-3.0 licence.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.4",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.5",
   "authProfileLogout": "Logout",
   "authProfileLogoutSuccessToastTitle": "Logout success",
   "authProfileLogoutSuccessToastDescription": "You've been successfully logged out of your account. See you soon!",
@@ -200,6 +201,8 @@
   "markDiscoveredSince": "Since",
   "markEdit": "Edit",
   "markDelete": "Delete",
+  "mapLoginInfoTitle": "About adding mark",
+  "mapLoginInfoDescription": "In order to add your own mark to the map, you must be logged into your account. You can register a new account if you're not already a BeerCrackerz member!",
   "mapOptionsTitle": "Map options",
   "mapOptionsLayerStyle": "Map layer style",
   "mapOptionsLayerPlan": "Plan",

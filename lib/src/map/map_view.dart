@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '/src/auth/auth_view.dart';
@@ -50,6 +51,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   bool showBars = true;
   bool showWIP = false;
   String mapLayer = 'osm';
+  bool doubleTap = false; // Enter double tap mode
+  bool doubleTapPerformed = false; // Double tap actually happened
   // Position alignment stream controller
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
@@ -350,42 +353,121 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                 TapPosition position,
                 LatLng latLng,
               ) {
-                if (showWIP == false) {
-                  // Add temporary marker
-                  wipMarker.add(
-                    MarkerView.buildWIPMarkerView(
-                      context,
+                // First user tap
+                if (doubleTap == false) {
+                  doubleTap = true;
+                  // Restore flag 
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    doubleTap = false;
+                    if (doubleTapPerformed == false) {
+                      if (showWIP == false) {
+                        // Add temporary marker
+                        wipMarker.add(
+                          MarkerView.buildWIPMarkerView(
+                            context,
+                            _mapController,
+                            latLng,
+                          ),
+                        );
+                        // Compute current map bound and lat/lng range for those bounds
+                        LatLngBounds bounds = _mapController.camera.visibleBounds;
+                        double mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
+                        // Move map to the marker position, with modal opened offset
+                        MapUtils.animatedMapMove(
+                          LatLng(
+                            latLng.latitude - (mapLatRange / 2),
+                            latLng.longitude,
+                          ),
+                          _mapController.camera.zoom + 2,
+                          _mapController,
+                          this,
+                        );
+                        // Then create new marker modal
+                        newMarkerModal(
+                          latLng,
+                          mapLatRange,
+                        );
+                      }
+                      // Invert wip state
+                      showWIP = !showWIP;
+                      setState(() {});
+                    }
+                  });
+                } else {
+                  doubleTapPerformed = true;
+                  // Restore flag 
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    doubleTapPerformed = false;
+                  });
+                  // Only perform double tap zoom if not exceeding maxZoom for map
+                  if (_mapController.camera.zoom + 1 <= 19) {
+                    MapUtils.animatedMapMove(
+                      LatLng(
+                        latLng.latitude,
+                        latLng.longitude,
+                      ),
+                      _mapController.camera.zoom + 1,
                       _mapController,
-                      latLng,
-                    ),
-                  );
-                  // Compute current map bound and lat/lng range for those bounds
-                  LatLngBounds bounds = _mapController.camera.visibleBounds;
-                  double mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
-                  // Move map to the marker position, with modal opened offset
-                  MapUtils.animatedMapMove(
-                    LatLng(
-                      latLng.latitude - (mapLatRange / 2),
-                      latLng.longitude,
-                    ),
-                    _mapController.camera.zoom + 2,
-                    _mapController,
-                    this,
-                  );
-                  // Then create new marker modal
-                  newMarkerModal(
-                    latLng,
-                    mapLatRange,
-                  );
+                      this,
+                    );
+                  }
                 }
-                // Invert wip state
-                showWIP = !showWIP;
-                setState(() {});
               }
             : (
                 TapPosition position,
                 LatLng latLng,
-              ) {}, // Do nothing on click if user is not logged in
+              ) {
+                // First user tap
+                if (doubleTap == false) {
+                  doubleTap = true;
+                  // Restore flag 
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    doubleTap = false;
+                    if (doubleTapPerformed == false) {
+                      // Inform user that login went OK
+                      toastification.dismissAll(
+                        delayForAnimation: false,
+                      );
+                      toastification.show(
+                        context: context,
+                        title: Text(
+                          AppLocalizations.of(context)!.mapLoginInfoTitle,
+                        ),
+                        description: Text(
+                          AppLocalizations.of(context)!.mapLoginInfoDescription,
+                          style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        type: ToastificationType.info,
+                        style: ToastificationStyle.flatColored,
+                        autoCloseDuration: const Duration(
+                          seconds: 5,
+                        ),
+                        showProgressBar: false,
+                      );
+                    }
+                  });
+                } else {
+                  doubleTapPerformed = true;
+                    // Restore flag 
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      doubleTapPerformed = false;
+                    });
+                  // Only perform double tap zoom if not exceeding maxZoom for map
+                  if (_mapController.camera.zoom + 1 <= 19) {
+                    MapUtils.animatedMapMove(
+                      LatLng(
+                        latLng.latitude,
+                        latLng.longitude,
+                      ),
+                      _mapController.camera.zoom + 1,
+                      _mapController,
+                      this,
+                    );
+                  }
+                }
+              },
         ),
         children: [
           TileLayer(
