@@ -84,16 +84,17 @@ class SettingsController with ChangeNotifier {
   /* Auth related methods */
 
   // Update the user JWT token
-  Future<void> updateAuthToken(
+  Future<bool> updateAuthToken(
     String? expiry,
     String? token,
   ) async {
-    if (expiry == null || token == null) return;
+    if (expiry == null || token == null) return false;
     await _settingsService.updateAuthToken(
       expiry,
       token,
     );
     notifyListeners();
+    return true;
   }
   // Test that the user token is expired or not
   Future<bool> isAuthTokenExpired() async {

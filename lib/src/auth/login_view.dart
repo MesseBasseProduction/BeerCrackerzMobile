@@ -67,36 +67,85 @@ class LoginViewState extends State<LoginView> {
           final parsedJson = jsonDecode(response.body);
           // Check server response validity, it must contain the token and its expiration date
           if (parsedJson['expiry'] != null && parsedJson['token'] != null) {
-            await widget.settingsController.updateAuthToken(
+            bool authTokenUpdated = await widget.settingsController.updateAuthToken(
               parsedJson['expiry'],
               parsedJson['token'],
             );
-            widget.settingsController.isLoggedIn = await widget.settingsController.getUserInfo();
-            // Ensure context is mounted, then redirect user to MapView
-            if (context.mounted) {
-              Navigator.popAndPushNamed(
-                context,
-                MapView.routeName
-              );
-              // Inform user that login went OK
-              toastification.show(
-                context: context,
-                title: Text(
-                  AppLocalizations.of(context)!.authLoginSuccessToastTitle,
-                ),
-                description: Text(
-                  AppLocalizations.of(context)!.authLoginSuccessToastDescription,
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
+
+            if (authTokenUpdated == false) {
+              if (context.mounted) {
+                // Issue when saving token and expiry date
+                // Error LGI4
+                toastification.show(
+                  context: context,
+                  title: Text(
+                    AppLocalizations.of(context)!.authLoginTokenErrorToastTitle,
                   ),
-                ),
-                type: ToastificationType.success,
-                style: ToastificationStyle.flatColored,
-                autoCloseDuration: const Duration(
-                  seconds: 5,
-                ),
-                showProgressBar: false,
-              );
+                  description: Text(
+                    AppLocalizations.of(context)!.authLoginTokenErrorToastDescription,
+                    style: const TextStyle(
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  type: ToastificationType.error,
+                  style: ToastificationStyle.flatColored,
+                  autoCloseDuration: const Duration(
+                    seconds: 5,
+                  ),
+                  showProgressBar: false,
+                );
+              }
+            } else {
+              widget.settingsController.isLoggedIn = await widget.settingsController.getUserInfo();
+              // Ensure context is mounted, then redirect user to MapView
+              if (context.mounted) {
+                if (widget.settingsController.isLoggedIn == false) {
+                  // Unable to get user info from server
+                  // Error LGI5
+                  toastification.show(
+                    context: context,
+                    title: Text(
+                      AppLocalizations.of(context)!.authLoginUserInfoErrorToastTitle,
+                    ),
+                    description: Text(
+                      AppLocalizations.of(context)!.authLoginUserInfoErrorToastDescription,
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    type: ToastificationType.error,
+                    style: ToastificationStyle.flatColored,
+                    autoCloseDuration: const Duration(
+                      seconds: 5,
+                    ),
+                    showProgressBar: false,
+                  );
+                } else {
+                  Navigator.popAndPushNamed(
+                    context,
+                    MapView.routeName
+                  );
+                  // Inform user that login went OK
+                  toastification.show(
+                    context: context,
+                    title: Text(
+                      AppLocalizations.of(context)!.authLoginSuccessToastTitle,
+                    ),
+                    description: Text(
+                      AppLocalizations.of(context)!.authLoginSuccessToastDescription,
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    type: ToastificationType.success,
+                    style: ToastificationStyle.flatColored,
+                    autoCloseDuration: const Duration(
+                      seconds: 5,
+                    ),
+                    showProgressBar: false,
+                  );
+                }
+              }
             }
           } else {
             // No token nor expiry sent through the response, not supposed to happen
