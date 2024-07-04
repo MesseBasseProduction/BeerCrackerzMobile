@@ -28,7 +28,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
   @override
   void initState() {
     super.initState();
-    showWelcomeScreen = widget.settingsController.showWelcomeScreen;
+    showWelcomeScreen = false; // Always disable show welcome screen, must be restored in settings
     // Otherwise listen to pages update
     _pageViewController.addListener(() {
       setState(() {
@@ -225,7 +225,6 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
                           value,
                         ) {
                           showWelcomeScreen = !showWelcomeScreen;
-                          widget.settingsController.updateShowWelcomeScreen(showWelcomeScreen);
                           setState(() {});
                         },
                       ),
@@ -283,6 +282,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
                           ],
                         ),
                         onPressed: () {
+                          widget.settingsController.updateShowWelcomeScreen(showWelcomeScreen);
                           Navigator.pushReplacementNamed(
                             context,
                             MapView.routeName,
