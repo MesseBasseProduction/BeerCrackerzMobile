@@ -66,6 +66,10 @@ class ModalHelper {
                 ),
                 // Mark name input
                 TextFormField(
+                  scrollPadding: EdgeInsets.only(
+                    top: MediaQuery.of(context).viewInsets.top + (SizeConfig.fontTextSize * 4),
+                    bottom: MediaQuery.of(context).viewInsets.bottom + (SizeConfig.fontTextSize * 4),
+                  ),
                   decoration: InputDecoration(
                     labelText: (markerData.type == 'spot')
                       ? AppLocalizations.of(context)!.newSpotNameInput
@@ -153,8 +157,12 @@ class ModalHelper {
                 ),
                 // Mark description input
                 TextFormField(
-                  minLines: 3,
+                  minLines: 1,
                   maxLines: 3,
+                  keyboardType: TextInputType.multiline,
+                  scrollPadding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom + (SizeConfig.fontTextSize * 8),
+                  ),
                   decoration: InputDecoration(
                     labelText: (markerData.type == 'spot')
                       ? AppLocalizations.of(context)!.newSpotDescriptionInput
