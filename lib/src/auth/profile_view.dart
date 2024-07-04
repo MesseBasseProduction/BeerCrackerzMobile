@@ -151,8 +151,8 @@ class ProfileViewState extends State<ProfileView> {
               toolbarColor: Theme.of(context).colorScheme.surface,
               toolbarWidgetColor: Theme.of(context).colorScheme.onSurface,
               backgroundColor: Theme.of(context).colorScheme.background,
-              lockAspectRatio: false,
-              hideBottomControls: true,
+              lockAspectRatio: true, // Force 1:1 aspxect ratio, forbid user to resize zone
+              hideBottomControls: false,
             ),
             IOSUiSettings(
               title: AppLocalizations.of(context)!.authProfileCropTitle,
@@ -171,6 +171,7 @@ class ProfileViewState extends State<ProfileView> {
           String base64Image = base64Encode(imageBytes);
           // Submit new image to the server as base 64 image
           if (context.mounted) {
+            // Sending squared image to the server
             submitProfilePicture(
               context,
               'data:image/jpeg;base64,$base64Image',
