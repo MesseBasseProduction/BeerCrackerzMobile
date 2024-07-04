@@ -87,6 +87,34 @@ class SettingsService {
       }
     }
   }
+  // Returns initial stored lat position
+  Future<double> initialLat() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    double? value = appPreferences.getDouble('bc-initial-pos-lat');
+    if (value == null) {
+      await appPreferences.setDouble(
+        'bc-initial-pos-lat',
+        48.8605277263,
+      );
+      return 48.8605277263;
+    } else {
+      return value;
+    }
+  }
+  // Returns initial stored lng position
+  Future<double> initialLng() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    double? value = appPreferences.getDouble('bc-initial-pos-lng');
+    if (value == null) {
+      await appPreferences.setDouble(
+        'bc-initial-pos-lng',
+        2.34402407374,
+      );
+      return 2.34402407374;
+    } else {
+      return value;
+    }
+  }
   // Persists the user's preferred ThemeMode to device storage
   Future<void> updateThemeMode(
     ThemeMode theme,
@@ -145,6 +173,21 @@ class SettingsService {
         'false',
       );      
     }
+  }
+  // Update the saved initial position to restore map to latest view position on map
+  Future<void> updateInitialPosition(
+    double lat,
+    double lng,
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    await appPreferences.setDouble(
+      'bc-initial-pos-lat',
+      lat,
+    );
+    await appPreferences.setDouble(
+      'bc-initial-pos-lng',
+      lng,
+    );
   }
   // Persists the user's JWT token in device secure storage
   Future<void> updateAuthToken(

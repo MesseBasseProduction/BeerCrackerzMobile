@@ -28,6 +28,9 @@ class SettingsController with ChangeNotifier {
   late String ppPath;
   late bool isUserActive;
   late bool isUserStaff;
+  // Map saved settings
+  double initLat = 48.8605277263;
+  double initLng = 2.34402407374;
   // Load settings from storage. Required before loading app
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
@@ -44,6 +47,8 @@ class SettingsController with ChangeNotifier {
     } else {
       isLoggedIn = false;
     }
+    initLat = await _settingsService.initialLat();
+    initLng = await _settingsService.initialLng();
     // Finally notify listener that settings are loaded, app can be started
     notifyListeners();
   }
@@ -78,6 +83,18 @@ class SettingsController with ChangeNotifier {
     if (showWelcomeScreen == _showWelcomeScreen) return;
     _showWelcomeScreen = showWelcomeScreen;
     await _settingsService.updateShowWelcomeScreen(showWelcomeScreen);
+    notifyListeners();
+  }
+  // Update initial lat/lng position
+  Future<void> updateInitialPosition(
+    double lat,
+    double lng,
+  ) async {
+    if (lat < -90 || lat > 90) return;
+    if (lng < -180 || lng > 180) return;
+    initLat = lat;
+    initLng = lng;
+    await _settingsService.updateInitialPosition(lat, lng);
     notifyListeners();
   }
 

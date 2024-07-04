@@ -57,6 +57,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
   double restoredZoomed = 0; // To restore zoom level when unlocking position
+  // Widget internal utils
+  Timer? _debounce; // o debounce the saving of initial lat/lng on map move
   // InitState main purpose is to async load spots/shops/bars
   @override
   void initState() {
@@ -321,9 +323,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
-          initialCenter: const LatLng(
-            48.8605277263,
-            2.34402407374,
+          initialCenter: LatLng(
+            widget.settingsController.initLat,
+            widget.settingsController.initLng,
           ),
           initialZoom: 11.0,
           interactionOptions: const InteractionOptions(
@@ -346,6 +348,19 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             if (hasGesture && _alignPositionOnUpdate != AlignOnUpdate.never) {
               setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
             }
+            // Update center map to initial lat/lng
+            if (_debounce?.isActive ?? false) _debounce?.cancel();
+            _debounce = Timer(
+              const Duration(
+                milliseconds: 500,
+              ),
+              () {
+                widget.settingsController.updateInitialPosition(
+                  position.center.latitude,
+                  position.center.longitude,
+                );
+              },
+            );
           },
           // Map clicked callback, add marker only if logged in
           onTap: (widget.settingsController.isLoggedIn == true)
