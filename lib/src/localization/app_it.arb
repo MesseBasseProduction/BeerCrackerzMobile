@@ -94,7 +94,7 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz è la comunità degli amanti della birra, piena di cacciatori di pinte e amanti dei cereali. Un'idea brillante di David Béché, portata in vita da Messe Basse Production! BeerCrackerz è un sito Web open source e un'applicazione mobile rilasciata con licenza GPL-3.0.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.6",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.7",
   "authProfileLogout": "Disconnettersi",
   "authProfileLogoutSuccessToastTitle": "Disconnessione riuscita",
   "authProfileLogoutSuccessToastDescription": "Sei stato disconnesso con successo dal tuo account. Arrivederci!",

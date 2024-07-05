@@ -94,7 +94,7 @@
     }
   },
   "authProfileAboutBeerCrackerz": "BeerCrackerz é a comunidade dos amantes da cerveja, repleta de caçadores de cerveja e amantes de cereais. Uma ideia brilhante de David Béché, concretizada pela Messe Basse Production! BeerCrackerz é um site de código aberto e um aplicativo móvel lançado sob a licença GPL-3.0.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.6",
+  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.7",
   "authProfileLogout": "Sair",
   "authProfileLogoutSuccessToastTitle": "Sucesso no logout",
   "authProfileLogoutSuccessToastDescription": "Você foi desconectado da sua conta com sucesso. Vejo você em breve!",
