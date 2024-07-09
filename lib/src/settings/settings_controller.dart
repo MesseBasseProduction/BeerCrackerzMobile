@@ -20,6 +20,8 @@ class SettingsController with ChangeNotifier {
   Locale get appLocale => _appLocale;
   late bool _showWelcomeScreen;
   bool get showWelcomeScreen => _showWelcomeScreen;
+  late bool _leftHanded;
+  bool get leftHanded => _leftHanded;
   // Auth internals / user infos
   late bool isLoggedIn;
   int userId = -1; // Must be iniatialized
@@ -36,6 +38,7 @@ class SettingsController with ChangeNotifier {
     _themeMode = await _settingsService.themeMode();
     _appLocale = await _settingsService.appLocale();
     _showWelcomeScreen = await _settingsService.showWelcomeScreen();
+    _leftHanded = await _settingsService.leftHanded();
     String token = await _settingsService.getAuthToken();
     if (token != '') {
       if (await _settingsService.isAuthTokenExpired() == true) {
@@ -84,6 +87,16 @@ class SettingsController with ChangeNotifier {
     _showWelcomeScreen = showWelcomeScreen;
     await _settingsService.updateShowWelcomeScreen(showWelcomeScreen);
     notifyListeners();
+  }
+  // Update left handed preference
+  Future<void> updateLeftHanded(
+    bool? leftHanded,
+  ) async {
+    if (leftHanded == null) return;
+    if (leftHanded == _leftHanded) return;
+    _leftHanded = leftHanded;
+    await _settingsService.updateLeftHanded(leftHanded);
+    notifyListeners(); 
   }
   // Update initial lat/lng position
   Future<void> updateInitialPosition(

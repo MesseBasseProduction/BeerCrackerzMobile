@@ -170,6 +170,9 @@ class SettingsViewState extends State<SettingsView> {
                 title: Text(
                   AppLocalizations.of(context)!.settingsInterfaceTheme,
                 ),
+                description: Text(
+                  AppLocalizations.of(context)!.settingsInterfaceThemeDescription,
+                ),
                 onToggle: (
                   checked,
                 ) async {
@@ -178,6 +181,26 @@ class SettingsViewState extends State<SettingsView> {
                   } else {
                     await widget.settingsController.updateThemeMode(ThemeMode.light);
                   }
+                },
+              ),
+              // Left-handed mode
+              SettingsTile.switchTile(
+                initialValue: (widget.settingsController.leftHanded == true)
+                  ? true
+                  : false,
+                leading: const Icon(
+                  Icons.front_hand,
+                ),
+                title: Text(
+                  AppLocalizations.of(context)!.settingsInterfaceLefHanded,
+                ),
+                description: Text(
+                  AppLocalizations.of(context)!.settingsInterfaceLefHandedDescription,
+                ),
+                onToggle: (
+                  checked,
+                ) async {
+                    await widget.settingsController.updateLeftHanded(checked);
                 },
               ),
             ],

@@ -322,9 +322,16 @@ class ProfileViewState extends State<ProfileView> {
                 child: Stack(
                   children: [
                     Align(
-                      alignment: Alignment.bottomRight,
+                      alignment: (widget.settingsController.leftHanded == true)
+                        ? Alignment.bottomLeft
+                        : Alignment.bottomRight,
                       child: FractionalTranslation(
-                        translation: const Offset(0.2, 0.2),
+                        translation: Offset(
+                          (widget.settingsController.leftHanded == true)
+                            ? -0.2
+                            : 0.2, 
+                          0.2,
+                        ),
                         child: FloatingActionButton(
                           onPressed: () => onImageButtonPressed(
                             context,

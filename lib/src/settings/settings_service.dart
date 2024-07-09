@@ -87,6 +87,27 @@ class SettingsService {
       }
     }
   }
+  // Returns left handed preference
+  Future<bool> leftHanded() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    // Read preference from device shared preference storage
+    String? value = appPreferences.getString('bc-left-handed');
+    // First app launch, set pref value to true and return true
+    if (value == null) {
+      await appPreferences.setString(
+        'bc-left-handed',
+        'false',
+      );
+      return false;
+    } else {
+      // Else read saved value
+      if (value == 'true') {
+        return true;
+      } else {
+        return false;        
+      }
+    }
+  }
   // Returns initial stored lat position
   Future<double> initialLat() async {
     final SharedPreferences appPreferences = await SharedPreferences.getInstance();
@@ -170,6 +191,23 @@ class SettingsService {
     } else {
       await appPreferences.setString(
         'bc-show-welcome-screen',
+        'false',
+      );      
+    }
+  }
+  // Update left handed saved value
+  Future<void> updateLeftHanded(
+    bool value,
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    if (value == true) {
+      await appPreferences.setString(
+        'bc-left-handed',
+        'true',
+      );      
+    } else {
+      await appPreferences.setString(
+        'bc-left-handed',
         'false',
       );      
     }

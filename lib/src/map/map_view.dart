@@ -320,6 +320,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     return Scaffold(
       appBar: null,
       resizeToAvoidBottomInset: false, // Do not move map when keyboard appear
+      floatingActionButtonLocation: (widget.settingsController.leftHanded == true)
+        ? FloatingActionButtonLocation.startFloat
+        : null,
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -417,10 +420,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   // Only perform double tap zoom if not exceeding maxZoom for map
                   if (_mapController.camera.zoom + 1 <= 19) {
                     MapUtils.animatedMapMove(
-                      LatLng(
-                        latLng.latitude,
-                        latLng.longitude,
-                      ),
+                      _mapController.camera.center,
                       _mapController.camera.zoom + 1,
                       _mapController,
                       this,
@@ -472,10 +472,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   // Only perform double tap zoom if not exceeding maxZoom for map
                   if (_mapController.camera.zoom + 1 <= 19) {
                     MapUtils.animatedMapMove(
-                      LatLng(
-                        latLng.latitude,
-                        latLng.longitude,
-                      ),
+                      _mapController.camera.center,
                       _mapController.camera.zoom + 1,
                       _mapController,
                       this,
@@ -520,7 +517,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               : [],
           ),
           RichAttributionWidget(
-            alignment: AttributionAlignment.bottomLeft,
+            alignment: (widget.settingsController.leftHanded == true)
+              ? AttributionAlignment.bottomRight
+              : AttributionAlignment.bottomLeft,
             showFlutterMapAttribution: false,
             popupBackgroundColor: Theme.of(context).colorScheme.primary,
             closeButton: (
