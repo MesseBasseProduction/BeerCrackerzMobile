@@ -87,7 +87,6 @@ class ProfileService {
     String token,
     int userId,
     String base64Image,
-    int imageSize,
   ) async {
     return await http.patch(
       Uri.parse('${AppConst.baseURL}/api/user/$userId/profile-picture/'),
@@ -98,10 +97,6 @@ class ProfileService {
       },
       body: jsonEncode({
         'profile_picture': base64Image,
-        'minX': 0,
-        'minY': 0,
-        'maxX': imageSize,
-        'maxY': imageSize,
       }),
     );
   }

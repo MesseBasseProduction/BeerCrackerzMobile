@@ -175,7 +175,6 @@ class ProfileViewState extends State<ProfileView> {
             submitProfilePicture(
               context,
               'data:image/jpeg;base64,$base64Image',
-              decodedImage.height,
             );
           }
         } else {
@@ -210,7 +209,6 @@ class ProfileViewState extends State<ProfileView> {
   void submitProfilePicture(
     BuildContext context,
     String base64Image,
-    int size,
   ) async {
     // Start loading overlay during server call
     if (context.mounted) {
@@ -221,7 +219,6 @@ class ProfileViewState extends State<ProfileView> {
       await widget.settingsController.getAuthToken(),
       widget.settingsController.userId,
       base64Image,
-      size,
     ).then((response) async {
       if (response.statusCode == 204) {
         // Request user info from server and perform a view refresh 
