@@ -221,6 +221,7 @@
   "shopDiscoveredBy": "Un negozio scoperto da",
   "barDiscoveredBy": "Una barra scoperto da",
   "markDiscoveredSince": "Da",
+  "markRoute": "Itinerario",
   "markEdit": "Modificare",
   "markDelete": "Eliminare",
   "mapLoginInfoTitle": "Informazioni sull'aggiunta del segno",
@@ -235,5 +236,11 @@
   "mapOptionsDisplayBars": "Visualizza le barre",
   "mapOSMContributors": "Contributori di OpenStreeMap",
   "mapEsriContributors": "Alimentato da Esri",
-  "mapFlutterMapContributors": "Sviluppatori di Flutter Map"
+  "mapFlutterMapContributors": "Sviluppatori di Flutter Map",
+  "mapRouteTooFarToastTitle": "Segna troppo lontano",
+  "mapRouteTooFarToastDescription": "Il punto che stai cercando di raggiungere è troppo lontano dalla tua posizione. Si prega di non utilizzare BeerCrackerz per raggiungere questo segno.",
+  "mapRouteFoundToastTitle": "Itinerario calcolato",
+  "mapRouteFoundToastDescription": "Tutto quello che devi fare ora è seguire il percorso della birra sacra tracciato sulla mappa.",
+  "mapRouteNotFoundToastTitle": "Impossibile calcolare il percorso",
+  "mapRouteNotFoundToastDescription": "Si è verificato un problema durante il recupero del percorso da Open Route Service. Contatta l'assistenza per ricevere assistenza con il codice di errore ORS1."
 }

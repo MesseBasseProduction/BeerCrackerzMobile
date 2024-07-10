@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:flutter_map_math/flutter_geo_math.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:open_route_service/open_route_service.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,6 +22,7 @@ import '/src/map/modal/map_options_view.dart';
 import '/src/map/modal/new_marker_view.dart';
 import '/src/map/utils/map_utils.dart';
 import '/src/settings/settings_controller.dart';
+import '/src/utils/app_const.dart';
 import '/src/utils/size_config.dart';
 // Hold the main widget map view, that contains
 // all spots, shops and bars saved on server. Handle
@@ -54,11 +59,17 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   String mapLayer = 'osm';
   bool doubleTap = false; // Enter double tap mode
   bool doubleTapPerformed = false; // Double tap actually happened
+  final OpenRouteService ors = OpenRouteService(
+    apiKey: AppConst.osrApiKey!,
+  );
   // Position alignment stream controller
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
+  StreamSubscription? _subscription;
+  // Navigation route points
+  List<LatLng> navRoutePoints = [];
   // Widget internal utils
-  Timer? _debounce; // o debounce the saving of initial lat/lng on map move
+  Timer? _debounce; // Debounce the saving of initial lat/lng on map move
   // InitState main purpose is to async load spots/shops/bars
   @override
   void initState() {
@@ -73,24 +84,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     // Fetch and build Spots, Shops and Bars.
     // Must delay data server calls to ensure context is set in buid
     Future.delayed(Duration.zero, () {
-      MapService.getSpots().then((spotMarkersData) {
-        for (var markerData in spotMarkersData) {
-          _spotMarkerView.add(
-            MarkerView.buildMarkerView(
-              context,
-              _mapController,
-              widget,
-              markerData,
-              this,
-              removeMarker,
-              editMarker,
-            ),
-          );
-        }
-        // Render UI modifications
-        setState(() {});
-      });
-
       MapService.getShops().then((shopMarkersData) {
         for (var markerData in shopMarkersData) {
           _shopMarkerView.add(
@@ -100,6 +93,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               widget,
               markerData,
               this,
+              computeRouteToMark,
               removeMarker,
               editMarker,
             ),
@@ -118,6 +112,26 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               widget,
               markerData,
               this,
+              computeRouteToMark,
+              removeMarker,
+              editMarker,
+            ),
+          );
+        }
+        // Render UI modifications
+        setState(() {});
+      });
+
+      MapService.getSpots().then((spotMarkersData) {
+        for (var markerData in spotMarkersData) {
+          _spotMarkerView.add(
+            MarkerView.buildMarkerView(
+              context,
+              _mapController,
+              widget,
+              markerData,
+              this,
+              computeRouteToMark,
               removeMarker,
               editMarker,
             ),
@@ -133,6 +147,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   void dispose() {
     // Release user position stream on dispose widget
     _alignPositionStreamController.close();
+    _subscription?.cancel();
     super.dispose();
   }
   // Add new marker callback, must be called from bottom modal sheet
@@ -147,6 +162,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       widget,
       markerData,
       this,
+      computeRouteToMark,
       removeMarker,
       editMarker,
     );
@@ -310,6 +326,130 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       showBars = value;
     }
     setState(() {});
+  }
+  // Navigation routing
+  void computeRouteToMark(
+    MarkerData markerData,
+  ) async {
+    // Clear any previous route
+    setState(() => navRoutePoints = []);
+    // Get latest known position to start the path with
+    Position? position = await Geolocator.getLastKnownPosition();
+    // First ensure route is not over threshold
+    double distance = FlutterMapMath().distanceBetween(
+      position!.latitude,
+      position.longitude,
+      markerData.lat,
+      markerData.lng,
+      'meters',
+    );
+    if (distance > AppConst.maxDistanceForRoute) {
+      if (mounted) {
+        // Mark too far from user
+        toastification.show(
+          context: context,
+          title: Text(
+            AppLocalizations.of(context)!.mapRouteTooFarToastTitle,
+          ),
+          description: Text(
+            AppLocalizations.of(context)!.mapRouteTooFarToastDescription,
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          type: ToastificationType.error,
+          style: ToastificationStyle.flatColored,
+          autoCloseDuration: const Duration(
+            seconds: 5,
+          ),
+          showProgressBar: false,
+        );
+      }
+      return;
+    }
+    // Now perform ORS route request
+    if (mounted) {
+      // Put loading overlay to notify user a computation is in progress
+      context.loaderOverlay.show();
+      // Request route from ORS
+      try {
+        final List<ORSCoordinate> routeCoordinates = await ors.directionsRouteCoordsGet(
+          startCoordinate: ORSCoordinate(
+            latitude: position.latitude,
+            longitude: position.longitude,
+          ),
+          endCoordinate: ORSCoordinate(
+            latitude: markerData.lat,
+            longitude: markerData.lng,
+          ),
+        );
+        // Build final polyline points
+        final List<LatLng> routePoints = routeCoordinates
+          .map((coordinate) => LatLng(
+            coordinate.latitude,
+            coordinate.longitude,
+          )).toList();
+        // Center map between path bounds
+        LatLngBounds bounds = LatLngBounds.fromPoints(routePoints);
+        _mapController.fitCamera(
+          CameraFit.bounds(
+            bounds: bounds,
+            padding: EdgeInsets.all(SizeConfig.paddingLarge)
+          ),
+        );
+        // Set widget state with found route
+        setState(() {
+          navRoutePoints = routePoints;
+          // Hide overlay loader
+          context.loaderOverlay.hide();
+          // Notify user the route was found and is displayed
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.mapRouteFoundToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.mapRouteFoundToastDescription,
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.success,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
+        });
+      } catch (e) {
+        if (mounted) {
+          // Hide overlay loader anyway
+          context.loaderOverlay.hide();
+          // Unable to get route from ORS
+          // Error ORS1
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.mapRouteNotFoundToastTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.mapRouteNotFoundToastDescription,
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
+        }
+        return;
+      }
+    }
   }
   // Map widget builing
   @override
@@ -496,48 +636,57 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   },
             ),
             children: [
-              Text(
-                AppLocalizations.of(context)!.appTitle,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: SizeConfig.fontTextSize,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              // Basemap layer
               TileLayer(
                 urlTemplate: (mapLayer == 'osm')
                   ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
                   : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                 userAgentPackageName: 'com.messebasseproduction.beercrackerz',
               ),
+              // Navigation route layer, positionned to be bottom all other layers
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: navRoutePoints,
+                    color: Theme.of(context).colorScheme.primary,
+                    strokeWidth: 5,
+                  ),
+                ],
+              ),
+              // User position layer
               CurrentLocationLayer(
                 alignPositionStream: _alignPositionStreamController.stream,
                 alignPositionOnUpdate: _alignPositionOnUpdate,
                 style: const LocationMarkerStyle(
-                  showHeadingSector: false,
+                  showHeadingSector: true,
                   showAccuracyCircle: true,
                 ),
               ),
+              // Spot marks layer
               MarkerLayer(
                 markers: (showSpots == true)
                   ? _spotMarkerView
                   : [],
               ),
+              // Shop marks layer
               MarkerLayer(
                 markers: (showShops == true)
                   ? _shopMarkerView
                   : [],
               ),
+              // Bar marks layer
               MarkerLayer(
                 markers: (showBars == true)
                   ? _barMarkerView
                   : [],
               ),
+              // WIP mark layer
               MarkerLayer(
                 markers: (showWIP == true)
                   ? wipMarker
                   : [],
               ),
+              // Map attribution
               RichAttributionWidget(
                 alignment: (widget.settingsController.leftHanded == true)
                   ? AttributionAlignment.bottomRight
@@ -586,6 +735,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               ),
             ],
           ),
+          // App text title
           Row(
             mainAxisAlignment: (widget.settingsController.leftHanded == true)
               ? MainAxisAlignment.end
@@ -612,13 +762,13 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                         foreground: Paint()
                           ..style = PaintingStyle.stroke
                           ..strokeWidth = 5
-                          ..color = Theme.of(context).colorScheme.onSurface,
+                          ..color = Theme.of(context).colorScheme.onBackground,
                       ),
                     ),
                     Text(
                       AppLocalizations.of(context)!.appTitle,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.background,
                         fontSize: SizeConfig.fontTextTitleSize,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold,
@@ -657,6 +807,28 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           ),
           Column(
             children: [
+              // Close navigation button (only displayed if navigation occured)
+              (navRoutePoints.isNotEmpty == true) 
+                ? Column(
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'closeNavigationButton',
+                      onPressed: () {
+                        navRoutePoints = [];
+                        setState(() {});
+                      },
+                      foregroundColor: null,
+                      backgroundColor: null,
+                      child: const Icon(
+                        Icons.close,
+                      ),
+                    ),
+                    SizedBox(
+                      height: SizeConfig.paddingSmall,
+                    ),
+                  ],
+                )
+                : const SizedBox.shrink(),
               // Map filtering operations
               FloatingActionButton(
                 heroTag: 'filterButton',
@@ -673,7 +845,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               // Center on user (and lock position on it)
               FloatingActionButton(
                 heroTag: 'centerOnButton',
-                onPressed: () {
+                onPressed: () async {
                   if (_alignPositionOnUpdate == AlignOnUpdate.never) {
                     _alignPositionStreamController.add(_mapController.camera.zoom);
                     setState(() => _alignPositionOnUpdate = AlignOnUpdate.always);

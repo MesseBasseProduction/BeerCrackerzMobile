@@ -21,6 +21,7 @@ class MarkerView {
     MapView mapView,
     MarkerData markerData,
     TickerProvider tickerProvider,
+    Function computeRouteToMark,
     Function removeCallback,
     Function editCallback,
   ) {
@@ -51,6 +52,7 @@ class MarkerView {
           mapView,
           markerData,
           tickerProvider,
+          computeRouteToMark,
           removeCallback,
           editCallback,
         ),
@@ -69,6 +71,7 @@ class MarkerView {
     MapView mapView,
     MarkerData markerData,
     TickerProvider tickerProvider,
+    Function computeRouteToMark,
     Function removeCallback,
     Function editCallback,
   ) {
@@ -254,6 +257,32 @@ class MarkerView {
                     ),
                     SizedBox(
                       height: SizeConfig.padding,
+                    ),
+                    // Route to mark
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.route,
+                              ),
+                              SizedBox(
+                                width: SizeConfig.paddingSmall,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!.markRoute,
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            // Forbid animation when bottom sheet switch to edit
+                            Navigator.of(context).pop(false);
+                            computeRouteToMark(markerData);
+                          },
+                        ),
+                      ],
                     ),
                     // Check if currentMark is created by user, allow him to delete/edit if so
                     (mapView.settingsController.userId == markerData.userId)

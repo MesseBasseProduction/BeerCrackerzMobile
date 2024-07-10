@@ -16,6 +16,7 @@ dependencies:
   flutter_settings_ui: ^3.0.0
   flutter_map: ^7.0.1
   flutter_map_location_marker: ^9.0.0
+  flutter_map_math: ^0.1.7
   flutter_rating_bar: ^4.0.1
   flutter_svg: ^2.0.9
   shared_preferences: ^2.2.3
@@ -30,12 +31,15 @@ dependencies:
   image_picker: ^1.1.0
   image_cropper: ^7.0.5
   cupertino_icons: ^1.0.8
+  open_route_service: ^1.2.6
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^4.0.0
+  build_runner: ^2.4.9
 
 flutter:
   uses-material-design: true
@@ -47,6 +51,7 @@ flutter:
     - assets/images/help/
     - assets/images/icon/
     - assets/images/marker/
+    - .env
 
 flutter_launcher_icons: # To update icon, run "flutter pub run flutter_launcher_icons"
   android: "launcher_icon"

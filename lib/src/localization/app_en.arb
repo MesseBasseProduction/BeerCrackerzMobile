@@ -221,6 +221,7 @@
   "shopDiscoveredBy": "A shop discovered by",
   "barDiscoveredBy": "A bar discovered by",
   "markDiscoveredSince": "Since",
+  "markRoute": "Route",
   "markEdit": "Edit",
   "markDelete": "Delete",
   "mapLoginInfoTitle": "About adding mark",
@@ -235,5 +236,11 @@
   "mapOptionsDisplayBars": "Display bars",
   "mapOSMContributors": "OpenStreeMap contributors",
   "mapEsriContributors": "Powered by Esri",
-  "mapFlutterMapContributors": "Flutter Map developers"
+  "mapFlutterMapContributors": "Flutter Map developers",
+  "mapRouteTooFarToastTitle": "Mark too far",
+  "mapRouteTooFarToastDescription": "The mark you're trying to reach is too far from your position. Please do not use BeerCrackerz to drive to this mark.",
+  "mapRouteFoundToastTitle": "Route computed",
+  "mapRouteFoundToastDescription": "All you have to do now is to follow the holy beer path drawn on the map.",
+  "mapRouteNotFoundToastTitle": "Couldn't compute route",
+  "mapRouteNotFoundToastDescription": "An issue occured while fetching route from Open Route Service. Please contact support for assistance with error code ORS1."
 }

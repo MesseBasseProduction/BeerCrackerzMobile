@@ -221,6 +221,7 @@
   "shopDiscoveredBy": "Uma loja descoberta por",
   "barDiscoveredBy": "Um bar descoberto por",
   "markDiscoveredSince": "Desde",
+  "markRoute": "Rota",
   "markEdit": "Editar",
   "markDelete": "Excluir",
   "mapLoginInfoTitle": "Sobre adicionar marca",
@@ -235,5 +236,11 @@
   "mapOptionsDisplayBars": "Exibir barras",
   "mapOSMContributors": "Colaboradores do OpenStreeMap",
   "mapEsriContributors": "Desenvolvido por Esri",
-  "mapFlutterMapContributors": "Desenvolvedores do Flutter Map"
+  "mapFlutterMapContributors": "Desenvolvedores do Flutter Map",
+  "mapRouteTooFarToastTitle": "Marcar muito longe",
+  "mapRouteTooFarToastDescription": "A marca que você está tentando alcançar está muito longe da sua posição. Por favor, não use BeerCrackerz para dirigir até esta marca.",
+  "mapRouteFoundToastTitle": "Rota calculada",
+  "mapRouteFoundToastDescription": "Tudo o que você precisa fazer agora é seguir o caminho da cerveja sagrada desenhado no mapa.",
+  "mapRouteNotFoundToastTitle": "Não foi possível calcular a rota",
+  "mapRouteNotFoundToastDescription": "Ocorreu um problema ao buscar a rota do Open Route Service. Entre em contato com o suporte para obter assistência com o código de erro ORS1."
 }
