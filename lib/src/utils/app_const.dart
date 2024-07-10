@@ -1,4 +1,6 @@
 class AppConst {
+  static const String appVersion = '0.0.8';
+  static const String serverVersion = '0.1.0';
   // The server URL to reach, ensure no trailing slash remains
   static const String baseURL = 'https://beercrackerz.org';
   // Local assets to  be used on the map

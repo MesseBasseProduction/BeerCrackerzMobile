@@ -93,11 +93,30 @@
       }
     }
   },
-  "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production! BeerCrackerz is an open source website and mobile application released under the GPL-3.0 licence.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.7",
+  "authProfileAboutBeerCrackerz": "BeerCrackerz is the beer lovers comunity, filled with pint slayers and cereals lovers. A brilliant idea from David Béché, brought to life by Messe Basse Production!",
   "authProfileLogout": "Logout",
   "authProfileLogoutSuccessToastTitle": "Logout success",
   "authProfileLogoutSuccessToastDescription": "You've been successfully logged out of your account. See you soon!",
+  "helpAboutTitle": "About BeerCrackerz",
+  "helpAboutPar1": "BeerCrackerz is the beer lovers community, providing a collaborative map where anyone can share their personnal best places to drink a few beers or to meet up at nearby bars. It was made to build, all together, the ultimate tour guide for beer lovers.",
+  "helpAboutPar2": "This application is fully open source. Because we trully respect our users, there is no tracking nor data mining at all. The database was only made to serve the users, not companies. Beer loving is not for sale and we guarantee that this will never change.",
+  "helpAboutSourceCode": "View source code",
+  "helpAboutPar3": "BeerCrackerz is edited by Messe Basse Production, a french non-profit organization, based on a brilliant idea from David Béché and released with the GPL-v3.0 licence. You are free to do whatever you want with the code, as long as you publish with the same copyleft license.",
+  "helpAboutPar4": "Although we do our best to have the highest code quality, we are not exempt from bugs ; in case you encountered an unexpected behavior, an app crash, a failed translation or if you simply want to suggest a feature you think is missing, you're welcome to reach us!",
+  "helpAboutReachUs": "Reach us",
+  "helpAboutVersion": "BeerCrackerz Mobile – v{field1}\nBeerCrackerz Server – v{field2}",
+  "@helpAboutVersion": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "1.0.0"
+      },
+      "field2": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
   "helpWelcomeTitle": "Welcome",
   "helpWelcomeSlideTitle": "Welcome to BeerCrackerz!",
   "helpWelcomeSlideDescription": "The app made by and for Beer lovers ; a community map where you will find the best spots around to enjoy a delightful beer. It also provides the nearest shops ands bars to refill your bag with the sweatests beers around. Anyone can register to contribute by adding their personnal best places to chill and enjoy a beer. With all that said, feel very welcome and enjoy the ride !",

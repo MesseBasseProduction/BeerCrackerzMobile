@@ -1,4 +1,3 @@
-
 {
   "@@locale": "de",
   "appTitle": "BeerCrackerz",
@@ -94,11 +93,30 @@
       }
     }
   },
-  "authProfileAboutBeerCrackerz": "BeerCrackerz ist die Community für Bierliebhaber, gefüllt mit Pint-Slayern und Müsliliebhabern. Eine clevere Idee von David Béché, umgesetzt von Messe Basse Production! BeerCrackerz ist eine Open-Source-Website und mobile Anwendung, die unter der GPL-3.0-Lizenz veröffentlicht wird.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.7",
+  "authProfileAboutBeerCrackerz": "BeerCrackerz ist die Community für Bierliebhaber, gefüllt mit Pint-Slayern und Müsliliebhabern. Eine clevere Idee von David Béché, umgesetzt von Messe Basse Production!",
   "authProfileLogout": "Ausloggen",
   "authProfileLogoutSuccessToastTitle": "Erfolgreiche Abmeldung",
   "authProfileLogoutSuccessToastDescription": "Sie wurden erfolgreich von Ihrem Konto abgemeldet. Bis bald!",
+  "helpAboutTitle": "Über BeerCrackerz",
+  "helpAboutPar1": "BeerCrackerz ist die Community für Bierliebhaber und bietet eine gemeinschaftliche Karte, auf der jeder seine persönlichen Lieblingsplätze teilen kann, um ein paar Bier zu trinken oder sich in nahegelegenen Bars zu treffen. Gemeinsam sollen sie den ultimativen Reiseführer für Bierliebhaber bilden.",
+  "helpAboutPar2": "Diese Anwendung ist vollständig Open Source. Da wir unsere Benutzer wirklich respektieren, gibt es keinerlei Tracking oder Data Mining. Die Datenbank wurde nur für die Benutzer erstellt, nicht für Unternehmen. Bierliebe ist nicht käuflich und wir garantieren, dass sich dies nie ändern wird.",
+  "helpAboutSourceCode": "Quellcode anzeigen",
+  "helpAboutPar3": "BeerCrackerz wird von Messe Basse Production herausgegeben, einer französischen Non-Profit-Organisation, basiert auf einer brillanten Idee von David Béché und wird unter der GPL-v3.0-Lizenz veröffentlicht. Sie können mit dem Code machen, was Sie wollen, solange Sie ihn unter derselben Copyleft-Lizenz veröffentlichen.",
+  "helpAboutPar4": "Obwohl wir unser Bestes tun, um die höchste Codequalität zu erzielen, sind auch wir nicht vor Fehlern gefeit. Falls Sie auf unerwartetes Verhalten stoßen, die App abstürzt oder die Übersetzung fehlschlägt oder Sie einfach eine Funktion vorschlagen möchten, die Ihrer Meinung nach fehlt, können Sie sich gerne an uns wenden!",
+  "helpAboutReachUs": "Erreiche uns",
+  "helpAboutVersion": "BeerCrackerz Mobile – v{field1}\nBeerCrackerz Server – v{field2}",
+  "@helpAboutVersion": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "1.0.0"
+      },
+      "field2": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
   "helpWelcomeTitle": "Willkommen",
   "helpWelcomeSlideTitle": "Willkommen bei BeerCrackerz!",
   "helpWelcomeSlideDescription": "Die App von und für Bierliebhaber; Eine Community-Karte, auf der Sie die besten Orte finden, an denen Sie ein köstliches Bier genießen können. Es bietet auch die nächstgelegenen Geschäfte und Bars, in denen Sie Ihre Tasche mit den besten Bieren der Gegend auffüllen können. Jeder kann sich registrieren, um einen Beitrag zu leisten, indem er seine persönlichen besten Orte zum Entspannen und Genießen eines Bieres hinzufügt. Trotzdem: Fühlen Sie sich herzlich willkommen und genießen Sie die Fahrt!",

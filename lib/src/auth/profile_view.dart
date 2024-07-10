@@ -386,23 +386,6 @@ class ProfileViewState extends State<ProfileView> {
               SizedBox(
                 height: SizeConfig.padding,
               ),
-              // App version
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SizeConfig.padding
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.authProfileAboutVersion,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: SizeConfig.padding,
-              ),
               // Logout button
               ButtonTheme(
                 height: (SizeConfig.defaultSize * 5),

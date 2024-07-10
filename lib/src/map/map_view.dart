@@ -9,6 +9,7 @@ import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '/src/auth/auth_view.dart';
+import '/src/help/about_view.dart';
 import '/src/map/map_service.dart';
 import '/src/map/marker/marker_data.dart';
 import '/src/map/marker/marker_view.dart';
@@ -321,8 +322,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       appBar: null,
       resizeToAvoidBottomInset: false, // Do not move map when keyboard appear
       floatingActionButtonLocation: (widget.settingsController.leftHanded == true)
-        ? FloatingActionButtonLocation.startFloat
-        : null,
+        ? FloatingActionButtonLocation.startDocked
+        : FloatingActionButtonLocation.endDocked,
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -565,73 +566,91 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         ],
       ),
       // Map buttons for profile, centerOn user and map options
-      floatingActionButton: Wrap(
-        direction: Axis.vertical,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          // Map filtering operations
-          Container(
-            margin: EdgeInsets.symmetric(
-              vertical: SizeConfig.paddingTiny,
-            ),
-            child: FloatingActionButton(
-              heroTag: 'filterButton',
-              onPressed: () => mapOptionsModal(),
-              foregroundColor: null,
-              backgroundColor: null,
-              child: const Icon(
-                Icons.map,
+          Column(
+            children: [
+              SizedBox(
+                height: SizeConfig.padding + MediaQuery.of(context).viewPadding.top,
               ),
-            ),
+              FloatingActionButton(
+                heroTag: 'aboutButton',
+                onPressed: () => Navigator.restorablePushNamed(
+                  context,
+                  AboutView.routeName,
+                ),
+                foregroundColor: null,
+                backgroundColor: null,
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: SizeConfig.iconSize,
+                ),
+              ),
+            ],
           ),
-          // Center on user (and lock position on it)
-          Container(
-            margin: EdgeInsets.symmetric(
-              vertical: SizeConfig.paddingTiny,
-            ),
-            child: FloatingActionButton(
-              heroTag: 'centerOnButton',
-              onPressed: () {
-                if (_alignPositionOnUpdate == AlignOnUpdate.never) {
-                  restoredZoomed = _mapController.camera.zoom;
-                  _alignPositionStreamController.add(18);
-                  setState(() => _alignPositionOnUpdate = AlignOnUpdate.always);
-                } else {
-                  MapUtils.animatedMapMove(
-                    _mapController.camera.visibleBounds.center,
-                    restoredZoomed,
-                    _mapController,
-                    this,
-                  );
-                  setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
-                }
-              },
-              foregroundColor: null,
-              backgroundColor: null,
-              child: Icon(
-                Icons.gps_fixed,
-                color: (_alignPositionOnUpdate == AlignOnUpdate.always)
-                  ? Theme.of(context).colorScheme.secondary
-                  : null,
+          Column(
+            children: [
+              // Map filtering operations
+              FloatingActionButton(
+                heroTag: 'filterButton',
+                onPressed: () => mapOptionsModal(),
+                foregroundColor: null,
+                backgroundColor: null,
+                child: const Icon(
+                  Icons.map,
+                ),
               ),
-            ),
-          ),
-          // Auth/Profile section
-          Container(
-            margin: EdgeInsets.symmetric(
-              vertical: SizeConfig.paddingTiny,
-            ),
-            child: FloatingActionButton(
-              heroTag: 'profileButton',
-              onPressed: () => Navigator.restorablePushNamed(
-                context,
-                AuthView.routeName,
+              SizedBox(
+                height: SizeConfig.paddingSmall,
               ),
-              foregroundColor: null,
-              backgroundColor: null,
-              child: const Icon(
-                Icons.account_circle,
+              // Center on user (and lock position on it)
+              FloatingActionButton(
+                heroTag: 'centerOnButton',
+                onPressed: () {
+                  if (_alignPositionOnUpdate == AlignOnUpdate.never) {
+                    restoredZoomed = _mapController.camera.zoom;
+                    _alignPositionStreamController.add(18);
+                    setState(() => _alignPositionOnUpdate = AlignOnUpdate.always);
+                  } else {
+                    MapUtils.animatedMapMove(
+                      _mapController.camera.visibleBounds.center,
+                      restoredZoomed,
+                      _mapController,
+                      this,
+                    );
+                    setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
+                  }
+                },
+                foregroundColor: null,
+                backgroundColor: null,
+                child: Icon(
+                  Icons.gps_fixed,
+                  color: (_alignPositionOnUpdate == AlignOnUpdate.always)
+                    ? Theme.of(context).colorScheme.secondary
+                    : null,
+                ),
               ),
-            ),
+              SizedBox(
+                height: SizeConfig.paddingSmall,
+              ),
+              // Auth/Profile section
+              FloatingActionButton(
+                heroTag: 'profileButton',
+                onPressed: () => Navigator.restorablePushNamed(
+                  context,
+                  AuthView.routeName,
+                ),
+                foregroundColor: null,
+                backgroundColor: null,
+                child: const Icon(
+                  Icons.account_circle,
+                ),
+              ),
+              SizedBox(
+                height: SizeConfig.padding,
+              ),
+            ],
           ),
         ],
       ),

@@ -6,6 +6,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
 import '/src/auth/auth_view.dart';
+import '/src/help/about_view.dart';
 import '/src/help/welcome_screen_view.dart';
 import '/src/map/map_view.dart';
 import '/src/settings/settings_controller.dart';
@@ -96,6 +97,10 @@ class BeerCrackerzMobile extends StatelessWidget {
                       );
                     case MapView.routeName:
                       return MapView(
+                        settingsController: settingsController,
+                      );
+                    case AboutView.routeName:
+                      return AboutView(
                         settingsController: settingsController,
                       );
                     default:

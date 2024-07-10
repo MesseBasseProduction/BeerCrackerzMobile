@@ -93,11 +93,30 @@
       }
     }
   },
-  "authProfileAboutBeerCrackerz": "BeerCrackerz è la comunità degli amanti della birra, piena di cacciatori di pinte e amanti dei cereali. Un'idea brillante di David Béché, portata in vita da Messe Basse Production! BeerCrackerz è un sito Web open source e un'applicazione mobile rilasciata con licenza GPL-3.0.",
-  "authProfileAboutVersion": "BeerCrackerz – v0.1.0 / BeerCrackerzMobile – v0.0.7",
+  "authProfileAboutBeerCrackerz": "BeerCrackerz è la comunità degli amanti della birra, piena di cacciatori di pinte e amanti dei cereali. Un'idea brillante di David Béché, portata in vita da Messe Basse Production!",
   "authProfileLogout": "Disconnettersi",
   "authProfileLogoutSuccessToastTitle": "Disconnessione riuscita",
   "authProfileLogoutSuccessToastDescription": "Sei stato disconnesso con successo dal tuo account. Arrivederci!",
+  "helpAboutTitle": "Informazioni su BeerCrackerz",
+  "helpAboutPar1": "BeerCrackerz è la comunità degli amanti della birra, che fornisce una mappa collaborativa in cui chiunque può condividere i propri posti migliori in cui bere qualche birra o incontrarsi nei bar nelle vicinanze. È stata creata per creare, tutti insieme, la guida turistica definitiva per gli amanti della birra.",
+  "helpAboutPar2": "Questa applicazione è completamente open source. Poiché rispettiamo veramente i nostri utenti, non c'è tracciamento né data mining. Il database è stato creato solo per servire gli utenti, non le aziende. L'amore per la birra non è in vendita e garantiamo che questo non cambierà mai.",
+  "helpAboutSourceCode": "Visualizza il codice sorgente",
+  "helpAboutPar3": "BeerCrackerz è curato da Messe Basse Production, un'organizzazione francese non-profit, basata su una brillante idea di David Béché e rilasciata con licenza GPL-v3.0. Sei libero di fare ciò che vuoi con il codice, purché pubblichi con la stessa licenza copyleft.",
+  "helpAboutPar4": "Anche se facciamo del nostro meglio per avere la massima qualità del codice, non siamo esenti da bug; se hai riscontrato un comportamento inaspettato, un crash dell'app, una traduzione fallita o se vuoi semplicemente suggerire una funzionalità che ritieni manchi, sei il benvenuto!",
+  "helpAboutReachUs": "Raggiungici",
+  "helpAboutVersion": "BeerCrackerz Mobile – v{field1}\nBeerCrackerz Server – v{field2}",
+  "@helpAboutVersion": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "1.0.0"
+      },
+      "field2": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
   "helpWelcomeTitle": "Benvenuto",
   "helpWelcomeSlideTitle": "Benvenuto su BeerCrackerz!",
   "helpWelcomeSlideDescription": "L'app realizzata da e per gli amanti della birra; una mappa della community dove troverai i posti migliori in cui goderti una deliziosa birra. Fornisce anche i negozi e i bar più vicini per riempire la borsa con le birre più belle in circolazione. Chiunque può registrarsi per contribuire aggiungendo i propri migliori posti personali dove rilassarsi e godersi una birra. Detto questo, sentitevi i benvenuti e godetevi il viaggio!",

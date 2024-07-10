@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '/src/map/map_view.dart';
-import '/src/utils/size_config.dart';
 import '/src/settings/settings_controller.dart';
-// 
+import '/src/utils/size_config.dart';
+// This view handle the startup helper which describes the app features
 class WelcomeScreenView extends StatefulWidget {
   const WelcomeScreenView({
     super.key,
