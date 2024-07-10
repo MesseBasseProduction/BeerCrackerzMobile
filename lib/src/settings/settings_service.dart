@@ -136,6 +136,20 @@ class SettingsService {
       return value;
     }
   }
+  // Returns initial stored lng position
+  Future<double> initialZoom() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    double? value = appPreferences.getDouble('bc-initial-pos-zoom');
+    if (value == null) {
+      await appPreferences.setDouble(
+        'bc-initial-pos-zoom',
+        11.0,
+      );
+      return 11.0;
+    } else {
+      return value;
+    }
+  }
   // Persists the user's preferred ThemeMode to device storage
   Future<void> updateThemeMode(
     ThemeMode theme,
@@ -216,6 +230,7 @@ class SettingsService {
   Future<void> updateInitialPosition(
     double lat,
     double lng,
+    double zoom,
   ) async {
     final SharedPreferences appPreferences = await SharedPreferences.getInstance();
     await appPreferences.setDouble(
@@ -225,6 +240,10 @@ class SettingsService {
     await appPreferences.setDouble(
       'bc-initial-pos-lng',
       lng,
+    );
+    await appPreferences.setDouble(
+      'bc-initial-pos-zoom',
+      zoom,
     );
   }
   // Persists the user's JWT token in device secure storage

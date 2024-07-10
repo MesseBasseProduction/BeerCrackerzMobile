@@ -57,7 +57,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   // Position alignment stream controller
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
-  double restoredZoomed = 0; // To restore zoom level when unlocking position
   // Widget internal utils
   Timer? _debounce; // o debounce the saving of initial lat/lng on map move
   // InitState main purpose is to async load spots/shops/bars
@@ -324,248 +323,315 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       floatingActionButtonLocation: (widget.settingsController.leftHanded == true)
         ? FloatingActionButtonLocation.startDocked
         : FloatingActionButtonLocation.endDocked,
-      body: FlutterMap(
-        mapController: _mapController,
-        options: MapOptions(
-          initialCenter: LatLng(
-            widget.settingsController.initLat,
-            widget.settingsController.initLng,
-          ),
-          initialZoom: 11.0,
-          interactionOptions: const InteractionOptions(
-            flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
-          ),
-          minZoom: 2,
-          maxZoom: 19,
-          // Force camera to remain on LatLng ranges
-          cameraConstraint: CameraConstraint.contain(
-            bounds: LatLngBounds(
-              const LatLng(-90, -180),
-              const LatLng(90, 180),
-            ),
-          ),
-          // User position tracking on map
-          onPositionChanged: (
-            position,
-            hasGesture,
-          ) {
-            if (hasGesture && _alignPositionOnUpdate != AlignOnUpdate.never) {
-              setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
-            }
-            // Update center map to initial lat/lng
-            if (_debounce?.isActive ?? false) _debounce?.cancel();
-            _debounce = Timer(
-              const Duration(
-                milliseconds: 500,
+      body: Stack(
+        children: [
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: LatLng(
+                widget.settingsController.initLat,
+                widget.settingsController.initLng,
               ),
-              () {
-                widget.settingsController.updateInitialPosition(
-                  position.center.latitude,
-                  position.center.longitude,
+              initialZoom: widget.settingsController.initZoom,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
+              ),
+              minZoom: 2,
+              maxZoom: 19,
+              // Force camera to remain on LatLng ranges
+              cameraConstraint: CameraConstraint.contain(
+                bounds: LatLngBounds(
+                  const LatLng(-90, -180),
+                  const LatLng(90, 180),
+                ),
+              ),
+              // User position tracking on map
+              onPositionChanged: (
+                position,
+                hasGesture,
+              ) {
+                if (hasGesture && _alignPositionOnUpdate != AlignOnUpdate.never) {
+                  setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
+                }
+                // Update center map to initial lat/lng
+                if (_debounce?.isActive ?? false) _debounce?.cancel();
+                _debounce = Timer(
+                  const Duration(
+                    milliseconds: 500,
+                  ),
+                  () {
+                    widget.settingsController.updateInitialPosition(
+                      position.center.latitude,
+                      position.center.longitude,
+                      position.zoom,
+                    );
+                  },
                 );
               },
-            );
-          },
-          // Map clicked callback, add marker only if logged in
-          onTap: (widget.settingsController.isLoggedIn == true)
-            ? (
-                TapPosition position,
-                LatLng latLng,
-              ) {
-                // First user tap
-                if (doubleTap == false) {
-                  doubleTap = true;
-                  // Restore flag 
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    doubleTap = false;
-                    if (doubleTapPerformed == false) {
-                      if (showWIP == false) {
-                        // Add temporary marker
-                        wipMarker.add(
-                          MarkerView.buildWIPMarkerView(
-                            context,
-                            _mapController,
-                            latLng,
-                          ),
-                        );
-                        // Compute current map bound and lat/lng range for those bounds
-                        LatLngBounds bounds = _mapController.camera.visibleBounds;
-                        double mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
-                        // Move map to the marker position, with modal opened offset
+              // Map clicked callback, add marker only if logged in
+              onTap: (widget.settingsController.isLoggedIn == true)
+                ? (
+                    TapPosition position,
+                    LatLng latLng,
+                  ) {
+                    // First user tap
+                    if (doubleTap == false) {
+                      doubleTap = true; // Double click candidate
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                      // Restore flag 
+                        doubleTap = false;
+                        if (doubleTapPerformed == false) { // No double click occured
+                          if (showWIP == false) {
+                            // Add temporary marker
+                            wipMarker.add(
+                              MarkerView.buildWIPMarkerView(
+                                context,
+                                _mapController,
+                                latLng,
+                              ),
+                            );
+                            // Compute current map bound and lat/lng range for those bounds
+                            LatLngBounds bounds = _mapController.camera.visibleBounds;
+                            double mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
+                            double zoomLevel = _mapController.camera.zoom + 2;
+                            // Max zoom restriction with mapRange to avoid mark being offscreen under modal
+                            if (_mapController.camera.zoom + 2 > 19) {
+                              if (_mapController.camera.zoom + 1 > 19) {
+                                zoomLevel = _mapController.camera.zoom;
+                                mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 100;
+                              } else {
+                                zoomLevel = _mapController.camera.zoom + 1;
+                                mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 200;
+                              }
+                            }
+                            // Move map to the marker position, with modal opened offset
+                            MapUtils.animatedMapMove(
+                              LatLng(
+                                latLng.latitude - (mapLatRange / 2),
+                                latLng.longitude,
+                              ),
+                              zoomLevel,
+                              _mapController,
+                              this,
+                            );
+                            // Then create new marker modal
+                            newMarkerModal(
+                              latLng,
+                              mapLatRange,
+                            );
+                          }
+                          // Invert wip state
+                          showWIP = !showWIP;
+                          setState(() {});
+                        }
+                      });
+                    } else {
+                      doubleTapPerformed = true;
+                      // Restore flag 
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        doubleTapPerformed = false;
+                      });
+                      // Only perform double tap zoom if not exceeding maxZoom for map
+                      if (_mapController.camera.zoom + 1 <= 19) {
                         MapUtils.animatedMapMove(
-                          LatLng(
-                            latLng.latitude - (mapLatRange / 2),
-                            latLng.longitude,
-                          ),
-                          _mapController.camera.zoom + 2,
+                          _mapController.camera.center,
+                          _mapController.camera.zoom + 1,
                           _mapController,
                           this,
                         );
-                        // Then create new marker modal
-                        newMarkerModal(
-                          latLng,
-                          mapLatRange,
+                      }
+                    }
+                  }
+                : (
+                    TapPosition position,
+                    LatLng latLng,
+                  ) {
+                    // First user tap
+                    if (doubleTap == false) {
+                      doubleTap = true;
+                      // Restore flag 
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        doubleTap = false;
+                        if (doubleTapPerformed == false) {
+                          // Inform user that login went OK
+                          toastification.dismissAll(
+                            delayForAnimation: false,
+                          );
+                          toastification.show(
+                            context: context,
+                            title: Text(
+                              AppLocalizations.of(context)!.mapLoginInfoTitle,
+                            ),
+                            description: Text(
+                              AppLocalizations.of(context)!.mapLoginInfoDescription,
+                              style: const TextStyle(
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            type: ToastificationType.info,
+                            style: ToastificationStyle.flatColored,
+                            autoCloseDuration: const Duration(
+                              seconds: 5,
+                            ),
+                            showProgressBar: false,
+                          );
+                        }
+                      });
+                    } else {
+                      doubleTapPerformed = true;
+                        // Restore flag 
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          doubleTapPerformed = false;
+                        });
+                      // Only perform double tap zoom if not exceeding maxZoom for map
+                      if (_mapController.camera.zoom + 1 <= 19) {
+                        MapUtils.animatedMapMove(
+                          _mapController.camera.center,
+                          _mapController.camera.zoom + 1,
+                          _mapController,
+                          this,
                         );
                       }
-                      // Invert wip state
-                      showWIP = !showWIP;
-                      setState(() {});
                     }
-                  });
-                } else {
-                  doubleTapPerformed = true;
-                  // Restore flag 
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    doubleTapPerformed = false;
-                  });
-                  // Only perform double tap zoom if not exceeding maxZoom for map
-                  if (_mapController.camera.zoom + 1 <= 19) {
-                    MapUtils.animatedMapMove(
-                      _mapController.camera.center,
-                      _mapController.camera.zoom + 1,
-                      _mapController,
-                      this,
-                    );
-                  }
-                }
-              }
-            : (
-                TapPosition position,
-                LatLng latLng,
-              ) {
-                // First user tap
-                if (doubleTap == false) {
-                  doubleTap = true;
-                  // Restore flag 
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    doubleTap = false;
-                    if (doubleTapPerformed == false) {
-                      // Inform user that login went OK
-                      toastification.dismissAll(
-                        delayForAnimation: false,
-                      );
-                      toastification.show(
-                        context: context,
-                        title: Text(
-                          AppLocalizations.of(context)!.mapLoginInfoTitle,
-                        ),
-                        description: Text(
-                          AppLocalizations.of(context)!.mapLoginInfoDescription,
-                          style: const TextStyle(
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                        type: ToastificationType.info,
-                        style: ToastificationStyle.flatColored,
-                        autoCloseDuration: const Duration(
-                          seconds: 5,
-                        ),
-                        showProgressBar: false,
-                      );
-                    }
-                  });
-                } else {
-                  doubleTapPerformed = true;
-                    // Restore flag 
-                    Future.delayed(const Duration(milliseconds: 300), () {
-                      doubleTapPerformed = false;
-                    });
-                  // Only perform double tap zoom if not exceeding maxZoom for map
-                  if (_mapController.camera.zoom + 1 <= 19) {
-                    MapUtils.animatedMapMove(
-                      _mapController.camera.center,
-                      _mapController.camera.zoom + 1,
-                      _mapController,
-                      this,
-                    );
-                  }
-                }
-              },
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: (mapLayer == 'osm')
-              ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-              : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-            userAgentPackageName: 'com.messebasseproduction.beercrackerz',
-          ),
-          CurrentLocationLayer(
-            alignPositionStream: _alignPositionStreamController.stream,
-            alignPositionOnUpdate: _alignPositionOnUpdate,
-            style: const LocationMarkerStyle(
-              showHeadingSector: false,
-              showAccuracyCircle: true,
+                  },
             ),
-          ),
-          MarkerLayer(
-            markers: (showSpots == true)
-              ? _spotMarkerView
-              : [],
-          ),
-          MarkerLayer(
-            markers: (showShops == true)
-              ? _shopMarkerView
-              : [],
-          ),
-          MarkerLayer(
-            markers: (showBars == true)
-              ? _barMarkerView
-              : [],
-          ),
-          MarkerLayer(
-            markers: (showWIP == true)
-              ? wipMarker
-              : [],
-          ),
-          RichAttributionWidget(
-            alignment: (widget.settingsController.leftHanded == true)
-              ? AttributionAlignment.bottomRight
-              : AttributionAlignment.bottomLeft,
-            showFlutterMapAttribution: false,
-            popupBackgroundColor: Theme.of(context).colorScheme.primary,
-            closeButton: (
-              BuildContext context,
-              Function close,
-            ) {
-              return IconButton(
-                icon: const Icon(
-                  Icons.cancel_outlined,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.appTitle,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: SizeConfig.fontTextSize,
                 ),
-                color: Theme.of(context).colorScheme.surface,
-                onPressed: () => close(),
-                style: const ButtonStyle(),
-              );
-            },
-            attributions: [
-              TextSourceAttribution(
-                (mapLayer == 'osm')
-                  ? AppLocalizations.of(context)!.mapOSMContributors
-                  : AppLocalizations.of(context)!.mapEsriContributors,
-                textStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.surface,
-                  fontStyle: FontStyle.italic,
-                ),
-                onTap: () => launchUrl(
-                  (mapLayer == 'osm')
-                    ? Uri.parse('https://openstreetmap.org/copyright')
-                    : Uri.parse('https://www.esri.com'),
+                textAlign: TextAlign.center,
+              ),
+              TileLayer(
+                urlTemplate: (mapLayer == 'osm')
+                  ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+                  : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                userAgentPackageName: 'com.messebasseproduction.beercrackerz',
+              ),
+              CurrentLocationLayer(
+                alignPositionStream: _alignPositionStreamController.stream,
+                alignPositionOnUpdate: _alignPositionOnUpdate,
+                style: const LocationMarkerStyle(
+                  showHeadingSector: false,
+                  showAccuracyCircle: true,
                 ),
               ),
-              TextSourceAttribution(
-                AppLocalizations.of(context)!.mapFlutterMapContributors,
-                textStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.surface,
-                  fontStyle: FontStyle.italic,
+              MarkerLayer(
+                markers: (showSpots == true)
+                  ? _spotMarkerView
+                  : [],
+              ),
+              MarkerLayer(
+                markers: (showShops == true)
+                  ? _shopMarkerView
+                  : [],
+              ),
+              MarkerLayer(
+                markers: (showBars == true)
+                  ? _barMarkerView
+                  : [],
+              ),
+              MarkerLayer(
+                markers: (showWIP == true)
+                  ? wipMarker
+                  : [],
+              ),
+              RichAttributionWidget(
+                alignment: (widget.settingsController.leftHanded == true)
+                  ? AttributionAlignment.bottomRight
+                  : AttributionAlignment.bottomLeft,
+                showFlutterMapAttribution: false,
+                popupBackgroundColor: Theme.of(context).colorScheme.primary,
+                closeButton: (
+                  BuildContext context,
+                  Function close,
+                ) {
+                  return IconButton(
+                    icon: const Icon(
+                      Icons.cancel_outlined,
+                    ),
+                    color: Theme.of(context).colorScheme.surface,
+                    onPressed: () => close(),
+                    style: const ButtonStyle(),
+                  );
+                },
+                attributions: [
+                  TextSourceAttribution(
+                    (mapLayer == 'osm')
+                      ? AppLocalizations.of(context)!.mapOSMContributors
+                      : AppLocalizations.of(context)!.mapEsriContributors,
+                    textStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.surface,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    onTap: () => launchUrl(
+                      (mapLayer == 'osm')
+                        ? Uri.parse('https://openstreetmap.org/copyright')
+                        : Uri.parse('https://www.esri.com'),
+                    ),
+                  ),
+                  TextSourceAttribution(
+                    AppLocalizations.of(context)!.mapFlutterMapContributors,
+                    textStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.surface,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    onTap: () => launchUrl(
+                      Uri.parse('https://github.com/fleaflet/flutter_map'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: (widget.settingsController.leftHanded == true)
+              ? MainAxisAlignment.end
+              : MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  left: (widget.settingsController.leftHanded == true)
+                      ? 0
+                      : SizeConfig.padding,
+                  right: (widget.settingsController.leftHanded == true)
+                      ? SizeConfig.padding
+                      : 0,
+                  top: SizeConfig.padding + MediaQuery.of(context).viewPadding.top + SizeConfig.paddingTiny,
                 ),
-                onTap: () => launchUrl(
-                  Uri.parse('https://github.com/fleaflet/flutter_map'),
+                child: Stack(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.appTitle,
+                      style: TextStyle(
+                        fontSize: SizeConfig.fontTextTitleSize,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 5
+                          ..color = Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.appTitle,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: SizeConfig.fontTextTitleSize,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ],
       ),
-      // Map buttons for profile, centerOn user and map options
+      // Map buttons for about, profile, centerOn user and map options
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -609,16 +675,9 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                 heroTag: 'centerOnButton',
                 onPressed: () {
                   if (_alignPositionOnUpdate == AlignOnUpdate.never) {
-                    restoredZoomed = _mapController.camera.zoom;
-                    _alignPositionStreamController.add(18);
+                    _alignPositionStreamController.add(_mapController.camera.zoom);
                     setState(() => _alignPositionOnUpdate = AlignOnUpdate.always);
                   } else {
-                    MapUtils.animatedMapMove(
-                      _mapController.camera.visibleBounds.center,
-                      restoredZoomed,
-                      _mapController,
-                      this,
-                    );
                     setState(() => _alignPositionOnUpdate = AlignOnUpdate.never);
                   }
                 },

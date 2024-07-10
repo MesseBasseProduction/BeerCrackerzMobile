@@ -33,6 +33,7 @@ class SettingsController with ChangeNotifier {
   // Map saved settings
   double initLat = 48.8605277263;
   double initLng = 2.34402407374;
+  double initZoom = 11.0;
   // Load settings from storage. Required before loading app
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
@@ -52,6 +53,7 @@ class SettingsController with ChangeNotifier {
     }
     initLat = await _settingsService.initialLat();
     initLng = await _settingsService.initialLng();
+    initZoom = await _settingsService.initialZoom();
     // Finally notify listener that settings are loaded, app can be started
     notifyListeners();
   }
@@ -102,12 +104,15 @@ class SettingsController with ChangeNotifier {
   Future<void> updateInitialPosition(
     double lat,
     double lng,
+    double zoom,
   ) async {
     if (lat < -90 || lat > 90) return;
     if (lng < -180 || lng > 180) return;
+    if (zoom < 2 || zoom > 19) return;
     initLat = lat;
     initLng = lng;
-    await _settingsService.updateInitialPosition(lat, lng);
+    initZoom = zoom;
+    await _settingsService.updateInitialPosition(lat, lng, zoom);
     notifyListeners();
   }
 
