@@ -11,17 +11,23 @@ class SettingsController with ChangeNotifier {
   SettingsController(
     this._settingsService,
   );
+
   // Settings service to access device and secure storage
   final SettingsService _settingsService;
   // App stored settings
-  late ThemeMode _themeMode;
-  ThemeMode get themeMode => _themeMode;
-  late Locale _appLocale;
-  Locale get appLocale => _appLocale;
-  late bool _showWelcomeScreen;
-  bool get showWelcomeScreen => _showWelcomeScreen;
-  late bool _leftHanded;
-  bool get leftHanded => _leftHanded;
+  late ThemeMode themeMode;
+  late Locale appLocale;
+  late bool showWelcomeScreen;
+  late bool leftHanded;
+  // Map saved settings
+  late String mapLayer;
+  late bool showSpots;
+  late bool showShops;
+  late bool showBars;
+  late bool showOnlySelf; // Display only user's markers
+  late double initLat;
+  late double initLng;
+  late double initZoom;
   // Auth internals / user infos
   late bool isLoggedIn;
   int userId = -1; // Must be iniatialized
@@ -30,16 +36,24 @@ class SettingsController with ChangeNotifier {
   late String ppPath;
   late bool isUserActive;
   late bool isUserStaff;
-  // Map saved settings
-  double initLat = 48.8605277263;
-  double initLng = 2.34402407374;
-  double initZoom = 11.0;
+
   // Load settings from storage. Required before loading app
   Future<void> loadSettings() async {
-    _themeMode = await _settingsService.themeMode();
-    _appLocale = await _settingsService.appLocale();
-    _showWelcomeScreen = await _settingsService.showWelcomeScreen();
-    _leftHanded = await _settingsService.leftHanded();
+    // App settings loading
+    themeMode = await _settingsService.themeMode();
+    appLocale = await _settingsService.appLocale();
+    showWelcomeScreen = await _settingsService.showWelcomeScreen();
+    leftHanded = await _settingsService.leftHanded();
+    // Map settings loading
+    mapLayer = await _settingsService.mapLayer();
+    showSpots = await _settingsService.showSpots();
+    showShops = await _settingsService.showShops();
+    showBars = await _settingsService.showBars();
+    showOnlySelf = await _settingsService.showOnlySelf();
+    initLat = await _settingsService.initialLat();
+    initLng = await _settingsService.initialLng();
+    initZoom = await _settingsService.initialZoom();
+    // Auth loading
     String token = await _settingsService.getAuthToken();
     if (token != '') {
       if (await _settingsService.isAuthTokenExpired() == true) {
@@ -51,9 +65,6 @@ class SettingsController with ChangeNotifier {
     } else {
       isLoggedIn = false;
     }
-    initLat = await _settingsService.initialLat();
-    initLng = await _settingsService.initialLng();
-    initZoom = await _settingsService.initialZoom();
     // Finally notify listener that settings are loaded, app can be started
     notifyListeners();
   }
@@ -65,9 +76,9 @@ class SettingsController with ChangeNotifier {
     ThemeMode? newThemeMode,
   ) async {
     if (newThemeMode == null) return;
-    if (newThemeMode == _themeMode) return;
-    _themeMode = newThemeMode;
-    await _settingsService.updateThemeMode(newThemeMode);
+    if (newThemeMode == themeMode) return;
+    themeMode = newThemeMode;
+    await _settingsService.updateThemeMode(themeMode);
     notifyListeners();
   }
   // Update app locale
@@ -75,30 +86,75 @@ class SettingsController with ChangeNotifier {
     Locale? newLocale,
   ) async {
     if (newLocale == null) return;
-    if (newLocale == _appLocale) return;
-    _appLocale = newLocale;
-    await _settingsService.updateAppLocale(newLocale);
+    if (newLocale == appLocale) return;
+    appLocale = newLocale;
+    await _settingsService.updateAppLocale(appLocale);
     notifyListeners();
   }
   // Update show welcome screen
   Future<void> updateShowWelcomeScreen(
-    bool? showWelcomeScreen,
+    bool newShowWelcomeScreen,
   ) async {
-    if (showWelcomeScreen == null) return;
-    if (showWelcomeScreen == _showWelcomeScreen) return;
-    _showWelcomeScreen = showWelcomeScreen;
+    if (showWelcomeScreen == newShowWelcomeScreen) return;
+    showWelcomeScreen = newShowWelcomeScreen;
     await _settingsService.updateShowWelcomeScreen(showWelcomeScreen);
     notifyListeners();
   }
   // Update left handed preference
   Future<void> updateLeftHanded(
-    bool? leftHanded,
+    bool newLeftHanded,
   ) async {
-    if (leftHanded == null) return;
-    if (leftHanded == _leftHanded) return;
-    _leftHanded = leftHanded;
+    if (leftHanded == newLeftHanded) return;
+    leftHanded = newLeftHanded;
     await _settingsService.updateLeftHanded(leftHanded);
     notifyListeners(); 
+  }
+  
+  // Update the saved preference for the map base layer
+  Future<void> updateMapLayer(
+    String newMapLayer
+  ) async {
+    if (newMapLayer != 'osm' && newMapLayer != 'esri') return;
+    if (mapLayer == newMapLayer) return;
+    mapLayer = newMapLayer;
+    await _settingsService.updateMapLayer(mapLayer);
+    notifyListeners();
+  }
+  // Update the saved preference to only display spots
+  Future<void> updateShowSpots(
+    bool value
+  ) async {
+    if (showSpots == value) return;
+    showSpots = value;
+    await _settingsService.updateShowSpots(showSpots);
+    notifyListeners();
+  }
+  // Update the saved preference to only display shops
+  Future<void> updateShowShops(
+    bool value
+  ) async {
+    if (showShops == value) return;
+    showShops = value;
+    await _settingsService.updateShowShops(showShops);
+    notifyListeners();
+  }
+  // Update the saved preference to only display bars
+  Future<void> updateShowBars(
+    bool value
+  ) async {
+    if (showBars == value) return;
+    showBars = value;
+    await _settingsService.updateShowBars(showBars);
+    notifyListeners();
+  }
+  // Update the saved preference to only display user's marks
+  Future<void> updateShowOnlySelf(
+    bool value
+  ) async {
+    if (showOnlySelf == value) return;
+    showOnlySelf = value;
+    await _settingsService.updateShowOnlySelf(showOnlySelf);
+    notifyListeners();
   }
   // Update initial lat/lng position
   Future<void> updateInitialPosition(

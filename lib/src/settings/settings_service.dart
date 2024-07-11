@@ -11,6 +11,9 @@ import '/src/utils/app_const.dart';
 class SettingsService {
   // Secure storage for authentification JWT token
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  /* Getters */
+
   // Loads the user's preferred ThemeMode from device storage
   Future<ThemeMode> themeMode() async {
     final SharedPreferences appPreferences = await SharedPreferences.getInstance();
@@ -108,6 +111,107 @@ class SettingsService {
       }
     }
   }
+  
+  // The map base layer to use
+  Future<String> mapLayer() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    // Read preference from device shared preference storage
+    String? value = appPreferences.getString('bc-map-layer');
+    // First app launch, set pref value to true and return true
+    if (value == null) {
+      await appPreferences.setString(
+        'bc-map-layer',
+        'osm',
+      );
+      return 'osm';
+    } else {
+      return value;
+    }
+  }
+  // Map filtering to display spots on map or not
+  Future<bool> showSpots() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    // Read preference from device shared preference storage
+    String? value = appPreferences.getString('bc-show-spots');
+    // First app launch, set pref value to true and return true
+    if (value == null) {
+      await appPreferences.setString(
+        'bc-show-spots',
+        'true',
+      );
+      return true;
+    } else {
+      // Else read saved value
+      if (value == 'true') {
+        return true;
+      } else {
+        return false;        
+      }
+    }
+  }
+  // Map filtering to display shops on map or not
+  Future<bool> showShops() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    // Read preference from device shared preference storage
+    String? value = appPreferences.getString('bc-show-shops');
+    // First app launch, set pref value to true and return true
+    if (value == null) {
+      await appPreferences.setString(
+        'bc-show-shops',
+        'true',
+      );
+      return true;
+    } else {
+      // Else read saved value
+      if (value == 'true') {
+        return true;
+      } else {
+        return false;        
+      }
+    }
+  }
+  // Map filtering to display bars on map or not
+  Future<bool> showBars() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    // Read preference from device shared preference storage
+    String? value = appPreferences.getString('bc-show-bars');
+    // First app launch, set pref value to true and return true
+    if (value == null) {
+      await appPreferences.setString(
+        'bc-show-bars',
+        'true',
+      );
+      return true;
+    } else {
+      // Else read saved value
+      if (value == 'true') {
+        return true;
+      } else {
+        return false;        
+      }
+    }
+  }
+  // Display only the user's marks on the map
+  Future<bool> showOnlySelf() async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    // Read preference from device shared preference storage
+    String? value = appPreferences.getString('bc-show-self');
+    // First app launch, set pref value to true and return true
+    if (value == null) {
+      await appPreferences.setString(
+        'bc-show-self',
+        'true',
+      );
+      return true;
+    } else {
+      // Else read saved value
+      if (value == 'true') {
+        return true;
+      } else {
+        return false;        
+      }
+    }
+  }
   // Returns initial stored lat position
   Future<double> initialLat() async {
     final SharedPreferences appPreferences = await SharedPreferences.getInstance();
@@ -150,6 +254,9 @@ class SettingsService {
       return value;
     }
   }
+
+  /* Setters */
+
   // Persists the user's preferred ThemeMode to device storage
   Future<void> updateThemeMode(
     ThemeMode theme,
@@ -226,6 +333,90 @@ class SettingsService {
       );      
     }
   }
+  
+  // Update the saved preference for the map base layer
+  Future<void> updateMapLayer(
+    String mapLayer
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    String value = 'osm';
+    if (mapLayer == 'esri') {
+      value = 'esri';
+    }
+    // Update stored app preferences
+    await appPreferences.setString(
+      'bc-map-layer',
+      value,
+    );    
+  }
+  // Update the saved preference to only display spots
+  Future<void> updateShowSpots(
+    bool value
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    if (value == true) {
+      await appPreferences.setString(
+        'bc-show-spots',
+        'true',
+      );      
+    } else {
+      await appPreferences.setString(
+        'bc-show-spots',
+        'false',
+      );      
+    }
+  }
+  // Update the saved preference to only display shops
+  Future<void> updateShowShops(
+    bool value
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    if (value == true) {
+      await appPreferences.setString(
+        'bc-show-shops',
+        'true',
+      );      
+    } else {
+      await appPreferences.setString(
+        'bc-show-shops',
+        'false',
+      );      
+    }
+  }
+  // Update the saved preference to only display bars
+  Future<void> updateShowBars(
+    bool value
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    if (value == true) {
+      await appPreferences.setString(
+        'bc-show-bars',
+        'true',
+      );      
+    } else {
+      await appPreferences.setString(
+        'bc-show-bars',
+        'false',
+      );      
+    }
+  }
+  // Update the saved preference to only display user's marks
+  Future<void> updateShowOnlySelf(
+    bool value
+  ) async {
+    final SharedPreferences appPreferences = await SharedPreferences.getInstance();
+    if (value == true) {
+      await appPreferences.setString(
+        'bc-show-self',
+        'true',
+      );      
+    } else {
+      await appPreferences.setString(
+        'bc-show-self',
+        'false',
+      );      
+    }
+  }
   // Update the saved initial position to restore map to latest view position on map
   Future<void> updateInitialPosition(
     double lat,
@@ -246,6 +437,9 @@ class SettingsService {
       zoom,
     );
   }
+  
+  /* Auth */
+  
   // Persists the user's JWT token in device secure storage
   Future<void> updateAuthToken(
     String expiry,

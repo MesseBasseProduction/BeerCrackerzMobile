@@ -43,20 +43,23 @@ class MapView extends StatefulWidget {
 }
 
 class MapViewState extends State<MapView> with TickerProviderStateMixin {
-  // Flutter_Map Markers ready to be set on Map
-  final List<Marker> _spotMarkerView = [];
-  final List<Marker> _shopMarkerView = [];
-  final List<Marker> _barMarkerView = [];
+  // All BeerCrackerz markers
+  final List<Marker> _allSpotMarkerViews = [];
+  final List<MarkerData> _allSpotMarkerData = [];
+  final List<Marker> _allShopMarkerViews = [];
+  final List<MarkerData> _allShopMarkerData = [];
+  final List<Marker> _allBarMarkerViews = [];
+  final List<MarkerData> _allBarMarkerData = [];
+  // Displayed marker
+  List<Marker> _displayedSpotMarkerViews = [];
+  List<Marker> _displayedShopMarkerViews = [];
+  List<Marker> _displayedBarMarkerViews = [];
   // Temporary marker when user wants to add a new mark
   final List<Marker> wipMarker = [];
   // FlutterMap controller
   late MapController _mapController;
   // Map user session settings (not saved upon restart)
-  bool showSpots = true;
-  bool showShops = true;
-  bool showBars = true;
   bool showWIP = false;
-  String mapLayer = 'osm';
   bool doubleTap = false; // Enter double tap mode
   bool doubleTapPerformed = false; // Double tap actually happened
   final OpenRouteService ors = OpenRouteService(
@@ -86,7 +89,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     Future.delayed(Duration.zero, () {
       MapService.getShops().then((shopMarkersData) {
         for (var markerData in shopMarkersData) {
-          _shopMarkerView.add(
+          _allShopMarkerData.add(markerData);
+          _allShopMarkerViews.add(
             MarkerView.buildMarkerView(
               context,
               _mapController,
@@ -99,13 +103,21 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             ),
           );
         }
+        _displayedShopMarkerViews = MapService.buildDisplayedMarks(
+          _allShopMarkerViews,
+          _allShopMarkerData,
+          (widget.settingsController.showOnlySelf == true)
+            ? [widget.settingsController.userId]
+            : null
+        );
         // Render UI modifications
         setState(() {});
       });
 
       MapService.getBars().then((barMarkersData) {
         for (var markerData in barMarkersData) {
-          _barMarkerView.add(
+          _allBarMarkerData.add(markerData);
+          _allBarMarkerViews.add(
             MarkerView.buildMarkerView(
               context,
               _mapController,
@@ -118,13 +130,22 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             ),
           );
         }
+
+        _displayedBarMarkerViews = MapService.buildDisplayedMarks(
+          _allBarMarkerViews,
+          _allBarMarkerData,
+          (widget.settingsController.showOnlySelf == true)
+            ? [widget.settingsController.userId]
+            : null
+        );
         // Render UI modifications
         setState(() {});
       });
 
       MapService.getSpots().then((spotMarkersData) {
         for (var markerData in spotMarkersData) {
-          _spotMarkerView.add(
+          _allSpotMarkerData.add(markerData);
+          _allSpotMarkerViews.add(
             MarkerView.buildMarkerView(
               context,
               _mapController,
@@ -137,6 +158,14 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             ),
           );
         }
+
+        _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
+          _allSpotMarkerViews,
+          _allSpotMarkerData,
+          (widget.settingsController.showOnlySelf == true)
+            ? [widget.settingsController.userId]
+            : null
+        );
         // Render UI modifications
         setState(() {});
       });
@@ -168,11 +197,35 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     );
     // Push it to associated Marker List
     if (type == 'spot') {
-      _spotMarkerView.add(marker);
+      _allSpotMarkerViews.add(marker);
+      _allSpotMarkerData.add(markerData);
+      _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
+        _allSpotMarkerViews,
+        _allSpotMarkerData,
+        (widget.settingsController.showOnlySelf == true)
+          ? [widget.settingsController.userId]
+          : null
+      );
     } else if (type == 'shop') {
-      _shopMarkerView.add(marker);
+      _allShopMarkerViews.add(marker);
+      _allShopMarkerData.add(markerData);
+      _displayedShopMarkerViews = MapService.buildDisplayedMarks(
+        _allShopMarkerViews,
+        _allShopMarkerData,
+        (widget.settingsController.showOnlySelf == true)
+          ? [widget.settingsController.userId]
+          : null
+      );
     } else if (type == 'bar') {
-      _barMarkerView.add(marker);
+      _allBarMarkerViews.add(marker);
+      _allBarMarkerData.add(markerData);
+      _displayedBarMarkerViews = MapService.buildDisplayedMarks(
+        _allBarMarkerViews,
+        _allBarMarkerData,
+        (widget.settingsController.showOnlySelf == true)
+          ? [widget.settingsController.userId]
+          : null
+      );
     }
     // Render UI modifications
     setState(() {});
@@ -184,23 +237,50 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     MarkerData markerData,
   ) {
     if (markerData.type == 'spot') {
-      for (var mark in _spotMarkerView) {
+      for (var i = 0; i < _allSpotMarkerViews.length; ++i) {
+        var mark = _allSpotMarkerViews[i];
         if (mark.point.latitude == markerData.lat && mark.point.longitude == markerData.lng) {
-          _spotMarkerView.remove(mark);
+          _allSpotMarkerViews.remove(_allSpotMarkerViews[i]);
+          _allSpotMarkerData.remove(_allSpotMarkerData[i]);
+          _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
+            _allSpotMarkerViews,
+            _allSpotMarkerData,
+            (widget.settingsController.showOnlySelf == true)
+              ? [widget.settingsController.userId]
+              : null
+          );
           break;
         }
       }
     } else if (markerData.type == 'shop') {
-      for (var mark in _shopMarkerView) {
+      for (var i = 0; i < _allShopMarkerViews.length; ++i) {
+        var mark = _allShopMarkerViews[i];
         if (mark.point.latitude == markerData.lat && mark.point.longitude == markerData.lng) {
-          _shopMarkerView.remove(mark);
+          _allShopMarkerViews.remove(_allShopMarkerViews[i]);
+          _allShopMarkerData.remove(_allShopMarkerData[i]);
+          _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
+            _allShopMarkerViews,
+            _allShopMarkerData,
+            (widget.settingsController.showOnlySelf == true)
+              ? [widget.settingsController.userId]
+              : null
+          );
           break;
         }
       }
     } else if (markerData.type == 'bar') {
-      for (var mark in _barMarkerView) {
+      for (var i = 0; i < _allBarMarkerViews.length; ++i) {
+        var mark = _allBarMarkerViews[i];
         if (mark.point.latitude == markerData.lat && mark.point.longitude == markerData.lng) {
-          _barMarkerView.remove(mark);
+          _allBarMarkerViews.remove(_allBarMarkerViews[i]);
+          _allBarMarkerData.remove(_allBarMarkerData[i]);
+          _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
+            _allBarMarkerViews,
+            _allBarMarkerData,
+            (widget.settingsController.showOnlySelf == true)
+              ? [widget.settingsController.userId]
+              : null
+          );
           break;
         }
       }
@@ -302,10 +382,10 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         BuildContext context,
       ) {
         return MapOptionsView(
-          mapLayer: mapLayer,
-          showSpots: showSpots,
-          showShops: showShops,
-          showBars: showBars,
+          mapLayer: widget.settingsController.mapLayer,
+          showSpots: widget.settingsController.showSpots,
+          showShops: widget.settingsController.showShops,
+          showBars: widget.settingsController.showBars,
           setter: mapOptionsSetter,
         );
       },
@@ -317,13 +397,13 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     dynamic value,
   ) {
     if (type == 'mapLayer') {
-      mapLayer = value;
+      widget.settingsController.updateMapLayer(value);
     } else if (type == 'showSpots') {
-      showSpots = value;
+      widget.settingsController.updateShowSpots(value);
     } else if (type == 'showShops') {
-      showShops = value;
+      widget.settingsController.updateShowShops(value);
     } else if (type == 'showBars') {
-      showBars = value;
+      widget.settingsController.updateShowBars(value);
     }
     setState(() {});
   }
@@ -638,7 +718,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             children: [
               // Basemap layer
               TileLayer(
-                urlTemplate: (mapLayer == 'osm')
+                urlTemplate: (widget.settingsController.mapLayer == 'osm')
                   ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
                   : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                 userAgentPackageName: 'com.messebasseproduction.beercrackerz',
@@ -664,20 +744,20 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               ),
               // Spot marks layer
               MarkerLayer(
-                markers: (showSpots == true)
-                  ? _spotMarkerView
+                markers: (widget.settingsController.showSpots == true)
+                  ? _displayedSpotMarkerViews
                   : [],
               ),
               // Shop marks layer
               MarkerLayer(
-                markers: (showShops == true)
-                  ? _shopMarkerView
+                markers: (widget.settingsController.showShops == true)
+                  ? _displayedShopMarkerViews
                   : [],
               ),
               // Bar marks layer
               MarkerLayer(
-                markers: (showBars == true)
-                  ? _barMarkerView
+                markers: (widget.settingsController.showBars == true)
+                  ? _displayedBarMarkerViews
                   : [],
               ),
               // WIP mark layer
@@ -708,7 +788,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                 },
                 attributions: [
                   TextSourceAttribution(
-                    (mapLayer == 'osm')
+                    (widget.settingsController.mapLayer == 'osm')
                       ? AppLocalizations.of(context)!.mapOSMContributors
                       : AppLocalizations.of(context)!.mapEsriContributors,
                     textStyle: TextStyle(
@@ -716,7 +796,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                       fontStyle: FontStyle.italic,
                     ),
                     onTap: () => launchUrl(
-                      (mapLayer == 'osm')
+                      (widget.settingsController.mapLayer == 'osm')
                         ? Uri.parse('https://openstreetmap.org/copyright')
                         : Uri.parse('https://www.esri.com'),
                     ),

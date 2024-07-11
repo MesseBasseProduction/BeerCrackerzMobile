@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 
 import '/src/map/marker/marker_data.dart';
@@ -66,6 +67,24 @@ class MapService {
       throw Exception(handleError);
     });
     return output;
+  }
+
+  static List<Marker> buildDisplayedMarks(
+    List<Marker> allMarksView,
+    List<MarkerData> allMarksData,
+    List<int>? filterIds,
+  ) {
+    if (filterIds == null || filterIds.isEmpty) {
+      return allMarksView;
+    } else {
+      List<Marker> output = [];
+      for (var i = 0; i < allMarksData.length; ++i) {
+        if (filterIds.contains(allMarksData[i].userId)) {
+          output.add(allMarksView[i]);
+        }
+      }
+      return output;
+    }
   }
 
   /* Marker submission, edition and deletion */
