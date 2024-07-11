@@ -235,11 +235,11 @@ class MarkerView {
                     ),
                     // Mark description
                     Center(
-                        child: Text(
-                          markerData.description,
-                          textAlign: TextAlign.center,
-                        ),
+                      child: Text(
+                        markerData.description,
+                        textAlign: TextAlign.center,
                       ),
+                    ),
                     SizedBox(
                       height: SizeConfig.paddingLarge,
                     ),

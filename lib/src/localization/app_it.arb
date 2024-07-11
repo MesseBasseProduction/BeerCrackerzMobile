@@ -104,6 +104,7 @@
   "helpAboutPar3": "BeerCrackerz è curato da Messe Basse Production, un'organizzazione francese non-profit, basata su una brillante idea di David Béché e rilasciata con licenza GPL-v3.0. Sei libero di fare ciò che vuoi con il codice, purché pubblichi con la stessa licenza copyleft.",
   "helpAboutPar4": "Anche se facciamo del nostro meglio per avere la massima qualità del codice, non siamo esenti da bug; se hai riscontrato un comportamento inaspettato, un crash dell'app, una traduzione fallita o se vuoi semplicemente suggerire una funzionalità che ritieni manchi, sei il benvenuto!",
   "helpAboutReachUs": "Raggiungici",
+  "helpAboutDisclaimer": "Il consumo di bevande alcoliche è riservato agli adulti. L'abuso di alcol è pericoloso per la salute, consumare con moderazione. BeerCrackerz e Messe Basse Production non possono essere ritenuti responsabili per il vostro stato di ubriachezza pubblica o per le vostre azioni sotto l'influenza dell'alcol.",
   "helpAboutVersion": "BeerCrackerz Mobile – v{field1}\nBeerCrackerz Server – v{field2}",
   "@helpAboutVersion": {
     "placeholders": {

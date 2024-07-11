@@ -104,6 +104,7 @@
   "helpAboutPar3": "BeerCrackerz is edited by Messe Basse Production, a french non-profit organization, based on a brilliant idea from David Béché and released with the GPL-v3.0 licence. You are free to do whatever you want with the code, as long as you publish with the same copyleft license.",
   "helpAboutPar4": "Although we do our best to have the highest code quality, we are not exempt from bugs ; in case you encountered an unexpected behavior, an app crash, a failed translation or if you simply want to suggest a feature you think is missing, you're welcome to reach us!",
   "helpAboutReachUs": "Reach us",
+  "helpAboutDisclaimer": "The consumption of alcoholic beverages is reserved for adults. Alcohol abuse is dangerous for your health, consume in moderation. BeerCrackerz and Messe Basse Production cannot be held responsible for your state of public intoxication or your actions under the influence of alcohol.",
   "helpAboutVersion": "BeerCrackerz Mobile – v{field1}\nBeerCrackerz Server – v{field2}",
   "@helpAboutVersion": {
     "placeholders": {

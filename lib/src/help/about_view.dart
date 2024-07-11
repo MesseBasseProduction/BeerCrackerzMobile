@@ -147,6 +147,19 @@ class AboutView extends StatelessWidget {
               height: SizeConfig.padding,
             ),
             Text(
+              AppLocalizations.of(context)!.helpAboutDisclaimer,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: SizeConfig.fontTextSize,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: SizeConfig.padding,
+            ),
+            Text(
               AppLocalizations.of(context)!.helpAboutVersion(AppConst.appVersion, AppConst.serverVersion),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
