@@ -200,9 +200,9 @@ class SettingsService {
     if (value == null) {
       await appPreferences.setString(
         'bc-show-self',
-        'true',
+        'false',
       );
-      return true;
+      return false;
     } else {
       // Else read saved value
       if (value == 'true') {

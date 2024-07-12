@@ -12,6 +12,7 @@ class MapOptionsView extends StatefulWidget {
     required this.showSpots,
     required this.showShops,
     required this.showBars,
+    required this.showOnlySelf,
     required this.setter,
   });
 
@@ -19,6 +20,7 @@ class MapOptionsView extends StatefulWidget {
   final bool showSpots;
   final bool showShops;
   final bool showBars;
+  final bool showOnlySelf;
   final Function setter;
 
   @override
@@ -38,6 +40,7 @@ class MapOptionsViewState extends State<MapOptionsView> {
     String mapLayer = widget.mapLayer;
     bool showSpots = widget.showSpots;
     bool showShops = widget.showShops;
+    bool showOnlySelf = widget.showOnlySelf;
     bool showBars = widget.showBars;
 
     return StatefulBuilder(
@@ -233,6 +236,32 @@ class MapOptionsViewState extends State<MapOptionsView> {
                             widget.setter(
                               'showBars',
                               showBars,
+                            );
+                            setModalState(() {});
+                          },
+                        ),
+                      ],
+                    ),
+                    // Show only self
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.mapOptionsDisplayOnlySelf,
+                          style: TextStyle(
+                            fontSize: SizeConfig.fontTextLargeSize,
+                          ),
+                        ),
+                        const Spacer(),
+                        Switch(
+                          value: showOnlySelf,
+                          onChanged: (
+                            value,
+                          ) {
+                            showOnlySelf = !showOnlySelf;
+                            widget.setter(
+                              'showOnlySelf',
+                              showOnlySelf,
                             );
                             setModalState(() {});
                           },

@@ -386,6 +386,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           showSpots: widget.settingsController.showSpots,
           showShops: widget.settingsController.showShops,
           showBars: widget.settingsController.showBars,
+          showOnlySelf: widget.settingsController.showOnlySelf,
           setter: mapOptionsSetter,
         );
       },
@@ -404,6 +405,31 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       widget.settingsController.updateShowShops(value);
     } else if (type == 'showBars') {
       widget.settingsController.updateShowBars(value);
+    } else if (type == 'showOnlySelf') {
+      widget.settingsController.updateShowOnlySelf(value);
+
+      _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
+        _allSpotMarkerViews,
+        _allSpotMarkerData,
+        (widget.settingsController.showOnlySelf == true)
+          ? [widget.settingsController.userId]
+          : null
+      );
+      _displayedShopMarkerViews = MapService.buildDisplayedMarks(
+        _allShopMarkerViews,
+        _allShopMarkerData,
+        (widget.settingsController.showOnlySelf == true)
+          ? [widget.settingsController.userId]
+          : null
+      );
+
+      _displayedBarMarkerViews = MapService.buildDisplayedMarks(
+        _allBarMarkerViews,
+        _allBarMarkerData,
+        (widget.settingsController.showOnlySelf == true)
+          ? [widget.settingsController.userId]
+          : null
+      );
     }
     setState(() {});
   }

@@ -235,6 +235,7 @@
   "mapOptionsDisplaySpots": "Anzeigespots",
   "mapOptionsDisplayShops": "Anzeigeshops",
   "mapOptionsDisplayBars": "Anzeigebars",
+  "mapOptionsDisplayOnlySelf": "Nur meine Noten anzeigen",
   "mapOSMContributors": "OpenStreeMap-Mitwirkende",
   "mapEsriContributors": "Unterstützt von Esri",
   "mapFlutterMapContributors": "Flutter Map-Entwickler",

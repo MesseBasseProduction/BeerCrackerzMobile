@@ -235,6 +235,7 @@
   "mapOptionsDisplaySpots": "Exibir spots",
   "mapOptionsDisplayShops": "Exibir lojas",
   "mapOptionsDisplayBars": "Exibir barras",
+  "mapOptionsDisplayOnlySelf": "Exibir apenas as minhas marcas",
   "mapOSMContributors": "Colaboradores do OpenStreeMap",
   "mapEsriContributors": "Desenvolvido por Esri",
   "mapFlutterMapContributors": "Desenvolvedores do Flutter Map",

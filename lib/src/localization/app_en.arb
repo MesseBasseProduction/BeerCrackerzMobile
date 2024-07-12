@@ -235,6 +235,7 @@
   "mapOptionsDisplaySpots": "Display spots",
   "mapOptionsDisplayShops": "Display shops",
   "mapOptionsDisplayBars": "Display bars",
+  "mapOptionsDisplayOnlySelf": "Display my marks only",
   "mapOSMContributors": "OpenStreeMap contributors",
   "mapEsriContributors": "Powered by Esri",
   "mapFlutterMapContributors": "Flutter Map developers",
