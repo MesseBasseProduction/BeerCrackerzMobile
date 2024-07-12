@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConst {
-  static const String appVersion = '0.0.8';
+  static const String appVersion = '0.0.9';
   static const String serverVersion = '0.1.0';
   // The server URL to reach, ensure no trailing slash remains
   static const String baseURL = 'https://beercrackerz.org';
