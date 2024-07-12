@@ -28,7 +28,7 @@ class SettingsController with ChangeNotifier {
   late double initLat;
   late double initLng;
   late double initZoom;
-  // Auth internals / user infos
+  // Auth internals & user infos
   late bool isLoggedIn;
   int userId = -1; // Must be iniatialized
   late String username;
@@ -36,6 +36,11 @@ class SettingsController with ChangeNotifier {
   late String ppPath;
   late bool isUserActive;
   late bool isUserStaff;
+  // Mark stats
+  int totalMarks = 0;
+  late int userSpotAdded;
+  late int userShopAdded;
+  late int userBarAdded;
 
   // Load settings from storage. Required before loading app
   Future<void> loadSettings() async {
@@ -234,5 +239,18 @@ class SettingsController with ChangeNotifier {
     isUserActive = false;
     isUserStaff = false;
     return false;
+  }
+
+  /* Marks stats */
+  void updateMarkStats(
+    int newTotalMarks,
+    int newUserSpotAdded,
+    int newUserShopAdded,
+    int newUserBarAdded,
+  ) {
+    totalMarks = newTotalMarks;
+    userSpotAdded = newUserSpotAdded;
+    userShopAdded = newUserShopAdded;
+    userBarAdded = newUserBarAdded;
   }
 }

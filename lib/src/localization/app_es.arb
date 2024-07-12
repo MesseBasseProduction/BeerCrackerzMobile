@@ -93,6 +93,46 @@
       }
     }
   },
+  "authProfileUserTotalAddedMarkers": "Ha añadido {field1} marcadores en el {field2} ya registrado en BeerCrackerz:",
+  "@authProfileUserTotalAddedMarkers": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "0"
+      },
+      "field2": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
+  "authProfileUserAddedSpots": "- {field} spots ;",
+  "@authProfileUserAddedSpots": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
+  "authProfileUserAddedShops": "- {field} tiendas ;",
+  "@authProfileUserAddedShops": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
+  "authProfileUserAddedBars": "- {field} bars.",
+  "@authProfileUserAddedBars": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
   "authProfileAboutBeerCrackerz": "BeerCrackerz es la comunidad de amantes de la cerveza, llena de amantes de las pintas y de los cereales. ¡Una idea brillante de David Béché, materializada por Messe Basse Production!",
   "authProfileLogout": "Cerrar sesión",
   "authProfileLogoutSuccessToastTitle": "Cierre de sesión exitoso",

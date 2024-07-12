@@ -110,6 +110,22 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             ? [widget.settingsController.userId]
             : null
         );
+        // Update saved mark stats
+        widget.settingsController.updateMarkStats(
+          _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
+          MapService.getMarkCount(
+            _allSpotMarkerData,
+            widget.settingsController.userId
+          ),
+          MapService.getMarkCount(
+            _allShopMarkerData,
+            widget.settingsController.userId
+          ),
+          MapService.getMarkCount(
+            _allBarMarkerData,
+            widget.settingsController.userId
+          ),
+        );
         // Render UI modifications
         setState(() {});
       });
@@ -138,6 +154,22 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             ? [widget.settingsController.userId]
             : null
         );
+        // Update saved mark stats
+        widget.settingsController.updateMarkStats(
+          _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
+          MapService.getMarkCount(
+            _allSpotMarkerData,
+            widget.settingsController.userId
+          ),
+          MapService.getMarkCount(
+            _allShopMarkerData,
+            widget.settingsController.userId
+          ),
+          MapService.getMarkCount(
+            _allBarMarkerData,
+            widget.settingsController.userId
+          ),
+        );
         // Render UI modifications
         setState(() {});
       });
@@ -165,6 +197,22 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           (widget.settingsController.showOnlySelf == true)
             ? [widget.settingsController.userId]
             : null
+        );
+        // Update saved mark stats
+        widget.settingsController.updateMarkStats(
+          _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
+          MapService.getMarkCount(
+            _allSpotMarkerData,
+            widget.settingsController.userId
+          ),
+          MapService.getMarkCount(
+            _allShopMarkerData,
+            widget.settingsController.userId
+          ),
+          MapService.getMarkCount(
+            _allBarMarkerData,
+            widget.settingsController.userId
+          ),
         );
         // Render UI modifications
         setState(() {});
@@ -227,6 +275,22 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           : null
       );
     }
+    // Update saved mark stats
+    widget.settingsController.updateMarkStats(
+      _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
+      MapService.getMarkCount(
+        _allSpotMarkerData,
+        widget.settingsController.userId
+      ),
+      MapService.getMarkCount(
+        _allShopMarkerData,
+        widget.settingsController.userId
+      ),
+      MapService.getMarkCount(
+        _allBarMarkerData,
+        widget.settingsController.userId
+      ),
+    );
     // Render UI modifications
     setState(() {});
     // Close bottom sheet as this callback is performed upon success
@@ -285,6 +349,22 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
         }
       }
     }
+    // Update saved mark stats
+    widget.settingsController.updateMarkStats(
+      _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
+      MapService.getMarkCount(
+        _allSpotMarkerData,
+        widget.settingsController.userId
+      ),
+      MapService.getMarkCount(
+        _allShopMarkerData,
+        widget.settingsController.userId
+      ),
+      MapService.getMarkCount(
+        _allBarMarkerData,
+        widget.settingsController.userId
+      ),
+    );
     // Render UI modifications
     setState(() {});
     // Close bottom sheet as this callback is performed upon success

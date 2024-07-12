@@ -370,6 +370,38 @@ class ProfileViewState extends State<ProfileView> {
               SizedBox(
                 height: SizeConfig.padding,
               ),
+              // Generic marker stats
+              Text(
+                AppLocalizations.of(context)!.authProfileUserTotalAddedMarkers(
+                  widget.settingsController.userSpotAdded + widget.settingsController.userShopAdded + widget.settingsController.userBarAdded,
+                  widget.settingsController.totalMarks,
+                ),
+                textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: SizeConfig.fontTextSize,
+                  ),
+              ),
+              Text(
+                AppLocalizations.of(context)!.authProfileUserAddedSpots(widget.settingsController.userSpotAdded),
+                  style: TextStyle(
+                    fontSize: SizeConfig.fontTextSize,
+                  ),
+              ),
+              Text(
+                AppLocalizations.of(context)!.authProfileUserAddedShops(widget.settingsController.userShopAdded),
+                  style: TextStyle(
+                    fontSize: SizeConfig.fontTextSize,
+                  ),
+              ),
+              Text(
+                AppLocalizations.of(context)!.authProfileUserAddedBars(widget.settingsController.userBarAdded),
+                  style: TextStyle(
+                    fontSize: SizeConfig.fontTextSize,
+                  ),
+              ),
+              SizedBox(
+                height: SizeConfig.padding,
+              ),
               // BeerCrackerz presentation text
               Padding(
                 padding: EdgeInsets.symmetric(

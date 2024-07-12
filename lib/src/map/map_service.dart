@@ -87,6 +87,19 @@ class MapService {
     }
   }
 
+  static int getMarkCount(
+    List<MarkerData> allMarksData,
+    int filterId,
+  ) {
+    int count = 0;
+    for (var i = 0; i < allMarksData.length; ++i) {
+      if (filterId == allMarksData[i].userId) {
+        ++count;
+      }
+    }
+    return count;
+  }
+
   /* Marker submission, edition and deletion */
 
   static Future<http.Response> postSpot(

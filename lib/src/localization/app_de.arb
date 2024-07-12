@@ -93,6 +93,46 @@
       }
     }
   },
+  "authProfileUserTotalAddedMarkers": "Sie haben {field1} Markierungen zu {field2} hinzugefügt, die bereits bei BeerCrackerz registriert sind:",
+  "@authProfileUserTotalAddedMarkers": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "0"
+      },
+      "field2": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
+  "authProfileUserAddedSpots": "- {field} spots ;",
+  "@authProfileUserAddedSpots": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
+  "authProfileUserAddedShops": "- {field} shops ;",
+  "@authProfileUserAddedShops": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
+  "authProfileUserAddedBars": "- {field} bars.",
+  "@authProfileUserAddedBars": {
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
   "authProfileAboutBeerCrackerz": "BeerCrackerz ist die Community für Bierliebhaber, gefüllt mit Pint-Slayern und Müsliliebhabern. Eine clevere Idee von David Béché, umgesetzt von Messe Basse Production!",
   "authProfileLogout": "Ausloggen",
   "authProfileLogoutSuccessToastTitle": "Erfolgreiche Abmeldung",
