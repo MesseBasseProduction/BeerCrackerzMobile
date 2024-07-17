@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConst {
-  static const String appVersion = '0.0.9';
+  static const String appVersion = '0.0.10';
   static const String serverVersion = '0.1.0';
   // The server URL to reach, ensure no trailing slash remains
   static const String baseURL = 'https://beercrackerz.org';
@@ -13,4 +13,5 @@ class AppConst {
   static const List<String> supportedLang = ['en', 'fr', 'es', 'de', 'it', 'pt'];
   static const int maxDistanceForRoute = 10000; // 10km is max range for route to be computed
   static String? osrApiKey = dotenv.env['OSR_API_KEY'];
+  static String? stadiaMapsApiKey = dotenv.env['STADIA_MAPS_KEY'];
 }

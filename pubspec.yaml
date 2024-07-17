@@ -3,7 +3,7 @@ description: "The app for beer lovers, to share the best spot to crack a beer, o
 
 publish_to: 'none'
 
-version: 0.0.9+9
+version: 0.0.10+10
 
 environment:
   sdk: '>=3.2.5 <4.0.0'

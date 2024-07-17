@@ -68,7 +68,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   // Position alignment stream controller
   late AlignOnUpdate _alignPositionOnUpdate;
   late final StreamController<double?> _alignPositionStreamController;
-  StreamSubscription? _subscription;
   // Navigation route points
   List<LatLng> navRoutePoints = [];
   // Widget internal utils
@@ -224,7 +223,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
   void dispose() {
     // Release user position stream on dispose widget
     _alignPositionStreamController.close();
-    _subscription?.cancel();
     super.dispose();
   }
   // Add new marker callback, must be called from bottom modal sheet
@@ -829,6 +827,27 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                 userAgentPackageName: 'com.messebasseproduction.beercrackerz',
               ),
+              // For satelite layer, adding lines and labels tile overlays
+              (widget.settingsController.mapLayer == 'esri')
+                ? TileLayer(//&api_key=${AppConst.stadiaMapsApiKey}
+                    urlTemplate: 'https://tiles-eu.stadiamaps.com/tiles/stamen_terrain-lines/{z}/{x}/{y}{r}.png?api_key=${AppConst.stadiaMapsApiKey}',
+                    userAgentPackageName: 'com.messebasseproduction.mondourdannais',
+                    retinaMode: true,
+                    additionalOptions: {
+                      'api_key': AppConst.stadiaMapsApiKey!,
+                    },
+                  )
+                : const SizedBox.shrink(),
+              (widget.settingsController.mapLayer == 'esri')
+                ? TileLayer(
+                    urlTemplate: 'https://tiles-eu.stadiamaps.com/tiles/stamen_terrain-labels/{z}/{x}/{y}{r}.png?api_key=${AppConst.stadiaMapsApiKey}',
+                    userAgentPackageName: 'com.messebasseproduction.mondourdannais',
+                    retinaMode: true,
+                    additionalOptions: {
+                      'api_key': AppConst.stadiaMapsApiKey!,
+                    },
+                  )
+                : const SizedBox.shrink(),
               // Navigation route layer, positionned to be bottom all other layers
               PolylineLayer(
                 polylines: [
