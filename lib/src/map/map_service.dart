@@ -118,7 +118,7 @@ class MapService {
         'description': markerData.description,
         'lat': markerData.lat,
         'lng': markerData.lng,
-        'rate': markerData.rate,
+        'rating': markerData.rating,
         'types': markerData.types,
         'modifiers': markerData.modifiers
       }),
@@ -141,7 +141,7 @@ class MapService {
         'description': markerData.description,
         'lat': markerData.lat,
         'lng': markerData.lng,
-        'rate': markerData.rate,
+        'rating': markerData.rating,
         'price': markerData.price,
         'types': markerData.types,
         'modifiers': markerData.modifiers
@@ -165,7 +165,7 @@ class MapService {
         'description': markerData.description,
         'lat': markerData.lat,
         'lng': markerData.lng,
-        'rate': markerData.rate,
+        'rating': markerData.rating,
         'price': markerData.price,
         'types': markerData.types,
         'modifiers': markerData.modifiers
@@ -189,7 +189,7 @@ class MapService {
         'description': markerData.description,
         'lat': markerData.lat,
         'lng': markerData.lng,
-        'rate': markerData.rate,
+        'rating': markerData.rating,
         'price': markerData.price,
         'types': markerData.types,
         'modifiers': markerData.modifiers
@@ -213,7 +213,7 @@ class MapService {
         'description': markerData.description,
         'lat': markerData.lat,
         'lng': markerData.lng,
-        'rate': markerData.rate,
+        'rating': markerData.rating,
         'price': markerData.price,
         'types': markerData.types,
         'modifiers': markerData.modifiers
@@ -237,7 +237,7 @@ class MapService {
         'description': markerData.description,
         'lat': markerData.lat,
         'lng': markerData.lng,
-        'rate': markerData.rate,
+        'rating': markerData.rating,
         'price': markerData.price,
         'types': markerData.types,
         'modifiers': markerData.modifiers

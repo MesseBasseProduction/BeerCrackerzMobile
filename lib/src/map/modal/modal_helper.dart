@@ -254,7 +254,7 @@ class ModalHelper {
                           textAlign: TextAlign.center,
                         ),
                         RatingBar.builder(
-                          initialRating: markerData.rate + 1,
+                          initialRating: markerData.rating,
                           direction: Axis.horizontal,
                           itemCount: 5,
                           itemSize: SizeConfig.iconSize,
@@ -265,7 +265,7 @@ class ModalHelper {
                             Icons.star,
                             color: Colors.amber,
                           ),
-                          onRatingUpdate: (rating) => markerData.rate = rating,
+                          onRatingUpdate: (rating) => markerData.rating = rating,
                         ),
                       ],
                     ),
@@ -280,7 +280,7 @@ class ModalHelper {
                               textAlign: TextAlign.center,
                             ),
                             RatingBar.builder(
-                              initialRating: markerData.price!.toDouble() + 1,
+                              initialRating: markerData.price!,
                               direction: Axis.horizontal,
                               itemCount: 3,
                               itemSize: SizeConfig.iconSize,
@@ -291,7 +291,7 @@ class ModalHelper {
                                 Icons.attach_money,
                                 color: Colors.green,
                               ),
-                              onRatingUpdate: (rating) => markerData.price = rating.toInt(),
+                              onRatingUpdate: (rating) => markerData.price = rating,
                             ),
                           ],
                         )

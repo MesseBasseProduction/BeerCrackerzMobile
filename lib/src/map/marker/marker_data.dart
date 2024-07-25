@@ -7,8 +7,8 @@ class MarkerData {
   String description;
   double lat;
   double lng;
-  double rate;
-  int? price;
+  double rating;
+  double? price;
   List<String> types;
   List<String> modifiers;
   String user;
@@ -22,7 +22,7 @@ class MarkerData {
     required this.description,
     required this.lat,
     required this.lng,
-    required this.rate,
+    required this.rating,
     this.price = 0, // Optionnal because not relevant for spot model
     required this.types,
     required this.modifiers,
@@ -40,8 +40,13 @@ class MarkerData {
     // Parse mark modifiers
     var rawModifiers = json['modifiers'];
     List<String> parsedModifiers = List<String>.from(rawModifiers);
-    // Mark pric (only relevant for shops and bars)
-    int sanitizedPrice = 0;
+    // Mark rating to avoid null exception
+    double sanitizedRating = 1;
+    if (json['rating'] != null) {
+      sanitizedRating = json['rating'];
+    }
+    // Mark price to avoid null exception (only relevant for shops and bars)
+    double sanitizedPrice = 1;
     if (json['price'] != null) {
       sanitizedPrice = json['price'];
     }
@@ -54,7 +59,6 @@ class MarkerData {
         'description': String description,
         'lat': double lat,
         'lng': double lng,
-        'rate': double rate,
         'user': String user,
         'userId': int userId,
         'creationDate': String creationDate,
@@ -65,7 +69,7 @@ class MarkerData {
         description: description,
         lat: lat,
         lng: lng,
-        rate: rate,
+        rating: sanitizedRating,
         price: sanitizedPrice,
         types: parsedTypes,
         modifiers: parsedModifiers,

@@ -202,7 +202,7 @@
       "feature": {}
     }
   },
-  "barFeatures": "{feature, select, regular{CLassique} snack{Snack} cellar{Brasserie} rooftop{Rooftop} tobacco{Cigarette} food{Nourriture} card{Carte de crédit} choice{Large choix} outdoor{Extérieur} other{Autre}}",
+  "barFeatures": "{feature, select, regular{Classique} snack{Snack} cellar{Brasserie} rooftop{Rooftop} tobacco{Cigarette} food{Nourriture} card{Carte de crédit} choice{Large choix} outdoor{Extérieur} other{Autre}}",
   "@barFeatures": {
     "placeholders": {
       "feature": {}
@@ -261,7 +261,7 @@
   "spotDiscoveredBy": "Un spot découvert par",
   "shopDiscoveredBy": "Un magasin découvert par",
   "barDiscoveredBy": "Un bar découvert par",
-  "markDiscoveredSince": "Depuis",
+  "markDiscoveredSince": "Depuis le",
   "markRoute": "Itinéraire",
   "markEdit": "Éditer",
   "markDelete": "Supprimer",

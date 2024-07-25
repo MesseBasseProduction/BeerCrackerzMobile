@@ -412,7 +412,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       description: '',
       lat: latLng.latitude,
       lng: latLng.longitude,
-      rate: 3.0,
+      rating: 3.0,
       types: [],
       modifiers: [],
       user: widget.settingsController.username,

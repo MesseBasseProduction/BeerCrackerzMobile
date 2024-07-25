@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
 import '/src/map/map_service.dart';
@@ -171,7 +172,7 @@ class MarkerView {
                               ),
                             ),
                             TextSpan(
-                                text: ' ${markerData.creationDate}',
+                                text: ' ${DateFormat('yMMMMd', mapView.settingsController.appLocale.toString()).format(DateTime.parse(markerData.creationDate))}',
                                 style: TextStyle(
                                   fontSize: SizeConfig.fontTextSmallSize,
                                   fontStyle: FontStyle.italic,
@@ -187,7 +188,7 @@ class MarkerView {
                     ),
                     // Mark rating
                     RatingBarIndicator(
-                      rating: markerData.rate + 1,
+                      rating: markerData.rating,
                       direction: Axis.horizontal,
                       itemCount: 5,
                       itemSize: SizeConfig.iconSize,
@@ -202,7 +203,7 @@ class MarkerView {
                     // Mark price if type is shop or bar
                     (markerData.type != 'spot')
                       ? RatingBarIndicator(
-                        rating: markerData.price! + 1,
+                        rating: markerData.price!,
                         direction: Axis.horizontal,
                         itemCount: 3,
                         itemSize: SizeConfig.iconSize,
