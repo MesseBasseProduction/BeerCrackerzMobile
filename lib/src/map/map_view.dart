@@ -89,18 +89,20 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       MapService.getShops().then((shopMarkersData) {
         for (var markerData in shopMarkersData) {
           _allShopMarkerData.add(markerData);
-          _allShopMarkerViews.add(
-            MarkerView.buildMarkerView(
-              context,
-              _mapController,
-              widget,
-              markerData,
-              this,
-              computeRouteToMark,
-              removeMarker,
-              editMarker,
-            ),
-          );
+          if (context.mounted) {
+            _allShopMarkerViews.add(
+              MarkerView.buildMarkerView(
+                context,
+                _mapController,
+                widget,
+                markerData,
+                this,
+                computeRouteToMark,
+                removeMarker,
+                editMarker,
+              ),
+            );
+          }
         }
         _displayedShopMarkerViews = MapService.buildDisplayedMarks(
           _allShopMarkerViews,
@@ -132,18 +134,20 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       MapService.getBars().then((barMarkersData) {
         for (var markerData in barMarkersData) {
           _allBarMarkerData.add(markerData);
-          _allBarMarkerViews.add(
-            MarkerView.buildMarkerView(
-              context,
-              _mapController,
-              widget,
-              markerData,
-              this,
-              computeRouteToMark,
-              removeMarker,
-              editMarker,
-            ),
-          );
+          if (context.mounted) {
+            _allBarMarkerViews.add(
+              MarkerView.buildMarkerView(
+                context,
+                _mapController,
+                widget,
+                markerData,
+                this,
+                computeRouteToMark,
+                removeMarker,
+                editMarker,
+              ),
+            );
+          }
         }
 
         _displayedBarMarkerViews = MapService.buildDisplayedMarks(
@@ -176,18 +180,20 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       MapService.getSpots().then((spotMarkersData) {
         for (var markerData in spotMarkersData) {
           _allSpotMarkerData.add(markerData);
-          _allSpotMarkerViews.add(
-            MarkerView.buildMarkerView(
-              context,
-              _mapController,
-              widget,
-              markerData,
-              this,
-              computeRouteToMark,
-              removeMarker,
-              editMarker,
-            ),
-          );
+          if (context.mounted) {
+            _allSpotMarkerViews.add(
+              MarkerView.buildMarkerView(
+                context,
+                _mapController,
+                widget,
+                markerData,
+                this,
+                computeRouteToMark,
+                removeMarker,
+                editMarker,
+              ),
+            );
+          }
         }
 
         _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
@@ -375,7 +381,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(),
       builder: (
@@ -423,7 +429,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(),
       builder: (
@@ -706,14 +712,16 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                         doubleTap = false;
                         if (doubleTapPerformed == false) { // No double click occured
                           if (showWIP == false) {
-                            // Add temporary marker
-                            wipMarker.add(
-                              MarkerView.buildWIPMarkerView(
-                                context,
-                                _mapController,
-                                latLng,
-                              ),
-                            );
+                            if (context.mounted) {
+                              // Add temporary marker
+                              wipMarker.add(
+                                MarkerView.buildWIPMarkerView(
+                                  context,
+                                  _mapController,
+                                  latLng,
+                                ),
+                              );
+                            }
                             // Compute current map bound and lat/lng range for those bounds
                             LatLngBounds bounds = _mapController.camera.visibleBounds;
                             double mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;
@@ -781,24 +789,26 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                           toastification.dismissAll(
                             delayForAnimation: false,
                           );
-                          toastification.show(
-                            context: context,
-                            title: Text(
-                              AppLocalizations.of(context)!.mapLoginInfoTitle,
-                            ),
-                            description: Text(
-                              AppLocalizations.of(context)!.mapLoginInfoDescription,
-                              style: const TextStyle(
-                                fontStyle: FontStyle.italic,
+                          if (context.mounted) {
+                            toastification.show(
+                              context: context,
+                              title: Text(
+                                AppLocalizations.of(context)!.mapLoginInfoTitle,
                               ),
-                            ),
-                            type: ToastificationType.info,
-                            style: ToastificationStyle.flatColored,
-                            autoCloseDuration: const Duration(
-                              seconds: 5,
-                            ),
-                            showProgressBar: false,
-                          );
+                              description: Text(
+                                AppLocalizations.of(context)!.mapLoginInfoDescription,
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              type: ToastificationType.info,
+                              style: ToastificationStyle.flatColored,
+                              autoCloseDuration: const Duration(
+                                seconds: 5,
+                              ),
+                              showProgressBar: false,
+                            );
+                          }
                         }
                       });
                     } else {
@@ -967,13 +977,13 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                         foreground: Paint()
                           ..style = PaintingStyle.stroke
                           ..strokeWidth = 5
-                          ..color = Theme.of(context).colorScheme.onBackground,
+                          ..color = Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
                       AppLocalizations.of(context)!.appTitle,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.background,
+                        color: Theme.of(context).colorScheme.surface,
                         fontSize: SizeConfig.fontTextTitleSize,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold,

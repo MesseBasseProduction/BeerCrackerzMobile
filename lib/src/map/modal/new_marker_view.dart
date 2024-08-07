@@ -137,15 +137,40 @@ class NewMarkerViewState extends State<NewMarkerView> {
               newMark,
             );
           } else {
-            // Invalid/incomplete data sent
-            // Error NSP1
+            if (context.mounted) {
+              // Invalid/incomplete data sent
+              // Error NSP1
+              toastification.show(
+                context: context,
+                title: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                ),
+                description: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastDescription('NSP1'),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                type: ToastificationType.error,
+                style: ToastificationStyle.flatColored,
+                autoCloseDuration: const Duration(
+                  seconds: 5,
+                ),
+                showProgressBar: false,
+              );
+            }
+          }
+        }).catchError((handleError) {
+          if (context.mounted) {
+            // Unable to perform server call
+            // Error NSP2
             toastification.show(
               context: context,
               title: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                AppLocalizations.of(context)!.httpFrontErrorToastTitle,
               ),
               description: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastDescription('NSP1'),
+                AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSP2'),
                 style: const TextStyle(
                   fontStyle: FontStyle.italic,
                 ),
@@ -158,30 +183,11 @@ class NewMarkerViewState extends State<NewMarkerView> {
               showProgressBar: false,
             );
           }
-        }).catchError((handleError) {
-          // Unable to perform server call
-          // Error NSP2
-          toastification.show(
-            context: context,
-            title: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-            ),
-            description: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSP2'),
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            type: ToastificationType.error,
-            style: ToastificationStyle.flatColored,
-            autoCloseDuration: const Duration(
-              seconds: 5,
-            ),
-            showProgressBar: false,
-          );
         }).whenComplete(() {
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
+          if (context.mounted) {
+            // Hide overlay loader anyway
+            context.loaderOverlay.hide();
+          }
         });
       }
     }
@@ -217,15 +223,40 @@ class NewMarkerViewState extends State<NewMarkerView> {
               newMark,
             );
           } else {
-            // Invalid/incomplete data sent
-            // Error NSH1
+            if (context.mounted) {
+              // Invalid/incomplete data sent
+              // Error NSH1
+              toastification.show(
+                context: context,
+                title: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                ),
+                description: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastDescription('NSH1'),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                type: ToastificationType.error,
+                style: ToastificationStyle.flatColored,
+                autoCloseDuration: const Duration(
+                  seconds: 5,
+                ),
+                showProgressBar: false,
+              );
+            }
+          }
+        }).catchError((handleError) {
+          if (context.mounted) {
+            // Unable to perform server call
+            // Error NSH2
             toastification.show(
               context: context,
               title: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                AppLocalizations.of(context)!.httpFrontErrorToastTitle,
               ),
               description: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastDescription('NSH1'),
+                AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSH2'),
                 style: const TextStyle(
                   fontStyle: FontStyle.italic,
                 ),
@@ -238,30 +269,11 @@ class NewMarkerViewState extends State<NewMarkerView> {
               showProgressBar: false,
             );
           }
-        }).catchError((handleError) {
-          // Unable to perform server call
-          // Error NSH2
-          toastification.show(
-            context: context,
-            title: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-            ),
-            description: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSH2'),
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            type: ToastificationType.error,
-            style: ToastificationStyle.flatColored,
-            autoCloseDuration: const Duration(
-              seconds: 5,
-            ),
-            showProgressBar: false,
-          );
         }).whenComplete(() {
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
+          if (context.mounted) {
+            // Hide overlay loader anyway
+            context.loaderOverlay.hide();
+          }
         });
       }
     }
@@ -297,15 +309,40 @@ class NewMarkerViewState extends State<NewMarkerView> {
               newMark,
             );
           } else {
-            // Invalid/incomplete data sent
-            // Error NBA1
+            if (context.mounted) {
+              // Invalid/incomplete data sent
+              // Error NBA1
+              toastification.show(
+                context: context,
+                title: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                ),
+                description: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastDescription('NBA1'),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                type: ToastificationType.error,
+                style: ToastificationStyle.flatColored,
+                autoCloseDuration: const Duration(
+                  seconds: 5,
+                ),
+                showProgressBar: false,
+              );
+            }
+          }
+        }).catchError((handleError) {
+          if (context.mounted) {
+            // Unable to perform server call
+            // Error NSH2
             toastification.show(
               context: context,
               title: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                AppLocalizations.of(context)!.httpFrontErrorToastTitle,
               ),
               description: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastDescription('NBA1'),
+                AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSH2'),
                 style: const TextStyle(
                   fontStyle: FontStyle.italic,
                 ),
@@ -318,30 +355,11 @@ class NewMarkerViewState extends State<NewMarkerView> {
               showProgressBar: false,
             );
           }
-        }).catchError((handleError) {
-          // Unable to perform server call
-          // Error NSH2
-          toastification.show(
-            context: context,
-            title: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-            ),
-            description: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastDescription('NSH2'),
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            type: ToastificationType.error,
-            style: ToastificationStyle.flatColored,
-            autoCloseDuration: const Duration(
-              seconds: 5,
-            ),
-            showProgressBar: false,
-          );
         }).whenComplete(() {
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
+          if (context.mounted) {
+            // Hide overlay loader anyway
+            context.loaderOverlay.hide();
+          }
         });
       }
     }

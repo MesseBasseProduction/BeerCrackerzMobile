@@ -92,17 +92,44 @@ class EditMarkerViewState extends State<EditMarkerView> {
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 200) {
-            Navigator.pop(context);
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
           } else {
-            // Invalid/incomplete data sent
-            // Error ESP1
+            if (context.mounted) {
+              // Invalid/incomplete data sent
+              // Error ESP1
+              toastification.show(
+                context: context,
+                title: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                ),
+                description: Text(
+                  AppLocalizations.of(context)!.editMarkErrorToastDescription('ESP1'),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                type: ToastificationType.error,
+                style: ToastificationStyle.flatColored,
+                autoCloseDuration: const Duration(
+                  seconds: 5,
+                ),
+                showProgressBar: false,
+              );
+            }
+          }
+        }).catchError((handleError) {
+          if (context.mounted) {
+            // Unable to perform server call
+            // Error ESP2
             toastification.show(
               context: context,
               title: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastTitle,
+                AppLocalizations.of(context)!.httpFrontErrorToastTitle,
               ),
               description: Text(
-                AppLocalizations.of(context)!.editMarkErrorToastDescription('ESP1'),
+                AppLocalizations.of(context)!.httpFrontErrorToastDescription('ESP2'),
                 style: const TextStyle(
                   fontStyle: FontStyle.italic,
                 ),
@@ -115,30 +142,11 @@ class EditMarkerViewState extends State<EditMarkerView> {
               showProgressBar: false,
             );
           }
-        }).catchError((handleError) {
-          // Unable to perform server call
-          // Error ESP2
-          toastification.show(
-            context: context,
-            title: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-            ),
-            description: Text(
-              AppLocalizations.of(context)!.httpFrontErrorToastDescription('ESP2'),
-              style: const TextStyle(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            type: ToastificationType.error,
-            style: ToastificationStyle.flatColored,
-            autoCloseDuration: const Duration(
-              seconds: 5,
-            ),
-            showProgressBar: false,
-          );
         }).whenComplete(() {
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
+          if (context.mounted) {
+            // Hide overlay loader anyway
+            context.loaderOverlay.hide();
+          }
         });
       }
     }

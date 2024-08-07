@@ -50,7 +50,7 @@ class MapOptionsViewState extends State<MapOptionsView> {
       ) {
         return Container(
           height: (SizeConfig.modalHeightRatio * mediaQueryData.size.height) / 100,
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           // Modal inner padding
           padding: EdgeInsets.symmetric(
             horizontal: SizeConfig.padding,

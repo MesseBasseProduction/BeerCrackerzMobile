@@ -148,26 +148,28 @@ class LoginViewState extends State<LoginView> {
               }
             }
           } else {
-            // No token nor expiry sent through the response, not supposed to happen
-            // Error LGI1
-            toastification.show(
-              context: context,
-              title: Text(
-                AppLocalizations.of(context)!.httpServerErrorToastTitle,
-              ),
-              description: Text(
-                AppLocalizations.of(context)!.httpServerErrorToastDescription('LGI1'),
-                style: const TextStyle(
-                  fontStyle: FontStyle.italic,
+            if (context.mounted) {
+              // No token nor expiry sent through the response, not supposed to happen
+              // Error LGI1
+              toastification.show(
+                context: context,
+                title: Text(
+                  AppLocalizations.of(context)!.httpServerErrorToastTitle,
                 ),
-              ),
-              type: ToastificationType.error,
-              style: ToastificationStyle.flatColored,
-              autoCloseDuration: const Duration(
-                seconds: 5,
-              ),
-              showProgressBar: false,
-            );
+                description: Text(
+                  AppLocalizations.of(context)!.httpServerErrorToastDescription('LGI1'),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                type: ToastificationType.error,
+                style: ToastificationStyle.flatColored,
+                autoCloseDuration: const Duration(
+                  seconds: 5,
+                ),
+                showProgressBar: false,
+              );
+            }
           }
         } else {
           // Check server response to check for known errors
@@ -177,52 +179,58 @@ class LoginViewState extends State<LoginView> {
           } else if (parsedJson['detail'] != null && parsedJson['detail'] == 'No credentials provided') {
             setState(() => errorMsg = AppLocalizations.of(context)!.authLoginEmptyCredentials);
           } else {
-            // Unexpected response code from server
-            // Error LGI2
-            toastification.show(
-              context: context,
-              title: Text(
-                AppLocalizations.of(context)!.httpWrongResponseToastTitle,
-              ),
-              description: Text(
-                AppLocalizations.of(context)!.httpWrongResponseToastDescription('LGI2 (${response.statusCode})'),
-                style: const TextStyle(
-                  fontStyle: FontStyle.italic,
+            if (context.mounted) {
+              // Unexpected response code from server
+              // Error LGI2
+              toastification.show(
+                context: context,
+                title: Text(
+                  AppLocalizations.of(context)!.httpWrongResponseToastTitle,
                 ),
-              ),
-              type: ToastificationType.error,
-              style: ToastificationStyle.flatColored,
-              autoCloseDuration: const Duration(
-                seconds: 5,
-              ),
-              showProgressBar: false,
-            );
+                description: Text(
+                  AppLocalizations.of(context)!.httpWrongResponseToastDescription('LGI2 (${response.statusCode})'),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                type: ToastificationType.error,
+                style: ToastificationStyle.flatColored,
+                autoCloseDuration: const Duration(
+                  seconds: 5,
+                ),
+                showProgressBar: false,
+              );
+            }
           }
         }
       }).catchError((handleError) {
-        // Unable to perform server call
-        // Error LGI3
-        toastification.show(
-          context: context,
-          title: Text(
-            AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-          ),
-          description: Text(
-            AppLocalizations.of(context)!.httpFrontErrorToastDescription('LGI3'),
-            style: const TextStyle(
-              fontStyle: FontStyle.italic,
+        if (context.mounted) {
+          // Unable to perform server call
+          // Error LGI3
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
             ),
-          ),
-          type: ToastificationType.error,
-          style: ToastificationStyle.flatColored,
-          autoCloseDuration: const Duration(
-            seconds: 5,
-          ),
-          showProgressBar: false,
-        );
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('LGI3'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
+        }
       }).whenComplete(() {
-        // Hide overlay loader in any case
-        context.loaderOverlay.hide();
+        if (context.mounted) {
+          // Hide overlay loader in any case
+          context.loaderOverlay.hide();
+        }
       });
     }
   }
@@ -292,7 +300,7 @@ class LoginViewState extends State<LoginView> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
-                          color: Theme.of(context).colorScheme.background,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

@@ -47,15 +47,40 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
         if (response.statusCode == 204) {
           widget.setAuthPage(4);
         } else {
-          // Unexpected response code from server
-          // Error RSP1
+          if (context.mounted) {
+            // Unexpected response code from server
+            // Error RSP1
+            toastification.show(
+              context: context,
+              title: Text(
+                AppLocalizations.of(context)!.httpWrongResponseToastTitle,
+              ),
+              description: Text(
+                AppLocalizations.of(context)!.httpWrongResponseToastDescription('RSP1 (${response.statusCode})'),
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              type: ToastificationType.error,
+              style: ToastificationStyle.flatColored,
+              autoCloseDuration: const Duration(
+                seconds: 5,
+              ),
+              showProgressBar: false,
+            );
+          }
+        }
+      }).catchError((handleError) {
+        if (context.mounted) {
+          // Unable to perform server call
+          // Error RSP2
           toastification.show(
             context: context,
             title: Text(
-              AppLocalizations.of(context)!.httpWrongResponseToastTitle,
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
             ),
             description: Text(
-              AppLocalizations.of(context)!.httpWrongResponseToastDescription('RSP1 (${response.statusCode})'),
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('RSP2'),
               style: const TextStyle(
                 fontStyle: FontStyle.italic,
               ),
@@ -68,30 +93,11 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
             showProgressBar: false,
           );
         }
-      }).catchError((handleError) {
-        // Unable to perform server call
-        // Error RSP2
-        toastification.show(
-          context: context,
-          title: Text(
-            AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-          ),
-          description: Text(
-            AppLocalizations.of(context)!.httpFrontErrorToastDescription('RSP2'),
-            style: const TextStyle(
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          type: ToastificationType.error,
-          style: ToastificationStyle.flatColored,
-          autoCloseDuration: const Duration(
-            seconds: 5,
-          ),
-          showProgressBar: false,
-        );
       }).whenComplete(() {
-        // Hide overlay loader anyway
-        context.loaderOverlay.hide();
+        if (context.mounted) {
+          // Hide overlay loader anyway
+          context.loaderOverlay.hide();
+        }
       });
     }
   }
@@ -144,7 +150,7 @@ class ResetPasswordViewState extends State<ResetPasswordView> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
-                          color: Theme.of(context).colorScheme.background,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

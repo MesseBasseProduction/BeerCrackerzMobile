@@ -196,7 +196,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
               ),
               padding: EdgeInsets.all(
                 SizeConfig.padding,
@@ -210,7 +210,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
                       Text(
                         AppLocalizations.of(context)!.helpWelcomeCTASlideShowWelcomeScreen,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: SizeConfig.fontTextSize,
                         ),
                       ),

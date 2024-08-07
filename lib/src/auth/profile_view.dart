@@ -49,11 +49,13 @@ class ProfileViewState extends State<ProfileView> {
     // Start loading overlay during server call, only if context is still mounted
     if (context.mounted) {
       context.loaderOverlay.show();
-      // Perform logout if token remains valid, request is valid aswell
-      await ProfileService.submitLogout(
-        await widget.settingsController.getAuthToken(),
-      ).then((response) {
-        if (response.statusCode != 204) {
+    }
+    // Perform logout if token remains valid, request is valid aswell
+    await ProfileService.submitLogout(
+      await widget.settingsController.getAuthToken(),
+    ).then((response) {
+      if (response.statusCode != 204) {
+        if (context.mounted) {
           // Unexpected response code from server
           // Error LGO1
           toastification.show(
@@ -74,10 +76,12 @@ class ProfileViewState extends State<ProfileView> {
             ),
             showProgressBar: false,
           );
-        } else {
-          widget.settingsController.updateAuthToken('', ''); // Clear remainning token and expiry
-          widget.settingsController.isLoggedIn = widget.settingsController.resetUserInfo();
-          widget.setAuthPage(0);
+        }
+      } else {
+        widget.settingsController.updateAuthToken('', ''); // Clear remainning token and expiry
+        widget.settingsController.isLoggedIn = widget.settingsController.resetUserInfo();
+        widget.setAuthPage(0);
+        if (context.mounted) {
           // Notify user he successfully logged out
           toastification.show(
             context: context,
@@ -98,7 +102,9 @@ class ProfileViewState extends State<ProfileView> {
             showProgressBar: false,
           );
         }
-      }).catchError((handleError) {
+      }
+    }).catchError((handleError) {
+      if (context.mounted) {
         // Unable to perform server call
         // Error LGO2
         toastification.show(
@@ -119,11 +125,13 @@ class ProfileViewState extends State<ProfileView> {
           ),
           showProgressBar: false,
         );
-      }).whenComplete(() {
-        // Hide overlay loader anyway
-        context.loaderOverlay.hide();
-      });
-    }
+      }
+    }).whenComplete(() {
+      if (context.mounted) {
+      // Hide overlay loader anyway
+      context.loaderOverlay.hide();
+      }
+    });
   }
 
   Future<void> onImageButtonPressed(
@@ -150,7 +158,7 @@ class ProfileViewState extends State<ProfileView> {
               toolbarTitle: AppLocalizations.of(context)!.authProfileCropTitle,
               toolbarColor: Theme.of(context).colorScheme.surface,
               toolbarWidgetColor: Theme.of(context).colorScheme.onSurface,
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               lockAspectRatio: true, // Force 1:1 aspxect ratio, forbid user to resize zone
               hideBottomControls: false,
             ),
@@ -225,15 +233,40 @@ class ProfileViewState extends State<ProfileView> {
         await widget.settingsController.getUserInfo();
         setState(() {});
       } else {
-        // Invalid/incomplete data sent
-        // Error UPP1
+        if (context.mounted) {
+          // Invalid/incomplete data sent
+          // Error UPP1
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.authProfileErrorPPUploadErrorTitle,
+            ),
+            description: Text(
+              AppLocalizations.of(context)!.authProfileErrorPPUploadErrorDescription('UPP1'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
+        }
+      }
+    }).catchError((handleError) {
+      if (context.mounted) {
+        // Unable to perform server call
+        // Error UPP2
         toastification.show(
           context: context,
           title: Text(
-            AppLocalizations.of(context)!.authProfileErrorPPUploadErrorTitle,
+            AppLocalizations.of(context)!.httpFrontErrorToastTitle,
           ),
           description: Text(
-            AppLocalizations.of(context)!.authProfileErrorPPUploadErrorDescription('UPP1'),
+            AppLocalizations.of(context)!.httpFrontErrorToastDescription('UPP2'),
             style: const TextStyle(
               fontStyle: FontStyle.italic,
             ),
@@ -246,30 +279,11 @@ class ProfileViewState extends State<ProfileView> {
           showProgressBar: false,
         );
       }
-    }).catchError((handleError) {
-      // Unable to perform server call
-      // Error UPP2
-      toastification.show(
-        context: context,
-        title: Text(
-          AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-        ),
-        description: Text(
-          AppLocalizations.of(context)!.httpFrontErrorToastDescription('UPP2'),
-          style: const TextStyle(
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-        type: ToastificationType.error,
-        style: ToastificationStyle.flatColored,
-        autoCloseDuration: const Duration(
-          seconds: 5,
-        ),
-        showProgressBar: false,
-      );
     }).whenComplete(() {
-      // Hide overlay loader anyway
-      context.loaderOverlay.hide();
+      if (context.mounted) {
+        // Hide overlay loader anyway
+        context.loaderOverlay.hide();
+      }
     });
   }
 
@@ -280,7 +294,7 @@ class ProfileViewState extends State<ProfileView> {
     SizeConfig().init(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.authProfileTitle,

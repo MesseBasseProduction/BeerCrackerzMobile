@@ -71,7 +71,7 @@ class RegisterSuccessViewState extends State<RegisterSuccessView> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
-                        color: Theme.of(context).colorScheme.background,
+                        color: Theme.of(context).colorScheme.surface,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

@@ -108,52 +108,58 @@ class RegisterViewState extends State<RegisterView> {
               setState(() => passwordErrorMsg = AppLocalizations.of(context)!.authRegisterPasswordTooCommon);
             }
           } else {
-            // Unexpected response code from server
-            // Error REG1
-            toastification.show(
-              context: context,
-              title: Text(
-                AppLocalizations.of(context)!.httpWrongResponseToastTitle,
-              ),
-              description: Text(
-                AppLocalizations.of(context)!.httpWrongResponseToastDescription('REG1 (${response.statusCode})'),
-                style: const TextStyle(
-                  fontStyle: FontStyle.italic,
+            if (context.mounted) {
+              // Unexpected response code from server
+              // Error REG1
+              toastification.show(
+                context: context,
+                title: Text(
+                  AppLocalizations.of(context)!.httpWrongResponseToastTitle,
                 ),
-              ),
-              type: ToastificationType.error,
-              style: ToastificationStyle.flatColored,
-              autoCloseDuration: const Duration(
-                seconds: 5,
-              ),
-              showProgressBar: false,
-            );
+                description: Text(
+                  AppLocalizations.of(context)!.httpWrongResponseToastDescription('REG1 (${response.statusCode})'),
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                type: ToastificationType.error,
+                style: ToastificationStyle.flatColored,
+                autoCloseDuration: const Duration(
+                  seconds: 5,
+                ),
+                showProgressBar: false,
+              );
+            }
           }
         }
       }).catchError((handleError) {
-        // Unable to perform server call
-        // Error REG2
-        toastification.show(
-          context: context,
-          title: Text(
-            AppLocalizations.of(context)!.httpFrontErrorToastTitle,
-          ),
-          description: Text(
-            AppLocalizations.of(context)!.httpFrontErrorToastDescription('REG2'),
-            style: const TextStyle(
-              fontStyle: FontStyle.italic,
+        if (context.mounted) {
+          // Unable to perform server call
+          // Error REG2
+          toastification.show(
+            context: context,
+            title: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastTitle,
             ),
-          ),
-          type: ToastificationType.error,
-          style: ToastificationStyle.flatColored,
-          autoCloseDuration: const Duration(
-            seconds: 5,
-          ),
-          showProgressBar: false,
-        );
+            description: Text(
+              AppLocalizations.of(context)!.httpFrontErrorToastDescription('REG2'),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            type: ToastificationType.error,
+            style: ToastificationStyle.flatColored,
+            autoCloseDuration: const Duration(
+              seconds: 5,
+            ),
+            showProgressBar: false,
+          );
+        }
       }).whenComplete(() {
-        // Hide overlay loader anyway
-        context.loaderOverlay.hide();
+        if (context.mounted) {
+          // Hide overlay loader anyway
+          context.loaderOverlay.hide();
+        }
       });
     }
   }
@@ -222,7 +228,7 @@ class RegisterViewState extends State<RegisterView> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
-                          color: Theme.of(context).colorScheme.background,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
