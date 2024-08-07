@@ -263,6 +263,40 @@ class MarkerView {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Zoom into marker
+                        ElevatedButton(
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.zoom_in,
+                              ),
+                              SizedBox(
+                                width: SizeConfig.paddingSmall,
+                              ),
+                              Text(
+                                "Zoom",
+                              ),
+                            ],
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                            noAnimation = true;
+                            // Move map to the marker position
+                            MapUtils.animatedMapMove(
+                              LatLng(
+                                markerData.lat,
+                                markerData.lng,
+                              ),
+                              17,
+                              mapController,
+                              tickerProvider,
+                            );                            
+                          },
+                        ),
+                        SizedBox(
+                          width: SizeConfig.padding,
+                        ),
+                        // Navigate to
                         ElevatedButton(
                           child: Row(
                             children: [
