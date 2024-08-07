@@ -273,6 +273,7 @@
   "shopDiscoveredBy": "A shop discovered by",
   "barDiscoveredBy": "A bar discovered by",
   "markDiscoveredSince": "Since",
+  "markZoom": "Zoom",
   "markRoute": "Route",
   "markEdit": "Edit",
   "markDelete": "Delete",

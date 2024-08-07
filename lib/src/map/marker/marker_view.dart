@@ -101,7 +101,6 @@ class MarkerView {
       builder: (
         BuildContext context,
       ) {
-        bool isPortrait = (MediaQuery.of(context).orientation == Orientation.portrait);
         return Container(
           height: (SizeConfig.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
           color: Theme.of(context).colorScheme.surfaceContainer,
@@ -274,7 +273,7 @@ class MarkerView {
                                 width: SizeConfig.paddingSmall,
                               ),
                               Text(
-                                "Zoom",
+                                AppLocalizations.of(context)!.markZoom,
                               ),
                             ],
                           ),
