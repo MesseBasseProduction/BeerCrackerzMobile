@@ -375,9 +375,7 @@ class MarkerView {
                         )
                         : const SizedBox.shrink(),
                     SizedBox(
-                      height: (isPortrait == false)
-                        ? SizeConfig.padding
-                        : 0,
+                      height: SizeConfig.padding,
                     ),
                   ],
                 ),
