@@ -294,7 +294,7 @@ class ProfileViewState extends State<ProfileView> {
     SizeConfig().init(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.authProfileTitle,

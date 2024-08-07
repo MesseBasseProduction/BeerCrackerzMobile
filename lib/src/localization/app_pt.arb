@@ -181,6 +181,17 @@
   "settingsAppSection": "Aplicativo",
   "settingsAppShowWelcomeScreenSetting": "Mostrar tela de boas-vindas",
   "settingsAppShowWelcomeScreenSettingDescription": "Painel de ajuda na inicialização do aplicativo",
+  "settingsAppTileCache": "Cache do mapa",
+  "settingsAppTileCacheDescription": "{field} blocos em cache",
+  "@settingsAppTileCacheDescription": {
+    "placeholders": {
+      "field": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "settingsAppTileCacheClear": "Claro",
   "emptyInput": "O campo {field} não pode ficar vazio",
   "@emptyInput": {
     "placeholders": {

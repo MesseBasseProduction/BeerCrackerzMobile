@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -381,7 +382,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(),
       builder: (
@@ -429,7 +430,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(),
       builder: (
@@ -836,12 +837,13 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                   ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
                   : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                 userAgentPackageName: 'com.messebasseproduction.beercrackerz',
+                tileProvider: const FMTCStore('beercrackerz-cache-storage').getTileProvider(),
               ),
               // For satelite layer, adding lines and labels tile overlays
               (widget.settingsController.mapLayer == 'esri')
-                ? TileLayer(//&api_key=${AppConst.stadiaMapsApiKey}
+                ? TileLayer(
                     urlTemplate: 'https://tiles-eu.stadiamaps.com/tiles/stamen_terrain-lines/{z}/{x}/{y}{r}.png?api_key=${AppConst.stadiaMapsApiKey}',
-                    userAgentPackageName: 'com.messebasseproduction.mondourdannais',
+                    userAgentPackageName: 'com.messebasseproduction.beercrackerz',
                     retinaMode: true,
                     additionalOptions: {
                       'api_key': AppConst.stadiaMapsApiKey!,
@@ -851,7 +853,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               (widget.settingsController.mapLayer == 'esri')
                 ? TileLayer(
                     urlTemplate: 'https://tiles-eu.stadiamaps.com/tiles/stamen_terrain-labels/{z}/{x}/{y}{r}.png?api_key=${AppConst.stadiaMapsApiKey}',
-                    userAgentPackageName: 'com.messebasseproduction.mondourdannais',
+                    userAgentPackageName: 'com.messebasseproduction.beercrackerz',
                     retinaMode: true,
                     additionalOptions: {
                       'api_key': AppConst.stadiaMapsApiKey!,

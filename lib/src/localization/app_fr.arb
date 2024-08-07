@@ -181,6 +181,17 @@
   "settingsAppSection": "Application",
   "settingsAppShowWelcomeScreenSetting": "Aide au démarrage",
   "settingsAppShowWelcomeScreenSettingDescription": "Montrer l'aide au lancement",
+  "settingsAppTileCache": "Cache de la carte",
+  "settingsAppTileCacheDescription": "{field} tuiles en cache",
+  "@settingsAppTileCacheDescription": {
+    "placeholders": {
+      "field": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "settingsAppTileCacheClear": "Effacer",
   "emptyInput": "Le champ {field} ne peut être vide",
   "@emptyInput": {
     "placeholders": {

@@ -181,6 +181,17 @@
   "settingsAppSection": "App",
   "settingsAppShowWelcomeScreenSetting": "Show welcome screen",
   "settingsAppShowWelcomeScreenSettingDescription": "Help panel on app startup",
+  "settingsAppTileCache": "Map cache",
+  "settingsAppTileCacheDescription": "{field} tile(s) cached",
+  "@settingsAppTileCacheDescription": {
+    "placeholders": {
+      "field": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "settingsAppTileCacheClear": "Clear",
   "emptyInput": "The {field} field can not be empty",
   "@emptyInput": {
     "placeholders": {

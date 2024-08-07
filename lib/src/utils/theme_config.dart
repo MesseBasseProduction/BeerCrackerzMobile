@@ -18,6 +18,7 @@ class ThemeConfig {
         onError: Color.fromARGB(255, 255, 255, 255),
         surface: Color.fromARGB(255, 240, 240, 240),
         onSurface: Color.fromARGB(255, 0, 0, 0),
+        surfaceContainer: Color.fromARGB(255, 214, 207, 184),
         shadow: Color.fromARGB(84, 228, 182, 181),
       ),
     );
@@ -38,6 +39,7 @@ class ThemeConfig {
         onError: Color(0xff000000),
         surface: Color(0xff151515),
         onSurface: Color(0xffffffff),
+        surfaceContainer: Color.fromARGB(255, 95, 77, 22),
         shadow: Color(0x55DE716D),
       ),
     );

@@ -181,6 +181,17 @@
   "settingsAppSection": "Aplicación",
   "settingsAppShowWelcomeScreenSetting": "Mostrar pantalla de bienvenida",
   "settingsAppShowWelcomeScreenSettingDescription": "Panel de ayuda al iniciar la aplicación",
+  "settingsAppTileCache": "Caché de mapas",
+  "settingsAppTileCacheDescription": "{field} mosaicos almacenados en caché",
+  "@settingsAppTileCacheDescription": {
+    "placeholders": {
+      "field": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "settingsAppTileCacheClear": "Claro",
   "emptyInput": "El campo {field} no puede estar vacío",
   "@emptyInput": {
     "placeholders": {

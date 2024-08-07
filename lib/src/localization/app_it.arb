@@ -181,6 +181,17 @@
   "settingsAppSection": "App",
   "settingsAppShowWelcomeScreenSetting": "Mostra la schermata di benvenuto",
   "settingsAppShowWelcomeScreenSettingDescription": "Pannello di aiuto all'avvio dell'app",
+  "settingsAppTileCache": "Cache della mappa",
+  "settingsAppTileCacheDescription": "{field} tessere memorizzate nella cache",
+  "@settingsAppTileCacheDescription": {
+    "placeholders": {
+      "field": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "settingsAppTileCacheClear": "Chiaro",
   "emptyInput": "Il campo {field} non può essere vuoto",
   "@emptyInput": {
     "placeholders": {

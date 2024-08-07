@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 
 import '/src/settings/settings_controller.dart';
 import '/src/utils/app_const.dart';
+import '/src/utils/global_utils.dart';
 import '/src/utils/size_config.dart';
 // This settings view handle global app settings.
 // They are stored on the phone so they are permanent.
@@ -24,6 +26,21 @@ class SettingsView extends StatefulWidget {
 }
 
 class SettingsViewState extends State<SettingsView> {
+  int cachedTiles = 0;
+  double cacheSize = 0.0;
+  
+  @override
+  void initState() {
+    super.initState();
+    updateCacheInfo();
+  }
+
+  Future<void> updateCacheInfo() async {
+    cachedTiles = await const FMTCStore('beercrackerz-cache-storage').stats.length;   
+    cacheSize = await const FMTCStore('beercrackerz-cache-storage').stats.size;
+    setState(() {}); 
+  }
+
   @override
   Widget build(
     BuildContext context,
@@ -205,6 +222,7 @@ class SettingsViewState extends State<SettingsView> {
               ),
             ],
           ),
+          // App section
           SettingsSection(
             title: Text(
               AppLocalizations.of(context)!.settingsAppSection,
@@ -233,6 +251,27 @@ class SettingsViewState extends State<SettingsView> {
                     await widget.settingsController.updateShowWelcomeScreen(false);
                   }
                 },
+              ),
+              // Map cached tiles and size on phone, allow user to manually clear cache
+              SettingsTile.navigation(
+                leading: const Icon(
+                  Icons.map,
+                ),
+                title: Text(
+                  AppLocalizations.of(context)!.settingsAppTileCache,
+                ),
+                description: Text(
+                  '${AppLocalizations.of(context)!.settingsAppTileCacheDescription(cachedTiles)} (${GlobalUtils.readableFileSize(cacheSize, true)})',
+                ),
+                trailing: ElevatedButton(
+                  child: Text(
+                    AppLocalizations.of(context)!.settingsAppTileCacheClear,               
+                  ),
+                  onPressed: () async {
+                    await const FMTCStore('beercrackerz-cache-storage').manage.reset();
+                    updateCacheInfo();
+                  },
+                ),
               ),
             ],
           ),

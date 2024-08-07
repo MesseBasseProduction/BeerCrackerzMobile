@@ -181,6 +181,17 @@
   "settingsAppSection": "App",
   "settingsAppShowWelcomeScreenSetting": "Begrüßungsbildschirm anzeigen",
   "settingsAppShowWelcomeScreenSettingDescription": "Hilfebereich beim App-Start",
+  "settingsAppTileCache": "Kartenkachel-Cache",
+  "settingsAppTileCacheDescription": "{field} Kartenkachel im Cache",
+  "@settingsAppTileCacheDescription": {
+    "placeholders": {
+      "field": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
+  "settingsAppTileCacheClear": "Klar",
   "emptyInput": "Das Feld {field} darf nicht leer sein",
   "@emptyInput": {
     "placeholders": {

@@ -104,7 +104,7 @@ class MarkerView {
         bool isPortrait = (MediaQuery.of(context).orientation == Orientation.portrait);
         return Container(
           height: (SizeConfig.modalHeightRatio * mediaQueryData.size.height) / 100, // Taking screenHeightRatio % of screen height
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           // Modal inner padding
           padding: EdgeInsets.symmetric(
             horizontal: SizeConfig.padding,
