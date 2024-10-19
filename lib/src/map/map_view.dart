@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_compass/flutter_map_compass.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
@@ -665,7 +666,7 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               ),
               initialZoom: widget.settingsController.initZoom,
               interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag
+                flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag | InteractiveFlag.rotate
               ),
               minZoom: 2,
               maxZoom: 19,
@@ -902,6 +903,21 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                 markers: (showWIP == true)
                   ? wipMarker
                   : [],
+              ),
+              // Map compass
+              MapCompass.cupertino(
+                alignment: (widget.settingsController.leftHanded == true)
+                  ? Alignment.topLeft
+                  : Alignment.topRight,
+                padding: EdgeInsets.only(
+                  left: (widget.settingsController.leftHanded == true)
+                    ? SizeConfig.padding
+                    : 0,
+                  right: (widget.settingsController.leftHanded == true)
+                    ? 0
+                    : SizeConfig.padding,
+                  top: (3 * SizeConfig.padding) + MediaQuery.of(context).viewPadding.top + SizeConfig.iconSize,
+                ),
               ),
               // Map attribution
               RichAttributionWidget(

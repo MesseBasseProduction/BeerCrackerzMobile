@@ -51,7 +51,7 @@ class SizeConfig {
     // Icon sizes
     inputIcon = (defaultSize * 2);
     iconSize = 24;
-    mapMarkerSize = 30;
+    mapMarkerSize = 26;
     // Font sizes
     fontTextSmallSize = 12;
     fontTextSize = 14;

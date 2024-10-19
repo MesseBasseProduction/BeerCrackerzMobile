@@ -352,6 +352,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.2"
+  flutter_map_compass:
+    dependency: "direct main"
+    description:
+      name: flutter_map_compass
+      sha256: "9e036786b556676dff7d30aa04fdb95ed23eada3e739bafc5b75b2a512c12d0d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   flutter_map_location_marker:
     dependency: "direct main"
     description:

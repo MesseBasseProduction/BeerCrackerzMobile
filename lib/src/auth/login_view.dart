@@ -64,7 +64,7 @@ class LoginViewState extends State<LoginView> {
         password,
       ).then((response) async {
         if (response.statusCode == 200) { // HTTP/200, Alrighty
-          final parsedJson = jsonDecode(response.body);
+          final parsedJson = jsonDecode(utf8.decode(response.bodyBytes));
           // Check server response validity, it must contain the token and its expiration date
           if (parsedJson['expiry'] != null && parsedJson['token'] != null) {
             bool authTokenUpdated = await widget.settingsController.updateAuthToken(
@@ -173,7 +173,7 @@ class LoginViewState extends State<LoginView> {
           }
         } else {
           // Check server response to check for known errors
-          final parsedJson = jsonDecode(response.body);
+          final parsedJson = jsonDecode(utf8.decode(response.bodyBytes));
           if (parsedJson['detail'] != null && parsedJson['detail'] == 'Invalid credentials') {
             setState(() => errorMsg = AppLocalizations.of(context)!.authLoginInvalidCredentials);
           } else if (parsedJson['detail'] != null && parsedJson['detail'] == 'No credentials provided') {

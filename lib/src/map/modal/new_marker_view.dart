@@ -130,7 +130,7 @@ class NewMarkerViewState extends State<NewMarkerView> {
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 201) {
-            final parsedJson = jsonDecode(response.body);
+            final parsedJson = jsonDecode(utf8.decode(response.bodyBytes));
             MarkerData newMark = MarkerData.fromJson(parsedJson);
             widget.callback(
               'spot',
@@ -216,7 +216,7 @@ class NewMarkerViewState extends State<NewMarkerView> {
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 201) {
-            final parsedJson = jsonDecode(response.body);
+            final parsedJson = jsonDecode(utf8.decode(response.bodyBytes));
             MarkerData newMark = MarkerData.fromJson(parsedJson);
             widget.callback(
               'shop',
@@ -302,7 +302,7 @@ class NewMarkerViewState extends State<NewMarkerView> {
           widget.markerData,
         ).then((response) async {
           if (response.statusCode == 201) {
-            final parsedJson = jsonDecode(response.body);
+            final parsedJson = jsonDecode(utf8.decode(response.bodyBytes));
             MarkerData newMark = MarkerData.fromJson(parsedJson);
             widget.callback(
               'bar',

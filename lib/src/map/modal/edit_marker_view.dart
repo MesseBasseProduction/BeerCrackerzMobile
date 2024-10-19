@@ -221,8 +221,10 @@ class EditMarkerViewState extends State<EditMarkerView> {
             showProgressBar: false,
           );
         }).whenComplete(() {
-          // Hide overlay loader anyway
-          context.loaderOverlay.hide();
+          if (context.mounted) {
+            // Hide overlay loader anyway
+            context.loaderOverlay.hide();
+          }
         });
       }
     }

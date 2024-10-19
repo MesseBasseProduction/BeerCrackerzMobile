@@ -207,7 +207,7 @@ class SettingsController with ChangeNotifier {
     if (token != '') {
       await ProfileService.getUserInfo(token).then((response) {
         if (response.statusCode == 200) {
-          final parsedJson = jsonDecode(response.body);
+          final parsedJson = jsonDecode(utf8.decode(response.bodyBytes));
           userId = parsedJson['id'];
           username = parsedJson['username'];
           email = parsedJson['email'];

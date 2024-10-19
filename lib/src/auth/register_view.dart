@@ -82,7 +82,7 @@ class RegisterViewState extends State<RegisterView> {
           widget.setAuthPage(2);
         } else {
           // Check server response to check for known errors
-          final parsedJson = jsonDecode(response.body);
+          final parsedJson = jsonDecode(utf8.decode(response.bodyBytes));
           // Server sent back input with issues
           if (parsedJson['username'] != null || parsedJson['password'] == null) {
             if (parsedJson['username'] != null) {
