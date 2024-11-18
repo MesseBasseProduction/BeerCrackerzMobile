@@ -63,7 +63,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
               style: TextStyle(
                 fontSize: SizeConfig.fontTextTitleSize,
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -73,7 +73,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             Text(
               AppLocalizations.of(context)!.helpWelcomeSlideDescription,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -101,7 +101,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             Text(
               AppLocalizations.of(context)!.helpWelcomeMapSlideDescription,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -129,7 +129,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             Text(
               AppLocalizations.of(context)!.helpWelcomeMarkSlideDescription,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -157,7 +157,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             Text(
               AppLocalizations.of(context)!.helpWelcomeNewMarkSlideDescription,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -185,7 +185,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             Text(
               AppLocalizations.of(context)!.helpWelcomeCTASlideDescription,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -315,8 +315,8 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             SizeConfig.paddingSmall,
           ),
           color: (currentPage.round() == index)
-            ? Theme.of(context).colorScheme.onPrimary
-            : Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
+            ? Theme.of(context).colorScheme.onSurface
+            : Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
         ),
       ),
     );
@@ -330,7 +330,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
     slides = buildSlides(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.helpWelcomeTitle,

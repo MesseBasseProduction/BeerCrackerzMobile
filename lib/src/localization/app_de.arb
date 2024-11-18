@@ -213,7 +213,7 @@
       "feature": {}
     }
   },
-  "barFeatures": "{feature, select, regular{Regulär} snack{Snack} cellar{Brauerei} rooftop{Auf dem Dach} tobacco{Zigaretten} food{Essen} card{Kreditkarte} choice{Große Auswahl} outdoor{Draussen} other{Andere}}",
+  "barFeatures": "{feature, select, regular{Regulär} snack{Snack} cellar{Brauerei} rooftop{Auf dem Dach} restaurant{Restaurant} tobacco{Zigaretten} food{Essen} card{Kreditkarte} choice{Große Auswahl} outdoor{Draussen} other{Andere}}",
   "@barFeatures": {
     "placeholders": {
       "feature": {}

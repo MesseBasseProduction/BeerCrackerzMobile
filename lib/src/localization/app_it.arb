@@ -213,7 +213,7 @@
       "feature": {}
     }
   },
-  "barFeatures": "{feature, select, regular{Normale} snack{Merenda} cellar{Birrificio} rooftop{Sul tetto} tobacco{Sigarette} food{Cibo} card{Carta di credito} choice{Ampia scelta} outdoor{All'aperto} other{Altro}}",
+  "barFeatures": "{feature, select, regular{Normale} snack{Merenda} cellar{Birrificio} rooftop{Sul tetto} restaurant{Ristorante} tobacco{Sigarette} food{Cibo} card{Carta di credito} choice{Ampia scelta} outdoor{All'aperto} other{Altro}}",
   "@barFeatures": {
     "placeholders": {
       "feature": {}

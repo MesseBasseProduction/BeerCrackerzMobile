@@ -22,7 +22,7 @@ class AboutView extends StatelessWidget {
     SizeConfig().init(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.helpAboutTitle,
@@ -51,7 +51,7 @@ class AboutView extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.helpAboutPar1,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -62,7 +62,7 @@ class AboutView extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.helpAboutPar2,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -100,7 +100,7 @@ class AboutView extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.helpAboutPar3,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -111,7 +111,7 @@ class AboutView extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.helpAboutPar4,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,
@@ -149,7 +149,7 @@ class AboutView extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.helpAboutDisclaimer,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.bold,
@@ -162,7 +162,7 @@ class AboutView extends StatelessWidget {
             Text(
               AppLocalizations.of(context)!.helpAboutVersion(AppConst.appVersion, AppConst.serverVersion),
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: SizeConfig.fontTextSize,
               ),
               textAlign: TextAlign.center,

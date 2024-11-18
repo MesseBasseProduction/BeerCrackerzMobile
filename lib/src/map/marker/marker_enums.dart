@@ -45,6 +45,7 @@ enum BarTypes {
   snack,
   cellar,
   rooftop,
+  restaurant,
 }
 
 enum BarModifiers {

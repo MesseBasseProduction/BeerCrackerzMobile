@@ -213,7 +213,7 @@
       "feature": {}
     }
   },
-  "barFeatures": "{feature, select, regular{Regular} snack{Bocadillo} cellar{Cervecería} rooftop{Techo} tobacco{Cigarrillos} food{Alimento} card{Tarjeta de crédito} choice{Amplia selección} outdoor{Exterior} other{Otro}}",
+  "barFeatures": "{feature, select, regular{Regular} snack{Bocadillo} cellar{Cervecería} rooftop{Techo} restaurant{Restaurante} tobacco{Cigarrillos} food{Alimento} card{Tarjeta de crédito} choice{Amplia selección} outdoor{Exterior} other{Otro}}",
   "@barFeatures": {
     "placeholders": {
       "feature": {}
