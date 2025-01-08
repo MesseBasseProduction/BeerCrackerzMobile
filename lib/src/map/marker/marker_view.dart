@@ -77,6 +77,8 @@ class MarkerView {
     Function editCallback,
   ) {
     SizeConfig().init(context);
+    // Ensure map is rotated to the north before animating to the marker
+    mapController.rotate(0);
     // Internal bool to lock animation if user tried to edit its mark
     bool noAnimation = false;
     MediaQueryData mediaQueryData = MediaQuery.of(context);

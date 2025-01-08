@@ -412,6 +412,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     LatLng latLng,
     double mapLatRange,
   ) {
+    // Force map to rotate to north
+    _mapController.rotate(0);
     // Fake data, won't be sent to server
     MarkerData markerData = MarkerData(
       id: 42,
