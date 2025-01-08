@@ -16,7 +16,7 @@ class ThemeConfig {
         onTertiary: Color(0xff000000),
         error: Color(0xffDE716D),
         onError: Color.fromARGB(255, 255, 255, 255),
-        surface: Color.fromARGB(255, 240, 240, 240),
+        surface: Color.fromARGB(255, 173, 173, 173),
         onSurface: Color.fromARGB(255, 0, 0, 0),
         surfaceContainer: Color.fromARGB(255, 214, 207, 184),
         shadow: Color.fromARGB(84, 228, 182, 181),
@@ -37,10 +37,10 @@ class ThemeConfig {
         onTertiary: Color(0xff000000),
         error: Color(0xffDE716D),
         onError: Color(0xff000000),
-        surface: Color(0xff151515),
+        surface: Color.fromARGB(255, 37, 37, 37),
         onSurface: Color(0xffffffff),
         surfaceContainer: Color.fromARGB(255, 95, 77, 22),
-        shadow: Color(0x55DE716D),
+        shadow: Color.fromARGB(84, 219, 182, 181),
       ),
     );
   }

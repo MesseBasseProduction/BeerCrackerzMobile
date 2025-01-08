@@ -196,7 +196,7 @@ class WelcomeScreenViewState extends State<WelcomeScreenView> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(SizeConfig.borderRadius),
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
               ),
               padding: EdgeInsets.all(
                 SizeConfig.padding,
