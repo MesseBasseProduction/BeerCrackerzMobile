@@ -666,7 +666,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
               ),
               initialZoom: widget.settingsController.initZoom,
               interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag | InteractiveFlag.rotate
+                flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag | InteractiveFlag.rotate,
+                enableMultiFingerGestureRace: true, // Ensure no rotationg while pinch zooming
               ),
               minZoom: 2,
               maxZoom: 19,
