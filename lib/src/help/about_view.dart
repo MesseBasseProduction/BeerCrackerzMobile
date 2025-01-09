@@ -28,6 +28,7 @@ class AboutView extends StatelessWidget {
           AppLocalizations.of(context)!.helpAboutTitle,
         ),
         shadowColor: Theme.of(context).colorScheme.shadow,
+        scrolledUnderElevation: 0.0,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(

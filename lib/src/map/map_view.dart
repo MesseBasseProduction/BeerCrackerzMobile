@@ -106,28 +106,15 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             );
           }
         }
+        // Then update total marks
+        widget.settingsController.totalMarks = _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length;
+
         _displayedShopMarkerViews = MapService.buildDisplayedMarks(
           _allShopMarkerViews,
           _allShopMarkerData,
           (widget.settingsController.showOnlySelf == true)
             ? [widget.settingsController.userId]
             : null
-        );
-        // Update saved mark stats
-        widget.settingsController.updateMarkStats(
-          _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
-          MapService.getMarkCount(
-            _allSpotMarkerData,
-            widget.settingsController.userId
-          ),
-          MapService.getMarkCount(
-            _allShopMarkerData,
-            widget.settingsController.userId
-          ),
-          MapService.getMarkCount(
-            _allBarMarkerData,
-            widget.settingsController.userId
-          ),
         );
         // Render UI modifications
         setState(() {});
@@ -151,6 +138,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             );
           }
         }
+        // Then update total marks
+        widget.settingsController.totalMarks = _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length;
 
         _displayedBarMarkerViews = MapService.buildDisplayedMarks(
           _allBarMarkerViews,
@@ -158,22 +147,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           (widget.settingsController.showOnlySelf == true)
             ? [widget.settingsController.userId]
             : null
-        );
-        // Update saved mark stats
-        widget.settingsController.updateMarkStats(
-          _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
-          MapService.getMarkCount(
-            _allSpotMarkerData,
-            widget.settingsController.userId
-          ),
-          MapService.getMarkCount(
-            _allShopMarkerData,
-            widget.settingsController.userId
-          ),
-          MapService.getMarkCount(
-            _allBarMarkerData,
-            widget.settingsController.userId
-          ),
         );
         // Render UI modifications
         setState(() {});
@@ -197,6 +170,8 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
             );
           }
         }
+        // Then update total marks
+        widget.settingsController.totalMarks = _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length;
 
         _displayedSpotMarkerViews = MapService.buildDisplayedMarks(
           _allSpotMarkerViews,
@@ -204,22 +179,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
           (widget.settingsController.showOnlySelf == true)
             ? [widget.settingsController.userId]
             : null
-        );
-        // Update saved mark stats
-        widget.settingsController.updateMarkStats(
-          _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
-          MapService.getMarkCount(
-            _allSpotMarkerData,
-            widget.settingsController.userId
-          ),
-          MapService.getMarkCount(
-            _allShopMarkerData,
-            widget.settingsController.userId
-          ),
-          MapService.getMarkCount(
-            _allBarMarkerData,
-            widget.settingsController.userId
-          ),
         );
         // Render UI modifications
         setState(() {});
@@ -282,21 +241,12 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       );
     }
     // Update saved mark stats
-    widget.settingsController.updateMarkStats(
-      _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
-      MapService.getMarkCount(
-        _allSpotMarkerData,
-        widget.settingsController.userId
-      ),
-      MapService.getMarkCount(
-        _allShopMarkerData,
-        widget.settingsController.userId
-      ),
-      MapService.getMarkCount(
-        _allBarMarkerData,
-        widget.settingsController.userId
-      ),
+    widget.settingsController.updateUserMarkStats(
+      type,
+      1,
     );
+    // Then update total marks
+    widget.settingsController.totalMarks = _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length;
     // Render UI modifications
     setState(() {});
     // Close bottom sheet as this callback is performed upon success
@@ -356,21 +306,12 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
       }
     }
     // Update saved mark stats
-    widget.settingsController.updateMarkStats(
-      _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length,
-      MapService.getMarkCount(
-        _allSpotMarkerData,
-        widget.settingsController.userId
-      ),
-      MapService.getMarkCount(
-        _allShopMarkerData,
-        widget.settingsController.userId
-      ),
-      MapService.getMarkCount(
-        _allBarMarkerData,
-        widget.settingsController.userId
-      ),
+    widget.settingsController.updateUserMarkStats(
+      markerData.type,
+      -1,
     );
+    // Then update total marks
+    widget.settingsController.totalMarks = _allSpotMarkerViews.length + _allShopMarkerViews.length + _allBarMarkerViews.length;
     // Render UI modifications
     setState(() {});
     // Close bottom sheet as this callback is performed upon success
@@ -412,8 +353,6 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
     LatLng latLng,
     double mapLatRange,
   ) {
-    // Force map to rotate to north
-    _mapController.rotate(0);
     // Fake data, won't be sent to server
     MarkerData markerData = MarkerData(
       id: 42,
@@ -727,6 +666,12 @@ class MapViewState extends State<MapView> with TickerProviderStateMixin {
                                 ),
                               );
                             }
+                            // Force map to rotate to north
+                            MapUtils.animateMapToNorth(
+                              mapController: _mapController,
+                              center: latLng,
+                              tickerProvider: this,
+                            );
                             // Compute current map bound and lat/lng range for those bounds
                             LatLngBounds bounds = _mapController.camera.visibleBounds;
                             double mapLatRange = (SizeConfig.modalHeightRatio * (bounds.northWest.latitude - bounds.southEast.latitude).abs()) / 400;

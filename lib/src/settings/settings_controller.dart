@@ -34,10 +34,12 @@ class SettingsController with ChangeNotifier {
   late String username;
   late String email;
   late String ppPath;
+  late String dateJoined; // Not meant to be updated anywhere
+  late String lastLogin;
   late bool isUserActive;
   late bool isUserStaff;
   // Mark stats
-  int totalMarks = 0;
+  int totalMarks = 0; // Total marks on map (regardless user, not user total)
   late int userSpotAdded;
   late int userShopAdded;
   late int userBarAdded;
@@ -216,8 +218,14 @@ class SettingsController with ChangeNotifier {
           } else {
             ppPath = parsedJson['profilePicture'];
           }
+          dateJoined = parsedJson['dateJoined'];
+          lastLogin = parsedJson['lastLogin'];
           isUserActive = parsedJson['isActive'];
           isUserStaff = parsedJson['isStaff'];
+          // User stats from server
+          userSpotAdded = parsedJson['spotCount'];
+          userShopAdded = parsedJson['shopCount'];
+          userBarAdded = parsedJson['barCount'];
           loggedIn = true;
         } else {
           loggedIn = false;
@@ -236,21 +244,27 @@ class SettingsController with ChangeNotifier {
     username = '';
     email = '';
     ppPath = '';
+    dateJoined = '';
+    lastLogin = '';
     isUserActive = false;
     isUserStaff = false;
+    userSpotAdded = 0;
+    userShopAdded = 0;
+    userBarAdded = 0;
     return false;
   }
 
   /* Marks stats */
-  void updateMarkStats(
-    int newTotalMarks,
-    int newUserSpotAdded,
-    int newUserShopAdded,
-    int newUserBarAdded,
+  void updateUserMarkStats(
+    String type,
+    int amount,
   ) {
-    totalMarks = newTotalMarks;
-    userSpotAdded = newUserSpotAdded;
-    userShopAdded = newUserShopAdded;
-    userBarAdded = newUserBarAdded;
+    if (type == 'spot') {
+      userSpotAdded += amount;
+    } else if (type == 'shop') {
+      userShopAdded += amount;
+    } else if (type == 'bar') {
+      userBarAdded += amount;
+    }
   }
 }

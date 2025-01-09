@@ -64,4 +64,62 @@ class MapUtils {
 
     controller.forward();
   }
+
+  static Future<void> animateMapToNorth({
+    required MapController mapController,
+    required LatLng center,
+    required TickerProvider tickerProvider,
+  }) async {
+    // Get initial map rotation angle in degree
+    final double initialRotation = mapController.camera.rotation;
+    final LatLng initialLatLng = mapController.camera.center;
+    // Create an AnimationController to handle the whole animation
+    final AnimationController animationController = AnimationController(
+      duration: const Duration(
+        milliseconds: 500,
+      ),
+      vsync: tickerProvider,
+    );
+    // Interpolate rotation from initial value to north (0 deg)
+    final Animation<double> rotationAnimation = Tween<double>(
+      begin: initialRotation,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: animationController,
+      curve: Curves.easeInOut,
+    ));
+    final Animation<double> latitudeAnimation = Tween<double>(
+      begin: initialLatLng.latitude,
+      end: center.latitude,
+    ).animate(CurvedAnimation(
+      parent: animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    final Animation<double> longitudeAnimation = Tween<double>(
+      begin: initialLatLng.longitude,
+      end: center.longitude,
+    ).animate(CurvedAnimation(
+      parent: animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    // ÉcouterListen event and apply rotation value
+    rotationAnimation.addListener(() {
+      final LatLng animatedPosition = LatLng(
+        latitudeAnimation.value,
+        longitudeAnimation.value,
+      );
+      mapController.move(
+        animatedPosition,
+        mapController.camera.zoom,
+      );
+      mapController.rotate(rotationAnimation.value);
+    });
+    // Start animation
+    animationController.forward().whenComplete(() {
+      animationController.dispose();
+      return;
+    });
+  }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:toastification/toastification.dart';
 
@@ -381,19 +382,37 @@ class ProfileViewState extends State<ProfileView> {
                   fontSize: SizeConfig.fontTextSize,
                 ),
               ),
+              Text(
+                AppLocalizations.of(context)!.authProfileUserMemberSince(
+                  DateFormat('yMMMMd', widget.settingsController.appLocale.toString()).format(DateTime.parse(widget.settingsController.dateJoined)),
+                ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                  fontStyle: FontStyle.italic,
+                  fontSize: SizeConfig.fontTextSize,
+                ),
+              ),
               SizedBox(
                 height: SizeConfig.padding,
               ),
               // Generic marker stats
-              Text(
-                AppLocalizations.of(context)!.authProfileUserTotalAddedMarkers(
-                  widget.settingsController.userSpotAdded + widget.settingsController.userShopAdded + widget.settingsController.userBarAdded,
-                  widget.settingsController.totalMarks,
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.paddingBig,
                 ),
-                textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: SizeConfig.fontTextSize,
+                child: Text(
+                  AppLocalizations.of(context)!.authProfileUserTotalAddedMarkers(
+                    widget.settingsController.userSpotAdded + widget.settingsController.userShopAdded + widget.settingsController.userBarAdded,
+                    widget.settingsController.totalMarks,
                   ),
+                  textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: SizeConfig.fontTextSize,
+                    ),
+                ),
+              ),
+              SizedBox(
+                height: SizeConfig.paddingSmall,
               ),
               Text(
                 AppLocalizations.of(context)!.authProfileUserAddedSpots(widget.settingsController.userSpotAdded),
@@ -431,6 +450,16 @@ class ProfileViewState extends State<ProfileView> {
               ),
               SizedBox(
                 height: SizeConfig.padding,
+              ),
+              Text(
+                AppLocalizations.of(context)!.authProfileUserLastLogin(
+                  DateFormat('yMMMMd', widget.settingsController.appLocale.toString()).format(DateTime.parse(widget.settingsController.lastLogin)),
+                ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                  fontStyle: FontStyle.italic,
+                  fontSize: SizeConfig.fontTextSize,
+                ),
               ),
               // Logout button
               ButtonTheme(

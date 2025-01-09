@@ -93,6 +93,15 @@
       }
     }
   },
+  "authProfileUserMemberSince": "Member since {field1}",
+  "@authProfileUserMemberSince": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "July 14, 1789"
+      }
+    }
+  },
   "authProfileUserTotalAddedMarkers": "You have added {field1} markers on the {field2} already registered on BeerCrackerz :",
   "@authProfileUserTotalAddedMarkers": {
     "placeholders": {
@@ -130,6 +139,15 @@
       "field": {
         "type": "int",
         "example": "0"
+      }
+    }
+  },
+  "authProfileUserLastLogin": "Last conection on {field1}",
+  "@authProfileUserLastLogin": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "July 14, 1789"
       }
     }
   },

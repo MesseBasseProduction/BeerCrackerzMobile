@@ -56,6 +56,16 @@ class SettingsViewState extends State<SettingsView> {
         shadowColor: Theme.of(context).colorScheme.shadow,
       ),
       body: SettingsList(
+        darkTheme: SettingsThemeData(
+          settingsListBackground: Theme.of(context).colorScheme.surface,
+          dividerColor: Theme.of(context).colorScheme.primary,
+          settingsSectionBackground: Theme.of(context).colorScheme.surfaceContainer,
+        ),
+        lightTheme: SettingsThemeData(
+          settingsListBackground: Theme.of(context).colorScheme.surfaceContainer,
+          dividerColor: Theme.of(context).colorScheme.primary,
+          settingsSectionBackground: Theme.of(context).colorScheme.surface,
+        ),
         sections: [
           // Interface section
           SettingsSection(

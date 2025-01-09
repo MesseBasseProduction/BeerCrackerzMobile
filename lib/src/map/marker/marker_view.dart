@@ -77,8 +77,12 @@ class MarkerView {
     Function editCallback,
   ) {
     SizeConfig().init(context);
-    // Ensure map is rotated to the north before animating to the marker
-    mapController.rotate(0);
+    // Force map to rotate to north
+    MapUtils.animateMapToNorth(
+      mapController: mapController,
+      center: LatLng(markerData.lat, markerData.lng),
+      tickerProvider: tickerProvider,
+    );
     // Internal bool to lock animation if user tried to edit its mark
     bool noAnimation = false;
     MediaQueryData mediaQueryData = MediaQuery.of(context);
@@ -95,6 +99,7 @@ class MarkerView {
       mapController,
       tickerProvider,
     );
+
     // Display mark informations in scrollable modal bottom sheet
     showModalBottomSheet<void>(
       context: context,

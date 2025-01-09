@@ -93,6 +93,15 @@
       }
     }
   },
+  "authProfileUserMemberSince": "Membre depuis le {field1}",
+  "@authProfileUserMemberSince": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "14 Juillet 1789"
+      }
+    }
+  },
   "authProfileUserTotalAddedMarkers": "Vous avez ajouté {field1} marqueurs sur les {field2} enregistrés sur BeerCrackerz :",
   "@authProfileUserTotalAddedMarkers": {
     "placeholders": {
@@ -130,6 +139,15 @@
       "field": {
         "type": "String",
         "example": "0"
+      }
+    }
+  },
+  "authProfileUserLastLogin": "Dernière connexion le {field1}",
+  "@authProfileUserLastLogin": {
+    "placeholders": {
+      "field1": {
+        "type": "String",
+        "example": "14 Juillet 1789"
       }
     }
   },
