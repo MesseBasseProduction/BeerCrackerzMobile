@@ -44,6 +44,9 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   build_runner: ^2.4.9
 
+dependency_overrides:
+  geolocator_android: 4.6.1
+
 flutter:
   uses-material-design: true
   # Enable generation of localized Strings from arb files.
